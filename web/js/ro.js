@@ -131,7 +131,8 @@ function gotoSection(key){
     previewBtn.textContent = 'Preview JSON';
   }
   render();
-  // On narrow screens, close sidebar/overlay if open
+    try{ updateActiveNav(); }catch(e){}
+// On narrow screens, close sidebar/overlay if open
   sidebar?.classList.remove('open'); overlay?.classList.remove('show');
 }
 
@@ -140,11 +141,15 @@ function buildNav(){
   navEl.innerHTML = '';
   sections.forEach(s=>{
     const b = document.createElement('button');
+    b.dataset.key = s.key;
     b.appendChild(icon(s.icon));
     const span = document.createElement('span'); span.textContent = s.label;
     b.appendChild(span);
 
     b.className = (s.key===active?'active':'' );
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-selected', String(s.key===active));
+    if (s.key===active) b.setAttribute('aria-current','page');
     b.addEventListener('click', ()=>{
       active = s.key;
       if(jsonMode){
@@ -153,7 +158,8 @@ function buildNav(){
         previewBtn.textContent = 'Preview JSON';
       }
       render();
-      sidebar.classList.remove('open');
+          try{ updateActiveNav(); }catch(e){}
+sidebar.classList.remove('open');
       overlay.classList.remove('show');
     });
 
@@ -276,6 +282,23 @@ function createItem(sectionKey, overrides = {}, lockedFlag /* optional */) {
   return base;
 }
 /* Render */
+
+// --- injected helper to keep left-nav highlighting in sync
+function updateActiveNav(){
+if (!navEl || !navEl.children) return;
+Array.from(navEl.children).forEach(btn => {
+  const isActive = (btn.dataset && btn.dataset.key === active);
+  if (btn.classList) btn.classList.toggle('active', isActive);
+  if (btn.setAttribute) {
+    btn.setAttribute('aria-selected', String(!!isActive));
+    if (isActive) btn.setAttribute('aria-current','page');
+    else btn.removeAttribute('aria-current');
+  }
+});
+
+}
+
+
 function render(){
   const section = sections.find(s=>s.key===active);
 
@@ -456,6 +479,9 @@ if(data.heirsTarget){
   items.filter(it=>!it.collapsed).forEach(it => itemsEl.appendChild(renderItem(it, active)));
 
   enableDockDrag();
+
+  // keep the left-nav highlighting in sync
+  try{ updateActiveNav(); }catch(e){}
 }
 
 /* Mini-card (collapsed) */
