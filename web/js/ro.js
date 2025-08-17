@@ -725,18 +725,6 @@ function renderItem(it, sectionKey){
     pySel.dataset.defaultToken='__RETIREMENT__';
     purchaseWrap.append(pyField); body.append(purchaseWrap);
 
-    /* ROI toggle */
-    const roiRow = document.createElement('div'); roiRow.className='row';
-    const roiBtn = document.createElement('button'); roiBtn.className='btn small'; roiBtn.textContent = it.showROI? 'Hide ROI' : 'Customize ROI';
-    roiBtn.addEventListener('click', ()=>{ it.showROI = !it.showROI; render(); });
-    roiRow.append(roiBtn); body.append(roiRow);
-
-    if(it.showROI){
-      const g = document.createElement('div'); g.className='grid-2';
-      const {field:roiF} = makeTextField('ROI (%)', 'e.g. 4.0', it.roi, (v)=>{ it.roi=v; });
-      const {field:sdF}  = makeTextField('Standard Deviation (%)', 'e.g. 8', it.stdev, (v)=>{ it.stdev=v; });
-      g.append(roiF, sdF); body.append(g);
-    }
 
     /* Mortgage */
     const mortRow = document.createElement('div'); mortRow.className='row';
@@ -769,7 +757,7 @@ function renderItem(it, sectionKey){
 
     /* Sale */
     const saleRow = document.createElement('div'); saleRow.className='row';
-    const saleBtn = document.createElement('button'); saleBtn.className='btn small'; saleBtn.textContent = it.showSale? 'Hide Sale Information' : 'Enter Sale Information';
+    const saleBtn = document.createElement('button'); saleBtn.className='btn small'; saleBtn.textContent = it.showSale? 'Hide Sale Information' : 'Enter Sale and Tax Information';
     saleBtn.addEventListener('click', ()=>{ it.showSale = !it.showSale; render(); });
     saleRow.append(saleBtn); body.append(saleRow);
 
@@ -794,6 +782,24 @@ function renderItem(it, sectionKey){
       const {field:paField} = makeSelectField('Proceeds to account', withPlaceholder, it.saleProceedsAccount || '', (v)=>{ it.saleProceedsAccount = v; });
       g3.append(paField); body.append(g3);
     }
+
+    /* ROI toggle */
+    const roiRow = document.createElement('div'); roiRow.className='row';
+    const roiBtn = document.createElement('button'); roiBtn.className='btn small'; roiBtn.textContent = it.showROI? 'Hide ROI' : 'Customize Appreciation';
+    roiBtn.addEventListener('click', ()=>{ it.showROI = !it.showROI; render(); });
+    roiRow.append(roiBtn); body.append(roiRow);
+
+    if(it.showROI){
+      const g = document.createElement('div'); g.className='grid-2';
+      const {field:roiF} = makeTextField('ROI (%)', 'e.g. 4.0', it.roi, (v)=>{ it.roi=v; });
+      const {field:sdF}  = makeTextField('Standard Deviation (%)', 'e.g. 8', it.stdev, (v)=>{ it.stdev=v; });
+      g.append(roiF, sdF); body.append(g);
+    }
+
+
+
+
+
 
   } else if (sectionKey === 'epsilon' || sectionKey === 'zeta'){
     const now = new Date().getFullYear();
