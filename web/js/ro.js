@@ -99,6 +99,7 @@ const previewBtn= document.getElementById('previewJsonBtn');
 const submitBtn = document.getElementById('submitBtn');
  
 const panelNextFooter = document.getElementById('panelNextFooter');
+const backSectionBtn  = document.getElementById('backSectionBtn');
 const nextSectionBtn  = document.getElementById('nextSectionBtn');
 
 const toastEl   = document.getElementById('toast');
@@ -279,32 +280,49 @@ function render(){
   const section = sections.find(s=>s.key===active);
 
   titleEl.textContent = section.label;
-  // Configure bottom-next footer button
-  if(panelNextFooter && nextSectionBtn){
-    const idx = sections.findIndex(s=>s.key===active);
-    nextSectionBtn.innerHTML = '';
-    nextSectionBtn.className = 'nav-like';
-    if(idx >= 0 && idx < sections.length - 1){
-      const next = sections[idx+1];
-      nextSectionBtn.appendChild(icon(next.icon));
-      const sp = document.createElement('span'); sp.textContent = `Next: ${next.label}`;
-      nextSectionBtn.appendChild(sp);
-      nextSectionBtn.onclick = ()=> gotoSection(next.key);
-      panelNextFooter.classList.remove('hidden');
+  lipsumEl.textContent = section.lipsum;
+
+  // Configure Back button
+  if (panelNextFooter && backSectionBtn) {
+    backSectionBtn.innerHTML = '';
+    backSectionBtn.className = 'navbtn';
+    const idx = sections.findIndex(s => s.key === active);
+    if (idx > 0) {
+      const prev = sections[idx - 1];
+      backSectionBtn.appendChild(icon(prev.icon));
+      const spb = document.createElement('span');
+      spb.textContent = '< Go Back';
+      backSectionBtn.appendChild(spb);
+      backSectionBtn.onclick = () => gotoSection(prev.key);
+      backSectionBtn.classList.remove('hidden');
     } else {
-      // Final section -> make it a replica of "Send to Server"
-      const sp = document.createElement('span'); sp.textContent = 'Send to Server';
-      // Style to match primary "ok" button
-      nextSectionBtn.className = 'btn ok';
-      nextSectionBtn.appendChild(sp);
-      nextSectionBtn.onclick = ()=> submitBtn.click();
-      panelNextFooter.classList.remove('hidden');
+      backSectionBtn.classList.add('hidden');
+      backSectionBtn.onclick = null;
     }
   }
 
-  lipsumEl.textContent = section.lipsum;
-
-  Array.from(navEl.children).forEach((btn,i)=>btn.classList.toggle('active', sections[i].key===active));
+  // Configure Next button
+  if (panelNextFooter && nextSectionBtn) {
+    nextSectionBtn.innerHTML = '';
+    nextSectionBtn.className = 'navbtn';
+    const idx = sections.findIndex(s => s.key === active);
+    if (idx >= 0 && idx < sections.length - 1) {
+      const next = sections[idx + 1];
+      nextSectionBtn.appendChild(icon(next.icon));
+      const sp = document.createElement('span');
+      sp.textContent = `Next: ${next.label}`;
+      nextSectionBtn.appendChild(sp);
+      nextSectionBtn.onclick = () => gotoSection(next.key);
+      panelNextFooter.classList.remove('hidden');
+    } else {
+      const sp = document.createElement('span');
+      sp.textContent = 'Send to Server';
+      nextSectionBtn.className = 'btn ok';
+      nextSectionBtn.appendChild(sp);
+      nextSectionBtn.onclick = () => submitBtn.click();
+      panelNextFooter.classList.remove('hidden');
+    }
+  }
 
   if(jsonMode){
     singleBasics.classList.add('hidden');
@@ -1117,14 +1135,13 @@ function showToast(msg, ok){
 
 /* Create the two default liquid assets (collapsed + locked) */
 function createDefaultLiquidAssets(){
-  // 1) DEFAULT Cash Account
+  // Create two default accounts collapsed and locked
   createItem('gamma', {
     title: 'DEFAULT Cash Account',
     atype: 'Cash',
     collapsed: true,
     locked: true
   });
-  // 2) DEFAULT Taxable Investment Account
   createItem('gamma', {
     title: 'DEFAULT Taxable Investment Account',
     atype: 'Taxable Investment',
@@ -1132,7 +1149,6 @@ function createDefaultLiquidAssets(){
     locked: true
   });
 }
-
 /* ======== HELP ME CHOOSE MODAL LOGIC ======== */
 const modalBackdrop = document.getElementById('modalBackdrop');
 const modal = document.getElementById('modal');

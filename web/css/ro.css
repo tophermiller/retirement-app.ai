@@ -428,25 +428,28 @@
 
   .cardish.sp-retire { grid-area: spret; }
 
-
-  /* Footer "Next section" nav button at bottom of main panel */
   .panel-next-footer{
+    display:flex;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    align-items:center;
+    gap:12px;
     margin-top:10px;
     padding-top:6px;
-    display:flex;
-    justify-content:flex-start;
   }
-  .panel-next-footer .nav-like{
+  .panel-next-footer #backSectionBtn{}
+
+
+  /* Shared left-nav style for footer nav buttons */
+  .navbtn{ /* ensure intrinsic width */
+    width:auto;
+
     display:flex; align-items:center; gap:10px;
-    padding:10px 12px; border-radius:10px;
-    background:transparent; border:1px solid var(--outline);
+    text-align:left; padding:10px 12px; border-radius:10px;
+    background:var(--surface); border:1px solid var(--outline);
     color:var(--text); cursor:pointer; transition:.15s;
   }
-  .panel-next-footer .nav-like:hover{ background:var(--surface-2) }
-  .panel-next-footer .nav-like .icon{
-    width:20px; height:20px; display:inline-flex;
-  }
-  .panel-next-footer .nav-like span{ font-weight:500 }
-  @media (max-width: 720px){
-    .panel-next-footer{ padding-bottom:8px }
-  }
+  .navbtn:hover{ background:var(--surface-2) }
+  .navbtn .icon{ width:20px; height:20px; display:inline-flex }
+  .navbtn span{ font-weight:500 }
+
