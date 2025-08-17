@@ -97,6 +97,10 @@ const hamburger = document.getElementById('hamburger');
 const jsonBox   = document.getElementById('jsonBox');
 const previewBtn= document.getElementById('previewJsonBtn');
 const submitBtn = document.getElementById('submitBtn');
+ 
+const panelNextFooter = document.getElementById('panelNextFooter');
+const nextSectionBtn  = document.getElementById('nextSectionBtn');
+
 const toastEl   = document.getElementById('toast');
 
 document.getElementById('submitBtnDup')?.addEventListener('click', () => submitBtn.click());
@@ -112,6 +116,22 @@ function baseNounFor(sectionKey){
 }
 function defaultTitle(sectionKey, id){
   return `${baseNounFor(sectionKey)} #${id}`;
+}
+
+
+/* Helper: jump to a section key, mirroring nav behavior */
+function gotoSection(key){
+  const s = sections.find(x=>x.key===key);
+  if(!s) return;
+  active = s.key;
+  if(jsonMode){
+    jsonMode = false;
+    jsonBox.classList.add('hidden');
+    previewBtn.textContent = 'Preview JSON';
+  }
+  render();
+  // On narrow screens, close sidebar/overlay if open
+  sidebar?.classList.remove('open'); overlay?.classList.remove('show');
 }
 
 /* Build nav */
@@ -259,6 +279,29 @@ function render(){
   const section = sections.find(s=>s.key===active);
 
   titleEl.textContent = section.label;
+  // Configure bottom-next footer button
+  if(panelNextFooter && nextSectionBtn){
+    const idx = sections.findIndex(s=>s.key===active);
+    nextSectionBtn.innerHTML = '';
+    nextSectionBtn.className = 'nav-like';
+    if(idx >= 0 && idx < sections.length - 1){
+      const next = sections[idx+1];
+      nextSectionBtn.appendChild(icon(next.icon));
+      const sp = document.createElement('span'); sp.textContent = `Next: ${next.label}`;
+      nextSectionBtn.appendChild(sp);
+      nextSectionBtn.onclick = ()=> gotoSection(next.key);
+      panelNextFooter.classList.remove('hidden');
+    } else {
+      // Final section -> make it a replica of "Send to Server"
+      const sp = document.createElement('span'); sp.textContent = 'Send to Server';
+      // Style to match primary "ok" button
+      nextSectionBtn.className = 'btn ok';
+      nextSectionBtn.appendChild(sp);
+      nextSectionBtn.onclick = ()=> submitBtn.click();
+      panelNextFooter.classList.remove('hidden');
+    }
+  }
+
   lipsumEl.textContent = section.lipsum;
 
   Array.from(navEl.children).forEach((btn,i)=>btn.classList.toggle('active', sections[i].key===active));
@@ -268,7 +311,7 @@ function render(){
     singleGrowth.classList.add('hidden');
     dockWrap.classList.add('hidden');
     itemsEl.classList.add('hidden');
-    panelFooter.classList.add('hidden');
+    panelFooter.classList.add('hidden'); panelNextFooter?.classList.add('hidden');
     document.getElementById('collapseAllBtn')?.classList.add('hidden');
     jsonBox.classList.remove('hidden');
     titleEl.textContent = 'JSON Preview';
@@ -277,7 +320,7 @@ function render(){
   }
 
   jsonBox.classList.add('hidden');
-  panelFooter.classList.remove('hidden');
+  panelFooter.classList.remove('hidden'); panelNextFooter?.classList.remove('hidden');
 
   if(section.mode === 'single'){
     dockWrap.classList.add('hidden');

@@ -427,3 +427,26 @@
   @media (max-width:560px){ .modal{ top:6%; } }
 
   .cardish.sp-retire { grid-area: spret; }
+
+
+  /* Footer "Next section" nav button at bottom of main panel */
+  .panel-next-footer{
+    margin-top:10px;
+    padding-top:6px;
+    display:flex;
+    justify-content:flex-start;
+  }
+  .panel-next-footer .nav-like{
+    display:flex; align-items:center; gap:10px;
+    padding:10px 12px; border-radius:10px;
+    background:transparent; border:1px solid var(--outline);
+    color:var(--text); cursor:pointer; transition:.15s;
+  }
+  .panel-next-footer .nav-like:hover{ background:var(--surface-2) }
+  .panel-next-footer .nav-like .icon{
+    width:20px; height:20px; display:inline-flex;
+  }
+  .panel-next-footer .nav-like span{ font-weight:500 }
+  @media (max-width: 720px){
+    .panel-next-footer{ padding-bottom:8px }
+  }
