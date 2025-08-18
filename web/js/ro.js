@@ -722,7 +722,7 @@ function renderItem(it, sectionKey){
     const purchaseOptions = [...special, ...next50];
     const defaultPurchase = it.purchaseYear || special[0];
     const {field:pyField, select: pySel} = makeSelectField('Purchase Year', purchaseOptions, defaultPurchase, (v)=>{ it.purchaseYear=v; });
-    pySel.dataset.defaultToken='__RETIREMENT__';
+    pySel.dataset.defaultToken='__ALREADY_OWNED__'; pySel.dataset.noRetirementToken='1'; pySel.dataset.includeAlreadyOwned='1';
     purchaseWrap.append(pyField); body.append(purchaseWrap);
 
 
@@ -1380,6 +1380,7 @@ init();
 (function(){
   const TOKENS = {
     RETIREMENT_YEAR: '__RETIREMENT__',
+    ALREADY_OWNED: '__ALREADY_OWNED__',
     FIRST_SPOUSE_DEATH: '__FIRST_DEATH__',
     FIRST_SPOUSE_DEATH_PLUS_1: '__FIRST_DEATH_P1__',
     END_OF_PLAN: '__END_OF_PLAN__'
@@ -1417,6 +1418,7 @@ init();
   function isYear(v){ return /^\d{4}$/.test(String(v)); }
   function labelForToken(token){
     switch(token){
+      case TOKENS.ALREADY_OWNED: return '• Already Owned';
       case TOKENS.RETIREMENT_YEAR: return '• Retirement Year';
       case TOKENS.FIRST_SPOUSE_DEATH: return '• First Spouse Death';
       case TOKENS.FIRST_SPOUSE_DEATH_PLUS_1: return '• First Spouse Death + 1';
@@ -1459,6 +1461,7 @@ init();
   }
   function defaultTokenFor(labelText){
     const t = (labelText||'').toLowerCase();
+    if (t.includes('already') || t.includes('owned')) return TOKENS.ALREADY_OWNED;
     if(t.includes('start') || t.includes('purchase')) return TOKENS.RETIREMENT_YEAR;
     if(t.includes('end') || t.includes('sale')) return TOKENS.END_OF_PLAN;
     return TOKENS.END_OF_PLAN;
@@ -1470,13 +1473,19 @@ init();
     const start = model.now;
     const end = model.endOfPlan;
     // Build options
-    const opts = [
-      {value:TOKENS.RETIREMENT_YEAR, label:labelForToken(TOKENS.RETIREMENT_YEAR)},
+    const opts = [];
+    if (select.dataset.includeAlreadyOwned === '1') {
+      opts.push({value:TOKENS.ALREADY_OWNED, label:labelForToken(TOKENS.ALREADY_OWNED)});
+    }
+    if (select.dataset.noRetirementToken !== '1') {
+      opts.push({value:TOKENS.RETIREMENT_YEAR, label:labelForToken(TOKENS.RETIREMENT_YEAR)});
+    }
+    opts.push(
       {value:TOKENS.FIRST_SPOUSE_DEATH, label:labelForToken(TOKENS.FIRST_SPOUSE_DEATH)},
       {value:TOKENS.FIRST_SPOUSE_DEATH_PLUS_1, label:labelForToken(TOKENS.FIRST_SPOUSE_DEATH_PLUS_1)},
       {value:TOKENS.END_OF_PLAN, label:labelForToken(TOKENS.END_OF_PLAN)},
       {value:'', label:'────────────', disabled:true}
-    ];
+    );
     for(let y=start; y<=end; y++){ opts.push({value:String(y), label:labelForYear(y)}); }
     // preserve selection when possible
     let toSelect = null;
