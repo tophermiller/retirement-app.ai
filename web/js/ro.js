@@ -243,6 +243,9 @@ function createItem(sectionKey, overrides = {}, lockedFlag /* optional */) {
       rmd: false,
       rmdProceedsAccount: '', // NEW
       showROI: false, roi: '', stdev: ''
+    ,
+      inheritance:false,
+      inheritanceYear: ''
     });
   } else if (sectionKey === 'delta') {
     Object.assign(base, {
@@ -708,7 +711,31 @@ function renderItem(it, sectionKey){
       }
     }
 
-  } else if (sectionKey === 'delta'){
+  
+    
+    // Inheritance toggle button and year picker (appears at the very end of the Asset form)
+    if(!it.locked){
+      const inhRow = document.createElement('div'); inhRow.className = 'row';
+      const inhBtn = document.createElement('button'); inhBtn.className='btn secondary';
+      inhBtn.textContent = it.inheritance ? 'Hide inheritance options' : 'This will be an inheritance';
+      inhBtn.addEventListener('click', ()=>{ it.inheritance = !it.inheritance; render(); });
+      inhRow.append(inhBtn); body.append(inhRow);
+
+      if (it.inheritance){
+        const inhGrid = document.createElement('div'); inhGrid.className='grid-2';
+        const now = new Date().getFullYear();
+        const years = Array.from({length:51},(_,i)=> now + i); // include current year + 50
+        const {field:inhField, select:inhSel} = makeSelectField('Inheritance Year', years, it.inheritanceYear || '', (v)=>{ it.inheritanceYear = v; });
+        inhSel.dataset.yearsOnly = '1';
+        inhSel.classList.add('year-select');
+        try { rebuildSelect(inhSel, 'Inheritance Year'); } catch(e){}
+        inhGrid.append(inhField);
+        body.append(inhGrid);
+      }
+    }
+
+  }
+else if (sectionKey === 'delta'){
     /* Current Value */
     const cvGrid = document.createElement('div'); cvGrid.className = 'grid-2';
     const {field:cvField} = makeTextField('Today\'s Value ($)', 'e.g. 750000', it.currentValue, (v)=>{ it.currentValue=v; });
@@ -1472,6 +1499,7 @@ init();
     if(t.includes('end')) return 'endYear';
     if(t.includes('purchase')) return 'purchaseYear';
     if(t.includes('sale')) return 'saleYear';
+    if(t.includes('inherit')) return 'inheritanceYear';
     return null;
   }
   function defaultTokenFor(labelText){
@@ -1502,10 +1530,11 @@ init();
     const end = model.endOfPlan;
     // Build options
     const opts = [];
-    if (select.dataset.isPurchaseYearSelect === '1') {
+    const yearsOnly = select.dataset.yearsOnly === '1';
+    if (!yearsOnly && select.dataset.isPurchaseYearSelect === '1') {
       opts.push({value:TOKENS.ALREADY_OWNED, label:labelForToken(TOKENS.ALREADY_OWNED)});
     }
-    else {
+    else if (!yearsOnly) {
       opts.push(
         {value:TOKENS.RETIREMENT_YEAR, label:labelForToken(TOKENS.RETIREMENT_YEAR)},
         {value:TOKENS.FIRST_SPOUSE_DEATH, label:labelForToken(TOKENS.FIRST_SPOUSE_DEATH)},
@@ -1545,7 +1574,7 @@ init();
       if(!label || !sel) return;
       const text = label.textContent || '';
       const t = text.toLowerCase();
-      if(!(t.includes('start year')||t.includes('end year')||t.includes('purchase year')||t.includes('sale year'))) return;
+      if(!(t.includes('start year')||t.includes('end year')||t.includes('purchase year')||t.includes('sale year')||t.includes('inheritance year'))) return;
       // Determine if item model has value; if empty, force default token on first enhancement
       let forceDefault = false;
       const itemEl = sel.closest('.item');
