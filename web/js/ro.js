@@ -249,7 +249,7 @@ function createItem(sectionKey, overrides = {}, lockedFlag /* optional */) {
       currentValue: '',
       purchaseYear: '',
       showROI: false, roi: '', stdev: '',
-  showMortgage: false, loanOrigYear: '', loanTerm: '', loanRate: '', monthlyPayment: '',
+  showMortgage: false, loanOrigYear: '', loanTerm: '', loanRate: '', monthlyPayment: '', downPaymentPct: '',
       showRental: false, annualExpenses: '', annualIncome: '', rentGrowth: '',
       showSale: false, saleYear: '', purchasePrice: '', improvements: '', sellCost: '',
       saleProceedsAccount: '' // NEW
@@ -727,17 +727,32 @@ function renderItem(it, sectionKey){
 
     /* Mortgage */
     const mortRow = document.createElement('div'); mortRow.className='row';
-    const mortBtn = document.createElement('button'); mortBtn.className='btn small'; mortBtn.textContent = it.showMortgage? 'Hide Mortgage Information' : 'Enter Mortgage Information';
+    const mortBtn = document.createElement('button'); mortBtn.className='btn small'; mortBtn.type='button';
+    mortBtn.textContent = it.showMortgage? 'Hide Mortgage Information' : 'Enter Mortgage Information';
     mortBtn.addEventListener('click', ()=>{ it.showMortgage = !it.showMortgage; render(); });
     mortRow.append(mortBtn); body.append(mortRow);
 
     if(it.showMortgage){
       const g = document.createElement('div'); g.className='grid';
-      const {field:yF} = makeTextField('Loan Origination Year', 'e.g. 2018', it.loanOrigYear, (v)=>{ it.loanOrigYear=v; }, 'text', 'numeric');
-      const {field:tF} = makeTextField('Loan Term (years)', 'e.g. 30', it.loanTerm, (v)=>{ it.loanTerm=v; }, 'text', 'numeric');
-      const {field:rF} = makeTextField('Interest Rate (%)', 'e.g. 3.75', it.loanRate, (v)=>{ it.loanRate=v; });
-  const {field:mpF} = makeTextField('Monthly Payment ($)', 'e.g. 1500', it.monthlyPayment, (v)=>{ it.monthlyPayment=v; });
-  g.append(yF, tF, rF, mpF); body.append(g);
+      const isAlreadyOwned = (it.purchaseYear === '__ALREADY_OWNED__' || !it.purchaseYear || it.purchaseYear === '' || it.purchaseYear === pySel?.dataset?.defaultToken);
+      if(isAlreadyOwned){
+        const {field:yF} = makeTextField('Loan Origination Year', 'e.g. 2015', it.loanOrigYear, (v)=>{ it.loanOrigYear=v; }, 'text', 'numeric');
+        const {field:tF} = makeTextField('Loan Term (years)', 'e.g. 30', it.loanTerm, (v)=>{ it.loanTerm=v; }, 'text', 'numeric');
+        const {field:rF} = makeTextField('Interest Rate (%)', 'e.g. 3.75', it.loanRate, (v)=>{ it.loanRate=v; });
+        const {field:mpF} = makeTextField('Monthly Payment ($)', 'e.g. 1500', it.monthlyPayment, (v)=>{ it.monthlyPayment=v; });
+        g.append(yF, tF, rF, mpF);
+      } else {
+        const {field:dpF} = makeTextField('Percent Down Payment (%)', 'e.g. 20', it.downPaymentPct, (v)=>{ it.downPaymentPct=v; }, 'text', 'numeric');
+        const {field:tF} = makeTextField('Loan Term (years)', 'e.g. 30', it.loanTerm, (v)=>{ it.loanTerm=v; }, 'text', 'numeric');
+        const {field:rF} = makeTextField('Interest Rate (%)', 'e.g. 5.25', it.loanRate, (v)=>{ it.loanRate=v; });
+        // Note styled like form labels
+        const noteWrap = document.createElement('div'); noteWrap.className='field'; noteWrap.style.gridColumn='1 / -1';
+        const note = document.createElement('div'); note.className='label';
+        note.textContent = 'Note: Future purchase price is projected based on today\'s value and appreciation rate.   Future down payment is treated as a drawdown expense only if purchase occurs during retirement years';
+        noteWrap.appendChild(note);
+        g.append(dpF, tF, rF, noteWrap);
+      }
+      body.append(g);
     }
 
     /* Rental */
@@ -1062,7 +1077,8 @@ function buildPlanJSON(){
       origination_year: nonEmpty(p.loanOrigYear) ? toInt(p.loanOrigYear) : null,
       term_years: nonEmpty(p.loanTerm) ? toInt(p.loanTerm) : null,
       interest_rate_pct: nonEmpty(p.loanRate) ? toFloat(p.loanRate) : null,
-      monthly_payment: nonEmpty(p.monthlyPayment) ? toInt(p.monthlyPayment) : null
+      monthly_payment: nonEmpty(p.monthlyPayment) ? toInt(p.monthlyPayment) : null,
+      percent_down_payment: nonEmpty(p.downPaymentPct) ? toFloat(p.downPaymentPct) : null
     } : undefined,
     rental: (p.showRental || (p.annualExpenses||p.annualIncome||p.rentGrowth)) ? {
       annual_expenses: nonEmpty(p.annualExpenses) ? toInt(p.annualExpenses) : null,
@@ -1534,6 +1550,21 @@ init();
   // Hook into render cycle
   const __origRender = window.render;
   window.render = function(){ __origRender.apply(this, arguments); enhanceAll(); };
+
+  const __origRender2 = window.render;
+  window.render = function(){
+    __origRender2.apply(this, arguments);
+    // Ensure mortgage UI updates when purchase year changes
+    document.querySelectorAll('select').forEach(sel=>{
+      if(sel && sel.dataset && sel.dataset.isPurchaseYearSelect === '1'){
+        if(!sel.__hadMortgageToggle){
+          sel.addEventListener('change', ()=>{ try { window.render(); } catch(e){} });
+          sel.__hadMortgageToggle = true;
+        }
+      }
+    });
+  };
+
   // Also rebuild when basics inputs change (without needing a render)
   ['ageInput','retireInput','lifeInput','ageInputSpouse','lifeInputSpouse'].forEach(id=>{
     const el = document.getElementById(id);
