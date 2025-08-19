@@ -711,16 +711,15 @@ function renderItem(it, sectionKey){
   } else if (sectionKey === 'delta'){
     /* Current Value */
     const cvGrid = document.createElement('div'); cvGrid.className = 'grid-2';
-    const {field:cvField} = makeTextField('Current Value ($)', 'e.g. 750000', it.currentValue, (v)=>{ it.currentValue=v; });
+    const {field:cvField} = makeTextField('Today\'s Value ($)', 'e.g. 750000', it.currentValue, (v)=>{ it.currentValue=v; });
     cvGrid.append(cvField); body.append(cvGrid);
 
-    /* NEW: Purchase Year */
+    /* Purchase Year */
     const purchaseWrap = document.createElement('div'); purchaseWrap.className = 'grid-2';
     const now = new Date().getFullYear();
     const next50 = Array.from({length:50}, (_,i)=> now + i);
-    const special = ['[before retirement]', '[first spouse death]', '[first spouse death + 1]'];
-    const purchaseOptions = [...special, ...next50];
-    const defaultPurchase = it.purchaseYear || special[0];
+    const purchaseOptions = [...next50];
+    const defaultPurchase = it.purchaseYear;
     const {field:pyField, select: pySel} = makeSelectField('Purchase Year', purchaseOptions, defaultPurchase, (v)=>{ it.purchaseYear=v; });
     pySel.dataset.defaultToken='__ALREADY_OWNED__'; pySel.dataset.noRetirementToken='1'; pySel.dataset.includeAlreadyOwned='1';
     purchaseWrap.append(pyField); body.append(purchaseWrap);
@@ -743,7 +742,7 @@ function renderItem(it, sectionKey){
 
     /* Rental */
     const rentRow = document.createElement('div'); rentRow.className='row';
-    const rentBtn = document.createElement('button'); rentBtn.className='btn small'; rentBtn.textContent = it.showRental? 'Hide Rental Income' : 'Enter Rental Income';
+    const rentBtn = document.createElement('button'); rentBtn.className='btn small'; rentBtn.textContent = it.showRental? 'Hide Rental Income' : 'Enter Rental Income (Optional)';
     rentBtn.addEventListener('click', ()=>{ it.showRental = !it.showRental; render(); });
     rentRow.append(rentBtn); body.append(rentRow);
 
@@ -757,7 +756,7 @@ function renderItem(it, sectionKey){
 
     /* Sale */
     const saleRow = document.createElement('div'); saleRow.className='row';
-    const saleBtn = document.createElement('button'); saleBtn.className='btn small'; saleBtn.textContent = it.showSale? 'Hide Sale Information' : 'Enter Sale and Tax Information';
+    const saleBtn = document.createElement('button'); saleBtn.className='btn small'; saleBtn.textContent = it.showSale? 'Hide Sale Information' : 'Enter Future Sale and Tax Information';
     saleBtn.addEventListener('click', ()=>{ it.showSale = !it.showSale; render(); });
     saleRow.append(saleBtn); body.append(saleRow);
 
@@ -785,7 +784,7 @@ function renderItem(it, sectionKey){
 
     /* ROI toggle */
     const roiRow = document.createElement('div'); roiRow.className='row';
-    const roiBtn = document.createElement('button'); roiBtn.className='btn small'; roiBtn.textContent = it.showROI? 'Hide ROI' : 'Customize Appreciation';
+    const roiBtn = document.createElement('button'); roiBtn.className='btn small'; roiBtn.textContent = it.showROI? 'Hide Appreciation' : 'Customize Appreciation';
     roiBtn.addEventListener('click', ()=>{ it.showROI = !it.showROI; render(); });
     roiRow.append(roiBtn); body.append(roiRow);
 
