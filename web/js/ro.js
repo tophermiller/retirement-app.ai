@@ -54,7 +54,7 @@ const sections = [
   { key:'alpha',   label:'Basics',        mode:'single', lipsum:'Enter some basics about your retirement plan here.', icon:'basics' },
   { key:'beta',    label:'Growth Rates',  mode:'single', lipsum:'Enter your inflation and return on investment assumptions here.   These are the most important inputs for best results.   Click the "Help me choose" buttons for help.', icon:'growth' },
   { key:'gamma',   label:'Liquid Assets', mode:'multi',  lipsum:'Enter your cash/liquid assets here by account type.   To set retirement withdrawal order, drag and drop in the collapsed area.', icon:'liquid' },
-  { key:'delta',   label:'Real Estate',   mode:'multi',  lipsum:'Add properties you own, including your home and any rental properties you own.', icon:'realestate' },
+  { key:'delta',   label:'Real Estate',   mode:'multi',  lipsum:'Add your home and any rental properties you own.', icon:'realestate' },
   { key:'epsilon', label:'Income',        mode:'multi',  lipsum:'Enter any forms of retirement income here, including pensions, Social Security, etc., with date ranges.', icon:'income' },
   { key:'zeta',    label:'Expenses',      mode:'multi',  lipsum:'Enter your retirement spending budget here with date ranges.', icon:'expenses' },
 ];
@@ -718,10 +718,14 @@ function renderItem(it, sectionKey){
     const purchaseWrap = document.createElement('div'); purchaseWrap.className = 'grid-2';
     const now = new Date().getFullYear();
     const next50 = Array.from({length:50}, (_,i)=> now + i);
-    const purchaseOptions = [...next50];
+    const purchaseOptions = [{value:"__ALREADY_OWNED__", label:"• Already Owned"}, ...next50];
     const defaultPurchase = it.purchaseYear;
-    const {field:pyField, select: pySel} = makeSelectField('Purchase Year', purchaseOptions, defaultPurchase, (v)=>{ it.purchaseYear=v; });
-    pySel.dataset.defaultToken='__ALREADY_OWNED__'; pySel.dataset.noRetirementToken='1'; pySel.dataset.includeAlreadyOwned='1';
+    const {field:pyField, select: pySel} = makeSelectField('Purchase Year', purchaseOptions, defaultPurchase, (v)=>{ it.purchaseYear=v; render(); pySel.value = (it.purchaseYear || pySel.value);
+    });
+    pySel.dataset.defaultToken='__ALREADY_OWNED__';
+    pySel.dataset.noSpouseTokens='1';
+    pySel.dataset.noEndOfPlanToken='1'; pySel.dataset.noRetirementToken='1'; pySel.dataset.includeAlreadyOwned='1';
+    pySel.dataset.prev = (it.purchaseYear || '');
     purchaseWrap.append(pyField); body.append(purchaseWrap);
 
 
@@ -731,16 +735,37 @@ function renderItem(it, sectionKey){
     mortBtn.addEventListener('click', ()=>{ it.showMortgage = !it.showMortgage; render(); });
     mortRow.append(mortBtn); body.append(mortRow);
 
-    if(it.showMortgage){
+    
+if(it.showMortgage){
+      const nowY = new Date().getFullYear();
       const g = document.createElement('div'); g.className='grid';
-      const {field:yF} = makeTextField('Loan Origination Year', 'e.g. 2018', it.loanOrigYear, (v)=>{ it.loanOrigYear=v; }, 'text', 'numeric');
-      const {field:tF} = makeTextField('Loan Term (years)', 'e.g. 30', it.loanTerm, (v)=>{ it.loanTerm=v; }, 'text', 'numeric');
-      const {field:rF} = makeTextField('Interest Rate (%)', 'e.g. 3.75', it.loanRate, (v)=>{ it.loanRate=v; });
-  const {field:mpF} = makeTextField('Monthly Payment ($)', 'e.g. 1500', it.monthlyPayment, (v)=>{ it.monthlyPayment=v; });
-  g.append(yF, tF, rF, mpF); body.append(g);
-    }
+      const py = it.purchaseYear;
+      const pyNum = parseInt(py, 10);
+      const isAlreadyOwned = (py === '__ALREADY_OWNED__');
+      const isFuturePurchase = (!isNaN(pyNum) && pyNum >= nowY);
 
-    /* Rental */
+      if(isFuturePurchase){
+        // Future purchase: show only percent down, rate, and term + note
+        const {field:dpF} = makeTextField('Percent down payment (%)', 'e.g. 20', it.downPaymentPct, (v)=>{ it.downPaymentPct=v; });
+        const {field:rF}  = makeTextField('Interest rate (%)', 'e.g. 5.5', it.futureLoanRate, (v)=>{ it.futureLoanRate=v; });
+        const {field:tF}  = makeTextField('Loan Term (years)', 'e.g. 30', it.futureLoanTerm, (v)=>{ it.futureLoanTerm=v; }, 'text', 'numeric');
+        g.append(dpF, rF, tF);
+        body.append(g);
+        const note = document.createElement('div');
+        note.className = 'note';
+        note.textContent = "Note: Purchase price and mortgage amount will be projected from today's value entered above using appreciation rate.   Down payment will be treated as a drawdown expense only if it occurs during the retirement years.";
+        body.append(note);
+      } else {
+        // Already owned or past/current year: show existing fields
+        const {field:yF}  = makeTextField('Loan Origination Year', 'e.g. 2016', it.loanOrigYear, (v)=>{ it.loanOrigYear=v; }, 'text', 'numeric');
+        const {field:tF}  = makeTextField('Loan Term (years)', 'e.g. 30', it.loanTerm, (v)=>{ it.loanTerm=v; }, 'text', 'numeric');
+        const {field:rF}  = makeTextField('Interest Rate (%)', 'e.g. 3.75', it.loanRate, (v)=>{ it.loanRate=v; });
+        const {field:mpF} = makeTextField('Monthly Payment ($)', 'e.g. 1500', it.monthlyPayment, (v)=>{ it.monthlyPayment=v; });
+        g.append(yF, tF, rF, mpF);
+        body.append(g);
+      }
+    }
+/* Rental */
     const rentRow = document.createElement('div'); rentRow.className='row';
     const rentBtn = document.createElement('button'); rentBtn.className='btn small'; rentBtn.textContent = it.showRental? 'Hide Rental Income' : 'Enter Rental Income (Optional)';
     rentBtn.addEventListener('click', ()=>{ it.showRental = !it.showRental; render(); });
@@ -1467,7 +1492,7 @@ init();
   }
   function rebuildSelect(select, labelText, forceDefault){
     const model = computeModel();
-    const prev = forceDefault ? '' : (select.value || select.dataset.prev || '');
+    const prev = forceDefault ? '' : (select.dataset.prev || select.value || '');
     const defTok = select.dataset.defaultToken || defaultTokenFor(labelText);
     const start = model.now;
     const end = model.endOfPlan;
@@ -1479,7 +1504,8 @@ init();
     if (select.dataset.noRetirementToken !== '1') {
       opts.push({value:TOKENS.RETIREMENT_YEAR, label:labelForToken(TOKENS.RETIREMENT_YEAR)});
     }
-    opts.push(
+    if (select.dataset.noSpouseTokens !== '1') {
+      opts.push(
       {value:TOKENS.FIRST_SPOUSE_DEATH, label:labelForToken(TOKENS.FIRST_SPOUSE_DEATH)},
       {value:TOKENS.FIRST_SPOUSE_DEATH_PLUS_1, label:labelForToken(TOKENS.FIRST_SPOUSE_DEATH_PLUS_1)},
       {value:TOKENS.END_OF_PLAN, label:labelForToken(TOKENS.END_OF_PLAN)},
@@ -1541,4 +1567,5 @@ init();
   });
   // initial
   document.addEventListener('DOMContentLoaded', enhanceAll);
+}
 })();

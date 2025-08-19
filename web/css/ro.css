@@ -453,3 +453,8 @@
   .navbtn .icon{ width:20px; height:20px; display:inline-flex }
   .navbtn span{ font-weight:500 }
 
+
+
+
+
+.note {font-size:12.5px; color:var(--muted)}
