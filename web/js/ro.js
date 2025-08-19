@@ -56,7 +56,7 @@ const sections = [
   { key:'gamma',   label:'Liquid Assets', mode:'multi',  lipsum:'Enter your cash/liquid assets here by account type.   To set retirement withdrawal order, drag and drop in the collapsed area.', icon:'liquid' },
   { key:'delta',   label:'Real Estate',   mode:'multi',  lipsum:'Add properties you own, including your home and any rental properties you own.', icon:'realestate' },
   { key:'epsilon', label:'Income',        mode:'multi',  lipsum:'Enter any forms of retirement income here, including pensions, Social Security, etc., with date ranges.', icon:'income' },
-  { key:'zeta',    label:'Expenses',      mode:'multi',  lipsum:'Enter your retirement spending budget here with date ranges.', icon:'expenses' },
+  { key:'zeta',    label:'Expenses',      mode:'multi',  lipsum:'Enter your retirement spending budget here with date ranges.  Do not include income taxes, as they are computed for you.   Also do not include mortgage payments that you entered in the Real Estate section.', icon:'expenses' },
 ];
 
 const state = Object.fromEntries(sections.map(s => [s.key, s.mode==='single'
