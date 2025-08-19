@@ -1229,11 +1229,21 @@ const modal = document.getElementById('modal');
 const modalBody = document.getElementById('modalBody');
 const modalTitle = document.getElementById('modalTitle');
 const modalCloseBtn = document.getElementById('modalCloseBtn');
+const modalXBtn = document.getElementById('modalXBtn');
+
+const modalXCloseBtn = document.getElementById('modalXClose');
+if(modalXCloseBtn){
+  modalXCloseBtn.addEventListener('click', ()=>{
+    closeModal();
+  });
+}
+
 
 function openModal(){ modalBackdrop.classList.add('show'); modal.classList.add('show'); }
 function closeModal(){ modalBackdrop.classList.remove('show'); modal.classList.remove('show'); }
 
 modalBackdrop.addEventListener('click', closeModal);
+if(modalXBtn){ modalXBtn.addEventListener('click', closeModal); }
 modalCloseBtn.addEventListener('click', ()=>{
   // Default close (if a handler assigned by helpMeChoose, it will be replaced there)
   closeModal();
