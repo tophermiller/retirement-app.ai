@@ -1483,7 +1483,20 @@ init();
   }
   function rebuildSelect(select, labelText, forceDefault){
     const model = computeModel();
-    const prev = forceDefault ? '' : (select.value || select.dataset.prev || '');
+    
+    // Prefer the saved item value from state over the DOM value to avoid snapping to first year during re-render
+    let storedVal = null;
+    try {
+      const itemEl = select.closest('.item');
+      if(itemEl && typeof state !== 'undefined' && typeof active !== 'undefined'){
+        const id = parseInt(itemEl.dataset.id,10);
+        const arr = (state[active]||{}).items || [];
+        const it = arr.find(x=>x.id===id);
+        const role = roleFromLabel(labelText);
+        if(it && role){ storedVal = it[role] ?? null; }
+      }
+    } catch(e){}
+    const prev = forceDefault ? '' : (storedVal ?? (select.value || select.dataset.prev || ''));
     const defTok = select.dataset.defaultToken || defaultTokenFor(labelText);
     const start = model.now;
     const end = model.endOfPlan;
