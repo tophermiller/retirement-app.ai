@@ -721,7 +721,7 @@ function renderItem(it, sectionKey){
     const purchaseOptions = [...next50];
     const defaultPurchase = it.purchaseYear;
     const {field:pyField, select: pySel} = makeSelectField('Purchase Year', purchaseOptions, defaultPurchase, (v)=>{ it.purchaseYear=v; });
-    pySel.dataset.defaultToken='__ALREADY_OWNED__'; pySel.dataset.noRetirementToken='1'; pySel.dataset.includeAlreadyOwned='1';
+    pySel.dataset.defaultToken='__ALREADY_OWNED__'; pySel.dataset.isPurchaseYearSelect='1'; // This is a special token to indicate the purchaseYear selector
     purchaseWrap.append(pyField); body.append(purchaseWrap);
 
 
@@ -1473,18 +1473,18 @@ init();
     const end = model.endOfPlan;
     // Build options
     const opts = [];
-    if (select.dataset.includeAlreadyOwned === '1') {
+    if (select.dataset.isPurchaseYearSelect === '1') {
       opts.push({value:TOKENS.ALREADY_OWNED, label:labelForToken(TOKENS.ALREADY_OWNED)});
     }
-    if (select.dataset.noRetirementToken !== '1') {
-      opts.push({value:TOKENS.RETIREMENT_YEAR, label:labelForToken(TOKENS.RETIREMENT_YEAR)});
+    else {
+      opts.push(
+        {value:TOKENS.RETIREMENT_YEAR, label:labelForToken(TOKENS.RETIREMENT_YEAR)},
+        {value:TOKENS.FIRST_SPOUSE_DEATH, label:labelForToken(TOKENS.FIRST_SPOUSE_DEATH)},
+        {value:TOKENS.FIRST_SPOUSE_DEATH_PLUS_1, label:labelForToken(TOKENS.FIRST_SPOUSE_DEATH_PLUS_1)},
+        {value:TOKENS.END_OF_PLAN, label:labelForToken(TOKENS.END_OF_PLAN)}
+      );
     }
-    opts.push(
-      {value:TOKENS.FIRST_SPOUSE_DEATH, label:labelForToken(TOKENS.FIRST_SPOUSE_DEATH)},
-      {value:TOKENS.FIRST_SPOUSE_DEATH_PLUS_1, label:labelForToken(TOKENS.FIRST_SPOUSE_DEATH_PLUS_1)},
-      {value:TOKENS.END_OF_PLAN, label:labelForToken(TOKENS.END_OF_PLAN)},
-      {value:'', label:'────────────', disabled:true}
-    );
+    opts.push({value:'', label:'────────────', disabled:true});
     for(let y=start; y<=end; y++){ opts.push({value:String(y), label:labelForYear(y)}); }
     // preserve selection when possible
     let toSelect = null;
