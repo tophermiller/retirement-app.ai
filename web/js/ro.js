@@ -611,6 +611,15 @@ function renderMiniCard(it, sectionKey){
   // Compact summary: only show amount/value on second line
   let amtText = '—';
   const getAmt = ()=>{
+    // Special case: Liquid Assets -> Taxable Investment shows Cost Basis + Unrealized Gains
+    try{
+      if (sectionKey === 'gamma' && it.atype === 'Taxable Investment') {
+        const cb = toInt ? (nonEmpty(it.costBasis) ? toInt(it.costBasis) : 0) : (parseInt(it.costBasis||0,10)||0);
+        const ug = toInt ? (nonEmpty(it.unrealized) ? toInt(it.unrealized) : 0) : (parseInt(it.unrealized||0,10)||0);
+        const total = (cb||0) + (ug||0);
+        return `$${fmtDollars(total)}`;
+      }
+    }catch(e){ /* fall through */ }
     if (it.amount) return `$${fmtDollars(it.amount)}`;
     if (it.currentValue) return `$${fmtDollars(it.currentValue)}`;
     if (it.dollars) return `$${fmtDollars(it.dollars)}`;
