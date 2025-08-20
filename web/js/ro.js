@@ -438,12 +438,12 @@ if(data.heirsTarget){
 
       if(obj.roi){
         roiEl.dataset.raw = String(obj.roi);
-        roiEl.value = `${obj.roi}%`;
+        roiEl.value = `${obj.roi}`;
       } else { roiEl.value=''; roiEl.dataset.raw=''; }
 
       if(obj.stdev){
         sdEl.dataset.raw = String(obj.stdev);
-        sdEl.value = `${obj.stdev}%`;
+        sdEl.value = `${obj.stdev}`;
       } else { sdEl.value=''; sdEl.dataset.raw=''; }
 
       roiEl.onfocus = ()=> onFocusNumeric(roiEl);
@@ -1314,7 +1314,12 @@ window.helpMeChoose = function(topic){
     const fP = document.createElement('div'); fP.className='field';
     const lP = document.createElement('label'); lP.className='label'; lP.textContent='Portfolio';
     const sP = document.createElement('select'); sP.id='modalPortfolio';
-    ['S&P 500','Dow Jones','Three Fund'].forEach(v=>{
+    [
+      '--Choose a common portfolio--',
+      'S&P 500', 'Dow Jones (DIA)', 'Total US Stock Market', 'Total US Bond Market',
+      '80% US Stock,20% Bonds', '60% US Stock,40% Bonds', '40% US Stock,60% Bonds',
+      '65% US Stock,15% Intl Stock,20% Bonds', '50% US Stock,10% Intl Stock,40% Bonds'      
+    ].forEach(v=>{
       const o=document.createElement('option'); o.value=v; o.textContent=v; sP.appendChild(o);
     });
     fP.append(lP, sP);
@@ -1323,29 +1328,36 @@ window.helpMeChoose = function(topic){
     const fH = document.createElement('div'); fH.className='field';
     const lH = document.createElement('label'); lH.className='label'; lH.textContent='Historical Time Period';
     const sH = document.createElement('select'); sH.id='modalPeriod';
-    ['1987-2023','2000-2023'].forEach(v=>{
+    [
+      '--Choose a historical time period--',
+      '1987-2023', '2000-2010', '2010-2023', '2000-2023'
+    ].forEach(v=>{
       const o=document.createElement('option'); o.value=v; o.textContent=v; sH.appendChild(o);
     });
     fH.append(lH, sH);
 
     const selWrap = document.createElement('div'); selWrap.className='grid-2';
     selWrap.append(fP, fH);
+    modalBody.append("Choose a portfolio that best matches your investments, and historical period that you feel can best predict the future.   Click \"Close & Apply\" to use the resulting values.");
     modalBody.appendChild(selWrap);
 
     const roiSdWrap = makeRoiSdFields(applyTo.roi, applyTo.stdev);
     modalBody.appendChild(roiSdWrap);
 
-    const randomize = ()=>{
-      // simple randoms (plausible-ish)
-      const roiEl = document.getElementById('modalRoi');
-      const sdEl  = document.getElementById('modalSd');
-      const roi = randomInRange(4, 12, 0.1);
-      const sd  = randomInRange(8, 25, 0.1);
-      roiEl.dataset.raw = String(roi); roiEl.value = `${roi}%`;
-      sdEl.dataset.raw  = String(sd);  sdEl.value  = `${sd}%`;
+    const lookupValues = ()=>{
+      const portfolio = sP.value;
+      const period = sH.value;
+      if (portfolio !== '--Choose a common portfolio--' && period !== '--Choose a historical time period--') {
+        const roi = marketreturns[portfolio][period]["ROI"];
+        const sd  = marketreturns[portfolio][period]["STD"];
+        const roiEl = document.getElementById('modalRoi');
+        const sdEl  = document.getElementById('modalSd');
+        roiEl.dataset.raw = String(roi); roiEl.value = `${roi}`;
+        sdEl.dataset.raw  = String(sd);  sdEl.value  = `${sd}`;
+      }
     };
-    sP.addEventListener('change', randomize);
-    sH.addEventListener('change', randomize);
+    sP.addEventListener('change', lookupValues);
+    sH.addEventListener('change', lookupValues);
   }
   else if(topic === 'real_estate'){
     title = 'Real Estate Investments • Help me choose';
@@ -1400,8 +1412,8 @@ window.helpMeChoose = function(topic){
     if(map){
       const roiEl = document.getElementById(map.roi);
       const sdEl  = document.getElementById(map.sd);
-      if(roiEl){ roiEl.dataset.raw = applyTo.roi || ''; roiEl.value = applyTo.roi ? `${applyTo.roi}%` : ''; }
-      if(sdEl){  sdEl.dataset.raw  = applyTo.stdev || ''; sdEl.value  = applyTo.stdev ? `${applyTo.stdev}%` : ''; }
+      if(roiEl){ roiEl.dataset.raw = applyTo.roi || ''; roiEl.value = applyTo.roi ? `${applyTo.roi}` : ''; }
+      if(sdEl){  sdEl.dataset.raw  = applyTo.stdev || ''; sdEl.value  = applyTo.stdev ? `${applyTo.stdev}` : ''; }
     }
 
     // Re-render to keep all bindings tidy (stays on Growth)
