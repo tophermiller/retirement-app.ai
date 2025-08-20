@@ -1062,8 +1062,9 @@ function enableDockDrag(){
     if(beforeNode){ dockEl.insertBefore(placeholder, beforeNode); } else { dockEl.appendChild(placeholder); }
   };
 
-  const finishAsClick = ()=>{
-    const id = Number(draggingEl.dataset.id);
+  const finishAsClick = (el)=>{
+    if(!el) return;
+    const id = Number(el.dataset.id);
     const it = state[active].items.find(x=>x.id===id);
     if(it){ it.collapsed = false; render(); }
   };
@@ -1073,8 +1074,8 @@ function enableDockDrag(){
     if(dragStarted){
       if(placeholder) dockEl.insertBefore(draggingEl, placeholder);
       commitReorder(); cleanup(); render();
-    }else{
-      cleanup(); finishAsClick();
+    }{
+      const el = draggingEl; cleanup(); finishAsClick(el);
     }
   };
 
