@@ -460,73 +460,110 @@ if(data.heirsTarget){
     
     /* --- Liquid: Customize ROI for Specific Years --- */
     (function(){
-      const btn  = document.getElementById('liquidCustomizeBtn');
-      const wrap = document.getElementById('liquidCustomizeWrap');
-      const rowsHost = document.getElementById('liquidRows');
-      const addBtn = document.getElementById('addLiquidRowBtn');
+  const btn  = document.getElementById('liquidCustomizeBtn');
+  const wrap = document.getElementById('liquidCustomizeWrap');
+  const rowsHost = document.getElementById('liquidRows');
+  const addBtn = document.getElementById('addLiquidRowBtn');
 
-      if(!btn || !wrap || !rowsHost || !addBtn) return;
-      g.liquid.customYears = g.liquid.customYears && g.liquid.customYears.length ? g.liquid.customYears : [{year:'', roi:'', prob:''}];
+  if (!btn || !wrap || !rowsHost || !addBtn) return;
 
-      function renderRows(){
-        rowsHost.innerHTML = '';
-        const arr = g.liquid.customYears || (g.liquid.customYears = []);
-        const now = new Date().getFullYear();
-        const years = Array.from({length:51}, (_,i)=> String(now + i));
+  // Ensure the array exists, seed with one empty row if none
+  g.liquid.customYears = (g.liquid.customYears && g.liquid.customYears.length)
+    ? g.liquid.customYears
+    : [{year:'', roi:'', prob:''}];
 
-        arr.forEach((row, idx)=>{
-          const div = document.createElement('div');
-          div.className = 'triple-row';
+  function renderRows(){
+    rowsHost.innerHTML = '';
+    const arr = g.liquid.customYears || (g.liquid.customYears = []);
+    const now = new Date().getFullYear();
+    const years = Array.from({length:51}, (_,i)=> String(now + i));
 
-          // Plan Year
-          const fY = document.createElement('div'); fY.className='field';
-          const lY = document.createElement('label'); lY.className='label'; lY.textContent='Plan Year';
-          const sY = document.createElement('select'); sY.className = 'year-compact';
-          years.forEach(y=>{ const o=document.createElement('option'); o.value=y; o.textContent=y; sY.appendChild(o); });
-          if(row.year) sY.value = String(row.year);
-          sY.addEventListener('change', ()=>{ row.year = sY.value; });
-          fY.append(lY, sY);
+    arr.forEach((row, idx)=>{
+      const showLabels = (idx === 0);
+      const div = document.createElement('div');
+      div.className = 'triple-row' + (showLabels ? ' header-row' : '');
 
-          // ROI (%)
-          const fR = document.createElement('div'); fR.className='field';
-          const lR = document.createElement('label'); lR.className='label'; lR.textContent='ROI (%)';
-          const iR = document.createElement('input'); iR.type='text'; iR.inputMode='decimal'; iR.className='pct small';
-          if(row.roi){ iR.dataset.raw = String(row.roi); iR.value = `${row.roi}%`; }
-          iR.addEventListener('focus', ()=> onFocusNumeric(iR));
-          iR.addEventListener('blur', ()=>{ onBlurPercent(iR); row.roi = iR.dataset.raw || ''; });
-          fR.append(lR, iR);
-
-          // Probability (%)
-          const fP = document.createElement('div'); fP.className='field';
-          const lP = document.createElement('label'); lP.className='label'; lP.textContent='Probability (%)';
-          const iP = document.createElement('input'); iP.type='text'; iP.inputMode='decimal'; iP.className='pct small';
-          if(row.prob){ iP.dataset.raw = String(row.prob); iP.value = `${row.prob}%`; }
-          iP.addEventListener('focus', ()=> onFocusNumeric(iP));
-          iP.addEventListener('blur', ()=>{ onBlurPercent(iP); row.prob = iP.dataset.raw || ''; });
-          fP.append(lP, iP);
-
-          // Remove button
-          const rem = document.createElement('button'); rem.className='rem-row'; rem.type='button'; rem.title='Remove';
-          rem.textContent = '✕';
-          rem.addEventListener('click', ()=>{ arr.splice(idx,1); renderRows(); });
-
-          div.append(fY, fR, fP, rem);
-          rowsHost.appendChild(div);
-        });
+      // Plan Year
+      const fY = document.createElement('div');
+      fY.className = 'field';
+      if (showLabels) {
+        const lY = document.createElement('label');
+        lY.className = 'label';
+        lY.textContent = 'Plan Year';
+        fY.append(lY);
       }
+      const sY = document.createElement('select');
+      sY.className = 'year-compact';
+      years.forEach(y=>{ const o=document.createElement('option'); o.value=y; o.textContent=y; sY.appendChild(o); });
+      if (row.year) sY.value = String(row.year);
+      sY.addEventListener('change', ()=>{ row.year = sY.value; });
+      fY.append(sY);
 
-      btn.onclick = ()=>{
-        const isHidden = wrap.classList.contains('hidden');
-        wrap.classList.toggle('hidden', !isHidden);
-        btn.textContent = isHidden ? 'Hide Customized ROI Years' : 'Customize ROI For Specific Years';
-        if(isHidden) renderRows();
-      };
-      addBtn.onclick = ()=>{
-        g.liquid.customYears = g.liquid.customYears || [];
-        g.liquid.customYears.push({year:'', roi:'', prob:''});
-        renderRows();
-      };
-    })();
+      // ROI (%)
+      const fR = document.createElement('div');
+      fR.className = 'field';
+      if (showLabels) {
+        const lR = document.createElement('label');
+        lR.className = 'label';
+        lR.textContent = 'ROI (%)';
+        fR.append(lR);
+      }
+      const iR = document.createElement('input');
+      iR.type='text';
+      iR.inputMode='decimal';
+      iR.className='pct small';
+      if (row.roi){ iR.dataset.raw = String(row.roi); iR.value = `${row.roi}%`; }
+      iR.addEventListener('focus', ()=> onFocusNumeric(iR));
+      iR.addEventListener('blur', ()=>{ onBlurPercent(iR); row.roi = iR.dataset.raw || ''; });
+      fR.append(iR);
+
+      // Probability (%)
+      const fP = document.createElement('div');
+      fP.className = 'field';
+      if (showLabels) {
+        const lP = document.createElement('label');
+        lP.className = 'label';
+        lP.textContent = 'Probability (%)';
+        fP.append(lP);
+      }
+      const iP = document.createElement('input');
+      iP.type='text';
+      iP.inputMode='decimal';
+      iP.className='pct small';
+      if (row.prob){ iP.dataset.raw = String(row.prob); iP.value = `${row.prob}%`; }
+      iP.addEventListener('focus', ()=> onFocusNumeric(iP));
+      iP.addEventListener('blur', ()=>{ onBlurPercent(iP); row.prob = iP.dataset.raw || ''; });
+      fP.append(iP);
+
+      // Remove button
+      const rem = document.createElement('button');
+      rem.className='rem-row';
+      rem.type='button';
+      rem.title='Remove';
+      rem.textContent = '✕';
+      rem.addEventListener('click', ()=>{ arr.splice(idx,1); renderRows(); });
+
+      div.append(fY, fR, fP, rem);
+      rowsHost.appendChild(div);
+    });
+  }
+
+  // Initial render if visible
+  if (!wrap.classList.contains('hidden')) renderRows();
+
+  btn.onclick = ()=>{
+    const isHidden = wrap.classList.contains('hidden'); // currently hidden?
+    wrap.classList.toggle('hidden');
+    btn.textContent = isHidden ? 'Hide Customized ROI Years' : 'Customize ROI For Specific Years';
+    if (isHidden) renderRows();
+  };
+
+  addBtn.onclick = ()=>{
+    g.liquid.customYears = g.liquid.customYears || [];
+    g.liquid.customYears.push({year:'', roi:'', prob:''});
+    renderRows();
+  };
+})();
 wireHelpButtons();
     return;
   }
@@ -1754,4 +1791,80 @@ init();
   });
   // initial
   document.addEventListener('DOMContentLoaded', enhanceAll);
-})();
+})()
+function renderRows(){
+  rowsHost.innerHTML = '';
+  const arr = g.liquid.customYears || (g.liquid.customYears = []);
+  const now = new Date().getFullYear();
+  const years = Array.from({length:51}, (_,i)=> String(now + i));
+
+  arr.forEach((row, idx)=>{
+    const showLabels = (idx === 0);
+    const div = document.createElement('div');
+    div.className = 'triple-row' + (showLabels ? ' header-row' : '');
+
+    // Plan Year
+    const fY = document.createElement('div');
+    fY.className = 'field';
+    if (showLabels) {
+      const lY = document.createElement('label');
+      lY.className = 'label';
+      lY.textContent = 'Plan Year';
+      fY.append(lY);
+    }
+    const sY = document.createElement('select');
+    sY.className = 'year-compact';
+    years.forEach(y=>{ const o=document.createElement('option'); o.value=y; o.textContent=y; sY.appendChild(o); });
+    if (row.year) sY.value = String(row.year);
+    sY.addEventListener('change', ()=>{ row.year = sY.value; });
+    fY.append(sY);
+
+    // ROI (%)
+    const fR = document.createElement('div');
+    fR.className = 'field';
+    if (showLabels) {
+      const lR = document.createElement('label');
+      lR.className = 'label';
+      lR.textContent = 'ROI (%)';
+      fR.append(lR);
+    }
+    const iR = document.createElement('input');
+    iR.type='text';
+    iR.inputMode='decimal';
+    iR.className='pct small';
+    if (row.roi){ iR.dataset.raw = String(row.roi); iR.value = `${row.roi}%`; }
+    iR.addEventListener('focus', ()=> onFocusNumeric(iR));
+    iR.addEventListener('blur', ()=>{ onBlurPercent(iR); row.roi = iR.dataset.raw || ''; });
+    fR.append(iR);
+
+    // Probability (%)
+    const fP = document.createElement('div');
+    fP.className = 'field';
+    if (showLabels) {
+      const lP = document.createElement('label');
+      lP.className = 'label';
+      lP.textContent = 'Probability (%)';
+      fP.append(lP);
+    }
+    const iP = document.createElement('input');
+    iP.type='text';
+    iP.inputMode='decimal';
+    iP.className='pct small';
+    if (row.prob){ iP.dataset.raw = String(row.prob); iP.value = `${row.prob}%`; }
+    iP.addEventListener('focus', ()=> onFocusNumeric(iP));
+    iP.addEventListener('blur', ()=>{ onBlurPercent(iP); row.prob = iP.dataset.raw || ''; });
+    fP.append(iP);
+
+    // Remove button
+    const rem = document.createElement('button');
+    rem.className='rem-row';
+    rem.type='button';
+    rem.title='Remove';
+    rem.textContent = '✕';
+    rem.addEventListener('click', ()=>{ arr.splice(idx,1); renderRows(); });
+
+    div.append(fY, fR, fP, rem);
+    rowsHost.appendChild(div);
+  });
+}
+;

@@ -502,3 +502,27 @@
 .custom-rows .triple-row .field { flex: 0 0 auto; }
 .custom-rows .triple-row .field select.year-compact { width: 120px !important; }
 .custom-rows .triple-row .field input.pct.small { width: 80px !important; text-align: right !important; }
+
+
+/* === ROI Custom Year Rows: tabular header style === */
+.triple-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 8px;
+  align-items: end;
+}
+.triple-row .field { min-width: 0; }
+.triple-row .field .label { display: block; margin-bottom: 2px; font-weight: 600; }
+
+/* First row acts like headers */
+.triple-row.header-row .field .label {
+  opacity: 0.9;
+}
+
+/* Remove excess top spacing when there is no label */
+.triple-row:not(.header-row) .field .label { display: none; }
+
+/* Keep the remove button visible in dark mode */
+.rem-row {
+  opacity: 0.85;
+}
