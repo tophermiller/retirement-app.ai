@@ -124,7 +124,7 @@ if (typeof(inflationdata) === "undefined") {
             const values = Object.values(inflationdata.numbers).filter(v => typeof v === 'number');
             if (values.length === 0) return null;
             const sum = values.reduce((acc, val) => acc + val, 0);
-            return (sum / values.length).toFixed(1);
+            return (sum / values.length).toFixed(2);
         },
 
         /**
@@ -141,7 +141,7 @@ if (typeof(inflationdata) === "undefined") {
                 const diff = val - mean;
                 return acc + diff * diff;
             }, 0);
-            return Math.sqrt(squaredDiffSum / n).toFixed(1);
+            return Math.sqrt(squaredDiffSum / n).toFixed(2);
         }        
 
     }

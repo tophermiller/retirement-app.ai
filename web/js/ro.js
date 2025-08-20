@@ -1364,28 +1364,49 @@ window.helpMeChoose = function(topic){
   else if(topic === 'real_estate'){
     title = 'Real Estate Investments • Help me choose';
     applyTo = growth.realEstate;
+    const p = document.createElement('p');
+    p.id = 'modalDesc';
+    p.className='lipsum';
+    p.innerHTML = 'Choose a state to see the historical appreciation for real estate in that state.  This data is for the period from Q1 1991 to Q3 2022 from the <a href=\"https://www.fhfa.gov/data/hpi\" target=\"_blank\">Federal Housing Finance Agency</a>.  Feel free to make adjustments as you see fit to predict the future.';
+    modalBody.appendChild(p);
 
     const fS = document.createElement('div'); fS.className='field';
     const lS = document.createElement('label'); lS.className='label'; lS.textContent='State';
     const sS = document.createElement('select'); sS.id='modalState';
-    US_STATES.forEach(st => {
-      const o=document.createElement('option'); o.value=st; o.textContent=st; sS.appendChild(o);
+
+    const o = document.createElement('option');
+    o.value = ''; o.textContent = '-- Choose a state --';
+    sS.appendChild(o);
+
+    Object.entries(realEstateROI).forEach(([abbr, data]) => {
+        const option = document.createElement('option');
+        option.value = abbr;
+        option.textContent = data.stateName;
+        sS.appendChild(option);
     });
+
     fS.append(lS, sS);
     modalBody.appendChild(fS);
 
     const roiSdWrap = makeRoiSdFields(applyTo.roi, applyTo.stdev);
     modalBody.appendChild(roiSdWrap);
 
-    const randomizeRE = ()=>{
-      const roiEl = document.getElementById('modalRoi');
-      const sdEl  = document.getElementById('modalSd');
-      const roi = randomInRange(2, 9, 0.1);
-      const sd  = randomInRange(3, 15, 0.1);
-      roiEl.dataset.raw = String(roi); roiEl.value = `${roi}%`;
-      sdEl.dataset.raw  = String(sd);  sdEl.value  = `${sd}%`;
+    const lookupRE = ()=>{
+      const selectedAbbr = sS.value;
+      const data = realEstateROI[selectedAbbr];
+      if (data) {
+        let roi = `${data.average}`;
+        roi = (100*Number(roi)).toFixed(2); // Average ROI for the state
+        let sd  = `${data.stdev}`;
+        sd = (100*Number(sd)).toFixed(2); // Standard Deviation for the state
+        const roiEl = document.getElementById('modalRoi');
+        const sdEl  = document.getElementById('modalSd');
+        roiEl.dataset.raw = String(roi); roiEl.value = `${roi}%`;
+        sdEl.dataset.raw  = String(sd);  sdEl.value  = `${sd}%`;
+      }
+
     };
-    sS.addEventListener('change', randomizeRE);
+    sS.addEventListener('change', lookupRE);
   }
 
   modalTitle.textContent = title;
