@@ -811,7 +811,7 @@ else if (sectionKey === 'delta'){
       const years = Array.from({length:51}, (_,i)=> nowY + i);
       const g1 = document.createElement('div'); g1.className='grid-2';
       const {field:saleYearField, select: saleSel} = makeSelectField('Sale Year', years, it.saleYear || years[0], (v)=>{ it.saleYear=v; });
-      saleSel.dataset.defaultToken='__END_OF_PLAN__';
+      saleSel.dataset.defaultToken='__AS_NEEDED__'; saleSel.dataset.isSaleYearSelect='1';
       g1.append(saleYearField); body.append(g1);
 
       const g2 = document.createElement('div'); g2.className='grid';
@@ -1482,6 +1482,7 @@ init();
   const TOKENS = {
     RETIREMENT_YEAR: '__RETIREMENT__',
     ALREADY_OWNED: '__ALREADY_OWNED__',
+    AS_NEEDED: '__AS_NEEDED__',
     FIRST_SPOUSE_DEATH: '__FIRST_DEATH__',
     FIRST_SPOUSE_DEATH_PLUS_1: '__FIRST_DEATH_P1__',
     END_OF_PLAN: '__END_OF_PLAN__'
@@ -1519,7 +1520,8 @@ init();
   function isYear(v){ return /^\d{4}$/.test(String(v)); }
   function labelForToken(token){
     switch(token){
-      case TOKENS.ALREADY_OWNED: return '• Already Owned';
+      case TOKENS.ALREADY_OWNED: return '• Before Current Year (Already Owned)';
+      case TOKENS.AS_NEEDED: return '• Whenever Needed For Cash Flow';
       case TOKENS.RETIREMENT_YEAR: return '• Retirement Year';
       case TOKENS.FIRST_SPOUSE_DEATH: return '• First Spouse Death';
       case TOKENS.FIRST_SPOUSE_DEATH_PLUS_1: return '• First Spouse Death + 1';
@@ -1564,6 +1566,7 @@ init();
   function defaultTokenFor(labelText){
     const t = (labelText||'').toLowerCase();
     if (t.includes('already') || t.includes('owned')) return TOKENS.ALREADY_OWNED;
+    if (t.includes('needed') || t.includes('cash flow')) return TOKENS.AS_NEEDED;
     if(t.includes('start') || t.includes('purchase')) return TOKENS.RETIREMENT_YEAR;
     if(t.includes('end') || t.includes('sale')) return TOKENS.END_OF_PLAN;
     return TOKENS.END_OF_PLAN;
@@ -1592,6 +1595,9 @@ init();
     const yearsOnly = select.dataset.yearsOnly === '1';
     if (!yearsOnly && select.dataset.isPurchaseYearSelect === '1') {
       opts.push({value:TOKENS.ALREADY_OWNED, label:labelForToken(TOKENS.ALREADY_OWNED)});
+    }
+    else if (!yearsOnly && select.dataset.isSaleYearSelect === '1') {
+      opts.push({value:TOKENS.AS_NEEDED, label:labelForToken(TOKENS.AS_NEEDED)});
     }
     else if (!yearsOnly) {
       opts.push(
