@@ -1,5 +1,4 @@
-
-  /* ================================
+/* ================================
      THEME TOKENS
   ================================== */
   :root{
@@ -561,3 +560,115 @@ select {
 .rem-row {
   opacity: 0.85;
 }
+
+
+
+
+
+
+
+
+
+
+  .basics-grid .ctrl input{
+    box-sizing: border-box;
+    padding-right: 3.25em; /* room for 'yrs' badge */
+    min-width: 7.5ch;      /* fits 3 digits comfortably */
+  }
+  .basics-grid .ctrl .unit{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    line-height: 1;
+  }
+}
+
+
+/* iPhone/mobile grid fix: place input and 'yrs' badge side-by-side so text never hides */
+@media (max-width: 480px){
+  .basics-grid .ctrl{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+    position: relative; /* normalize */
+  }
+  .basics-grid .ctrl .unit{
+    position: static;   /* stop absolute positioning that drifts off-screen */
+    margin-left: 4px;
+    padding: 0 6px;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none; /* badge never blocks input taps */
+  }
+  .basics-grid .ctrl input{
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 8px; /* ordinary right padding; no overlay */
+    min-width: 12ch;    /* comfortably shows 3 digits */
+    text-align: right;  /* preserve right-justified numeric look */
+    -webkit-appearance: none;
+  }
+}
+
+
+/* ===== Basics inputs: make inputs full-width and keep 'yrs' visible ===== */
+#basicsForm .basics-grid .ctrl{
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+#basicsForm .basics-grid .ctrl input{
+  width: 100% !important;
+  min-width: 12ch !important;  /* show up to 3 digits comfortably */
+  box-sizing: border-box !important;
+  flex: 1 1 auto !important;
+  padding-right: 8px !important; /* no overlay */
+  text-align: right !important;
+  -webkit-appearance: none;
+  min-height: 34px;
+}
+#basicsForm .basics-grid .ctrl .unit{
+  position: static !important;
+  margin-left: 4px !important;
+  padding: 2px 6px;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+
+
+/* Mobile basics layout & control sizing */
+@media (max-width: 480px){
+  #basicsForm .basics-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+  #basicsForm .cardish{
+    width: 100%;
+  }
+  #basicsForm .ctrl{
+    width: auto;
+    max-width: 22ch; /* input (6ch) + spacing + 'yrs' badge */
+    justify-content: flex-end;
+  }
+  #basicsForm .ctrl input{
+    flex: 0 0 6ch;
+    width: 6ch;
+    min-width: 6ch;
+    text-align: right;
+    padding-right: 0;
+  }
+  #basicsForm .ctrl .unit{
+    position: static;
+    margin-left: 6px;
+    pointer-events: none;
+  }
+}
+
