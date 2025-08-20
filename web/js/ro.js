@@ -262,6 +262,10 @@ function createItem(sectionKey, overrides = {}, lockedFlag /* optional */) {
       startYear: '', endYear: '', amount: '',
       showInflation: false, roi: ''
     });
+  if (sectionKey === 'epsilon' && !base.taxTreatment) {
+    base.taxTreatment = 'Ordinary Income';
+  }
+
   } else {
     Object.assign(base, { year: '', dollars: '', percent: '' });
   }
@@ -856,6 +860,15 @@ else if (sectionKey === 'delta'){
     const gAmt = document.createElement('div'); gAmt.className='grid-2';
     const {field:amtF} = makeTextField('Annual Amount ($)', 'e.g. 45000', it.amount, (v)=>{ it.amount=v; });
     gAmt.append(amtF); body.append(gAmt);
+    // Tax Treatment (Income only)
+    if (sectionKey === 'epsilon') {
+      const taxGrid = document.createElement('div'); taxGrid.className='grid-2';
+      const taxOptions = ['Ordinary Income','Social Security Income','Non-taxable Income'];
+      const currentTax = it.taxTreatment || 'Ordinary Income';
+      const {field:taxField} = makeSelectField('Tax Treatment', taxOptions, currentTax, (v)=>{ it.taxTreatment = v; });
+      taxGrid.append(taxField); body.append(taxGrid);
+    }
+
 
     const inflRow = document.createElement('div'); inflRow.className='row';
     const inflBtn = document.createElement('button'); inflBtn.className='btn small'; inflBtn.textContent = it.showInflation? 'Hide Inflation' : 'Customize Inflation';
@@ -1126,6 +1139,7 @@ function buildPlanJSON(){
     start_year: nonEmpty(i.startYear) ? toInt(i.startYear) : null,
     end_year: nonEmpty(i.endYear) ? toInt(i.endYear) : null,
     annual_amount: nonEmpty(i.amount) ? toInt(i.amount) : null,
+    tax_treatment: i.taxTreatment || 'Ordinary Income',
     inflation_override_pct: i.showInflation && nonEmpty(i.roi) ? toFloat(i.roi) : undefined
   }));
 
