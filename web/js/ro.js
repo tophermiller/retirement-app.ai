@@ -438,12 +438,12 @@ if(data.heirsTarget){
 
       if(obj.roi){
         roiEl.dataset.raw = String(obj.roi);
-        roiEl.value = `${obj.roi}`;
+        roiEl.value = `${obj.roi}%`;
       } else { roiEl.value=''; roiEl.dataset.raw=''; }
 
       if(obj.stdev){
         sdEl.dataset.raw = String(obj.stdev);
-        sdEl.value = `${obj.stdev}`;
+        sdEl.value = `${obj.stdev}%`;
       } else { sdEl.value=''; sdEl.dataset.raw=''; }
 
       roiEl.onfocus = ()=> onFocusNumeric(roiEl);
@@ -1302,9 +1302,11 @@ window.helpMeChoose = function(topic){
     const p = document.createElement('p');
     p.id = 'modalDesc';
     p.className='lipsum';
-    p.textContent = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dictum, arcu ut pretium imperdiet, risus nisl vulputate enim, vitae ullamcorper massa nisl id dui.';
+    p.innerHTML = 'The historical average inflation from the <a href="https://www.usinflationcalculator.com/inflation/historical-inflation-rates/" target="_blank">US Inflation Calculator</a> web site is shown below.   Feel free to make adjustments as you see fit to predict the future.';
     modalBody.appendChild(p);
-    modalBody.appendChild(makeRoiSdFields(applyTo.roi, applyTo.stdev));
+    const inflationRoi = inflationdata.computeMean();
+    const inflationSd  = inflationdata.computeStdDev();
+    modalBody.appendChild(makeRoiSdFields(inflationRoi, inflationSd));
   }
   else if(topic === 'liquid'){
     title = 'Liquid Investments • Help me choose';
@@ -1348,12 +1350,12 @@ window.helpMeChoose = function(topic){
       const portfolio = sP.value;
       const period = sH.value;
       if (portfolio !== '--Choose a common portfolio--' && period !== '--Choose a historical time period--') {
-        const roi = marketreturns[portfolio][period]["ROI"];
-        const sd  = marketreturns[portfolio][period]["STD"];
+        const roi = marketreturns[portfolio][period]["ROI"].replace(/%$/, '');;
+        const sd  = marketreturns[portfolio][period]["STD"].replace(/%$/, '');;
         const roiEl = document.getElementById('modalRoi');
         const sdEl  = document.getElementById('modalSd');
-        roiEl.dataset.raw = String(roi); roiEl.value = `${roi}`;
-        sdEl.dataset.raw  = String(sd);  sdEl.value  = `${sd}`;
+        roiEl.dataset.raw = String(roi); roiEl.value = `${roi}%`;
+        sdEl.dataset.raw  = String(sd);  sdEl.value  = `${sd}%`;
       }
     };
     sP.addEventListener('change', lookupValues);
