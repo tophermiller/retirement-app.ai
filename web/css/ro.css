@@ -817,3 +817,14 @@ select {
   box-sizing: border-box;
 }
 
+
+
+/* Phone-friendly hamburger menu */
+@media (max-width: 440px) {
+  .hamburger {
+    width: 50px;      /* bigger tap area */
+    height: 50px;
+    font-size: 32px;  /* larger ☰ lines */
+    border-radius: 12px;
+  }
+}
