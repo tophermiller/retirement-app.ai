@@ -178,7 +178,7 @@
   .btn.disabled{opacity:.5; pointer-events:none; filter:grayscale(40%)}
   .item-body{padding:14px 12px 16px;}
 
-  .grid{display:grid; gap:12px; grid-template-columns: repeat(3, minmax(140px, 1fr))}
+  .grid{display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(200px, 200px)); justify-content:start}
   .grid-2{display:grid; gap:12px; grid-template-columns: repeat(2, minmax(140px, 1fr))}
   .field{display:flex; flex-direction:column; gap:6px; min-width:0}
   .label{font-size:12.5px; color:var(--muted)}
@@ -715,3 +715,105 @@ select {
 .mini h4{margin:0; font-size:12.5px; line-height:1.15}
 .mini .kv{margin-top:2px; font-size:12.5px; line-height:1.15}
 .mini .badges{display:none !important}
+
+
+
+
+
+
+
+.property-item .hidden-section .field,
+.property-form .hidden-section .field {
+  min-width: 0;
+  max-width: 200px;
+}
+.property-item .hidden-section .field input,
+.property-item .hidden-section .field select,
+.property-item .hidden-section .field .select,
+.property-form .hidden-section .field input,
+.property-form .hidden-section .field select,
+.property-form .hidden-section .field .select {
+  width: 100%;
+  max-width: 200px;
+  box-sizing: border-box;
+}
+
+
+
+/* === Responsive wrapping for Property hidden sections: fixed 200px columns === */
+.property-item .hidden-section .field-row,
+.property-item .hidden-section .fields,
+.property-item .hidden-section .triple-row,
+.property-form .hidden-section .field-row,
+.property-form .hidden-section .fields,
+.property-form .hidden-section .triple-row,
+.property-item .section-inner .field-row--3,
+.property-form .section-inner .field-row--3 {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(0, 200px)) !important;
+  gap: 12px !important;
+  justify-content: start !important;
+  align-items: start !important;
+}
+
+/* Make sure children don't stretch beyond 200px, but fill the track */
+.property-item .hidden-section .field,
+.property-form .hidden-section .field {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 200px !important;
+}
+
+.property-item .hidden-section .field > *,
+.property-form .hidden-section .field > * {
+  width: 100% !important;
+  max-width: 200px !important;
+  box-sizing: border-box !important;
+}
+/* === End block === */
+
+
+
+/* === Property hidden sections: force responsive wrapping === */
+.property-form .hidden-section .grid,
+.property-item .hidden-section .grid,
+.property-form .hidden-section .grid-2,
+.property-item .hidden-section .grid-2,
+.property-form .hidden-section .field-row,
+.property-item .hidden-section .field-row,
+.property-form .hidden-section .fields,
+.property-item .hidden-section .fields,
+.property-form .hidden-section .triple-row,
+.property-item .hidden-section .triple-row {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 200px)) !important; /* fixed 200px tracks */
+  gap: 12px !important;
+  justify-content: start !important; /* prevent centering gaps */
+  align-items: start !important;
+}
+
+/* Children fit their track and never exceed 200px */
+.property-form .hidden-section .field,
+.property-item .hidden-section .field {
+  width: 100% !important;
+  max-width: 200px !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+.property-form .hidden-section .field > *,
+.property-item .hidden-section .field > * {
+  width: 100% !important;
+  max-width: 200px !important;
+  box-sizing: border-box !important;
+}
+/* === End override === */
+
+
+
+/* Responsive wrapping: fixed-width tracks so items wrap instead of overflowing */
+.grid > .field, .grid > .field .input, .grid > .field select, .grid > .field input {
+  width: 200px;
+  max-width: 200px;
+  box-sizing: border-box;
+}
+
