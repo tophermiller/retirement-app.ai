@@ -604,96 +604,23 @@ function renderMiniCard(it, sectionKey){
   card.className = 'mini'; card.setAttribute('role','button'); card.setAttribute('tabindex','0');
   card.dataset.id = it.id; card.title = 'Drag to reorder • Click to expand';
 
-  const actions = document.createElement('div'); actions.className = 'actions';
-  if(!it.locked){
-    const del = document.createElement('button'); del.className = 'icon-btn'; del.setAttribute('aria-label','Delete item'); del.title='Delete'; del.textContent = '✕';
-    del.addEventListener('click',(e)=>{
-      e.stopPropagation();
-      const list = state[sectionKey].items;
-      const idx = list.findIndex(x=>x.id===it.id);
-      if(idx>=0){ list.splice(idx,1); render(); }
-    });
-    actions.appendChild(del);
-  }
-  card.appendChild(actions);
-
   const title = document.createElement('h4'); title.textContent = it.title; card.appendChild(title);
 
+  
   const kv = document.createElement('div'); kv.className='kv';
-
-  if(sectionKey==='gamma'){
-    let summaryHTML = '';
-    if(it.atype==='Taxable Investment'){
-      const cb = it.costBasis ? `$${fmtDollars(it.costBasis)}` : '—';
-      const ug = it.unrealized ? `$${fmtDollars(it.unrealized)}` : '—';
-      summaryHTML += `<div><strong>Basis:</strong> ${cb}</div><div><strong>Gains:</strong> ${ug}</div>`;
-    } else {
-      const amt = it.amount ? `$${fmtDollars(it.amount)}` : '—';
-      summaryHTML += `<div><strong>Amount:</strong> ${amt}</div>`;
-      if(it.atype==='Cash'){
-        const ir = it.interest ? `${it.interest}%` : '—';
-        summaryHTML += `<div><strong>Interest:</strong> ${ir}</div>`;
-      }
-    }
-    if(it.atype!=='Cash'){
-      if(it.roi) summaryHTML += `<div><strong>ROI:</strong> ${it.roi}%</div>`;
-      if(it.stdev) summaryHTML += `<div><strong>SD:</strong> ${it.stdev}%</div>`;
-    }
-    if(it.atype==='Tax Deferred' && it.rmd && it.rmdProceedsAccount){
-      summaryHTML += `<div><strong>RMD→</strong> ${it.rmdProceedsAccount}</div>`;
-    }
-    kv.innerHTML = summaryHTML;
-
-  } else if(sectionKey==='delta'){
-    const cv = it.currentValue ? `$${fmtDollars(it.currentValue)}` : '—';
-    let summaryHTML = `<div><strong>Value:</strong> ${cv}</div>`;
-    if(it.purchaseYear) summaryHTML += `<div><strong>Purchased:</strong> ${it.purchaseYear}</div>`;
-    if(it.roi) summaryHTML += `<div><strong>ROI:</strong> ${it.roi}%</div>`;
-    if(it.showMortgage) summaryHTML += `<div><strong>Mortgage:</strong> ${it.loanOrigYear || '—'} • ${it.loanTerm? it.loanTerm+'y':'—'} • ${it.loanRate? it.loanRate+'%':'—'}</div>`;
-    if(it.showRental) summaryHTML += `<div><strong>Rent:</strong> ${it.annualIncome? '$'+fmtDollars(it.annualIncome):'—'} /yr</div>`;
-    if(it.showSale && it.saleYear) summaryHTML += `<div><strong>Sale:</strong> ${it.saleYear}</div>`;
-    if(it.showSale && it.saleProceedsAccount) summaryHTML += `<div><strong>Proceeds:</strong> ${it.saleProceedsAccount}</div>`;
-    kv.innerHTML = summaryHTML;
-
-  } else if(sectionKey==='epsilon' || sectionKey==='zeta'){
-    const amt = it.amount ? `$${fmtDollars(it.amount)}` : '—';
-    const sy  = it.startYear || '—';
-    const ey  = it.endYear || '—';
-    let summaryHTML = `<div><strong>Years:</strong> ${sy}–${ey}</div><div><strong>Amount:</strong> ${amt}/yr</div>`;
-    if(it.showInflation && it.roi) summaryHTML += `<div><strong>Inflation:</strong> ${it.roi}%</div>`;
-    kv.innerHTML = summaryHTML;
-
-  } else {
-    const yr = it.year ? it.year : '—';
-    const dl = it.dollars ? `$${fmtDollars(it.dollars)}` : '—';
-    const pc = it.percent ? `${it.percent}%` : '—';
-    kv.innerHTML = `<div><strong>Year:</strong> ${yr}</div><div><strong>Amount:</strong> ${dl}</div><div><strong>Rate:</strong> ${pc}</div>`;
-  }
+  // Compact summary: only show amount/value on second line
+  let amtText = '—';
+  const getAmt = ()=>{
+    if (it.amount) return `$${fmtDollars(it.amount)}`;
+    if (it.currentValue) return `$${fmtDollars(it.currentValue)}`;
+    if (it.dollars) return `$${fmtDollars(it.dollars)}`;
+    if (it.value) return `$${fmtDollars(it.value)}`;
+    return null;
+  };
+  const a = getAmt(); if (a) amtText = a;
+  kv.innerHTML = `<div>${amtText}</div>`;
   card.appendChild(kv);
 
-  const badges = document.createElement('div'); badges.className='badges';
-  if(it.locked){ badges.appendChild(makeBadge('Default')); }
-  if(sectionKey==='gamma'){
-    if(it.atype) badges.appendChild(makeBadge(it.atype));
-    if(it.amount && it.atype!=='Taxable Investment') badges.appendChild(makeBadge('Amt'));
-    if((it.costBasis||it.unrealized) && it.atype==='Taxable Investment') badges.appendChild(makeBadge('Taxable'));
-    if(it.interest && it.atype==='Cash') badges.appendChild(makeBadge('Int'));
-    if(it.roi && it.atype!=='Cash') badges.appendChild(makeBadge('ROI'));
-    if(it.atype==='Tax Deferred' && it.rmd) badges.appendChild(makeBadge('RMD'));
-    if(it.atype==='Tax Deferred' && it.rmd && it.rmdProceedsAccount) badges.appendChild(makeBadge('Proceeds→Acct'));
-  } else if(sectionKey==='delta'){
-    if(it.currentValue) badges.appendChild(makeBadge('Value'));
-    if(it.purchaseYear) badges.appendChild(makeBadge('Purchased'));
-    if(it.showMortgage) badges.appendChild(makeBadge('Mortgage'));
-    if(it.showRental) badges.appendChild(makeBadge('Rental'));
-    if(it.showSale) badges.appendChild(makeBadge('Sale'));
-    if(it.showSale && it.saleProceedsAccount) badges.appendChild(makeBadge('Proceeds→Acct'));
-  } else if(sectionKey==='epsilon' || sectionKey==='zeta'){
-    if(it.startYear || it.endYear) badges.appendChild(makeBadge('Range'));
-    if(it.amount) badges.appendChild(makeBadge('Amt'));
-    if(it.showInflation) badges.appendChild(makeBadge('Infl.'));
-  }
-  if(badges.childElementCount) card.appendChild(badges);
 
   const expand = ()=>{ it.collapsed=false; render(); };
   card.addEventListener('click', expand);
