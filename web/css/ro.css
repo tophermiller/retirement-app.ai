@@ -469,3 +469,36 @@
 .modal-x:hover{ color:#fff; }
 .modal-x:focus{ outline:2px solid #aaa; outline-offset:2px; }
 .modal-x:focus{outline:2px solid #777;outline-offset:2px}
+
+/* Custom ROI Years (Liquid) */
+.custom-rows { margin-top: 8px; padding: 8px 10px; border: 1px dashed var(--fg-3); border-radius: 10px; }
+.custom-rows.hidden { display: none; }
+.custom-rows .rows-head { font-size: 12.5px; margin-bottom: 8px; }
+.triple-row .field { flex: 0 0 auto; }
+.triple-row .field select { width: 120px; }
+.triple-row .field input { width: 80px; text-align: right; }
+.triple-row .field { margin: 0; }
+.triple-row .field .label { font-size: 12.5px; }
+.triple-row .field input { width: 100%; text-align: right; }
+.btn-row { margin-top: 6px; display: flex; gap: 8px; }
+.rem-row { border: 0; background: transparent; cursor: pointer; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 8px; color: #ccc; }
+.rem-row:hover { background: var(--bg-2); color: #fff; }
+
+
+.triple-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 8px !important;
+  align-items: flex-end !important;
+  margin-bottom: 6px !important;
+}
+.triple-row .field { flex: 0 0 auto !important; margin: 0 !important; }
+.triple-row .field select { width: 120px !important; }
+.triple-row .field input { width: 80px !important; text-align: right !important; }
+
+
+/* Compact fields in Liquid -> Customize ROI Years */
+.custom-rows .triple-row { display: flex; flex-wrap: nowrap; gap: 8px; align-items: flex-end; margin-bottom: 6px; }
+.custom-rows .triple-row .field { flex: 0 0 auto; }
+.custom-rows .triple-row .field select.year-compact { width: 120px !important; }
+.custom-rows .triple-row .field input.pct.small { width: 80px !important; text-align: right !important; }

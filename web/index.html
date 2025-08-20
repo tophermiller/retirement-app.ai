@@ -202,7 +202,18 @@
                 <input id="liquidSd" class="pct" type="text" inputmode="decimal" placeholder="e.g. 12">
               </div>
             </div>
+            <div class="btn-row">
+              <button id="liquidCustomizeBtn" type="button" class="btn small">Customize ROI For Specific Years</button>
+            </div>
+            <div id="liquidCustomizeWrap" class="custom-rows hidden">
+              <div class="rows-head note">Set specific rates of return for specific years with the specified probability. Years not specified here or falling outside of the specified probability will be randomized normally. This is useful for simulating recessions or sequence-of-returns risk. Note that any entries you put here will affect your overall realized average ROI and standard deviation.</div>
+              <div id="liquidRows"></div>
+              <div class="btn-row">
+                <button id="addLiquidRowBtn" type="button" class="btn small">+ Add Year</button>
+              </div>
+            </div>
           </div>
+
 
           <!-- 3. Real Estate Investments -->
           <div class="gr-section">
