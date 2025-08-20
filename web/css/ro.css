@@ -121,17 +121,22 @@
 
   .dock-wrap{margin:6px 0 14px}
   .dock{
-    display:flex; gap:10px; align-items:stretch; overflow-x:auto; overflow-y:hidden;
+    display:flex; gap:10px; align-items:stretch;
+    flex-wrap: wrap;
+    overflow-x: clip;
+    overflow-y: visible;
     padding:10px; border:1px dashed var(--outline); border-radius:12px;
     background:linear-gradient(180deg, rgba(255,255,255,.02), transparent);
-    scroll-snap-type:x mandatory; scroll-padding:10px;
-    -webkit-overflow-scrolling: touch;
-  }
+    scroll-snap-type: none;
+    -webkit-overflow-scrolling: auto;
+    align-content: flex-start;
+    width: 100%;
+    }
   .dock::-webkit-scrollbar{height:8px}
   .dock::-webkit-scrollbar-thumb{background:#223049; border-radius:8px}
   .dock.empty{justify-content:center; color:#8591a6; font-size:12.5px; min-height:60px}
 
-  .mini{
+  .mini{ flex:0 1 auto;
     position:relative; width:220px; min-width:220px;
     background:var(--surface-2); border:1px solid var(--outline); border-radius:12px;
     box-shadow:0 6px 18px rgba(0,0,0,.25);
