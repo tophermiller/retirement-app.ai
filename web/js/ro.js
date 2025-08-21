@@ -250,16 +250,16 @@ function createItem(sectionKey, overrides = {}, lockedFlag /* optional */) {
   } else if (sectionKey === 'delta') {
     Object.assign(base, {
       currentValue: '',
-      purchaseYear: '',
+      purchaseYear: '__ALREADY_OWNED__',
       showROI: false, roi: '', stdev: '',
   showMortgage: false, loanOrigYear: '', loanTerm: '', loanRate: '', monthlyPayment: '', downPaymentPct: '',
       showRental: false, annualExpenses: '', annualIncome: '', rentGrowth: '',
-      showSale: false, saleYear: '', purchasePrice: '', improvements: '', sellCost: '',
+      showSale: false, saleYear: '__AS_NEEDED__', purchasePrice: '', improvements: '', sellCost: '',
       saleProceedsAccount: '' // NEW
     });
   } else if (sectionKey === 'epsilon' || sectionKey === 'zeta') {
     Object.assign(base, {
-      startYear: '', endYear: '', amount: '',
+      startYear: '__RETIREMENT__', endYear: '__END_OF_PLAN__', amount: '',
       showInflation: false, roi: ''
     });
   if (sectionKey === 'epsilon' && !base.taxTreatment) {
@@ -1170,7 +1170,7 @@ function buildPlanJSON(){
       growth_rate_pct: nonEmpty(p.rentGrowth) ? toFloat(p.rentGrowth) : null
     } : undefined,
     sale: (p.showSale || p.saleYear || p.purchasePrice || p.improvements || p.sellCost || p.saleProceedsAccount) ? {
-      year: nonEmpty(p.saleYear) ? toInt(p.saleYear) : null,
+      year: p.saleYear || null,
       purchase_price: nonEmpty(p.purchasePrice) ? toInt(p.purchasePrice) : null,
       improvements_value: nonEmpty(p.improvements) ? toInt(p.improvements) : null,
       selling_cost: nonEmpty(p.sellCost) ? toInt(p.sellCost) : null,
@@ -1180,8 +1180,8 @@ function buildPlanJSON(){
 
   const income = (state.epsilon.items || []).map(i => ({
     title: i.title || null,
-    start_year: nonEmpty(i.startYear) ? toInt(i.startYear) : null,
-    end_year: nonEmpty(i.endYear) ? toInt(i.endYear) : null,
+    start_year: i.startYear || null,
+    end_year: i.endYear || null,
     annual_amount: nonEmpty(i.amount) ? toInt(i.amount) : null,
     tax_treatment: i.taxTreatment || 'Ordinary Income',
     inflation_override_pct: i.showInflation && nonEmpty(i.roi) ? toFloat(i.roi) : undefined
@@ -1189,8 +1189,8 @@ function buildPlanJSON(){
 
   const expenses = (state.zeta.items || []).map(e => ({
     title: e.title || null,
-    start_year: nonEmpty(e.startYear) ? toInt(e.startYear) : null,
-    end_year: nonEmpty(e.endYear) ? toInt(e.endYear) : null,
+    start_year: e.startYear || null,
+    end_year: e.endYear || null,
     annual_amount: nonEmpty(e.amount) ? toInt(e.amount) : null,
     inflation_override_pct: e.showInflation && nonEmpty(e.roi) ? toFloat(e.roi) : undefined
   }));
@@ -1211,7 +1211,7 @@ function buildPlanJSON(){
       },
       liquid_investments: {
         custom_years: (g?.liquid?.customYears || []).map(r => ({
-          year: nonEmpty(r.year) ? toInt(r.year) : null,
+          year: r.year || null,
           roi_pct: nonEmpty(r.roi) ? toFloat(r.roi) : null,
           probability_pct: nonEmpty(r.prob) ? toFloat(r.prob) : null
         })),
