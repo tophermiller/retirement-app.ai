@@ -1234,6 +1234,11 @@ function buildPlanJSON(){
 
 /* JSON preview toggle */
 previewBtn.addEventListener('click', ()=>{
+  const errors = validator.validate();
+  if(errors.length > 0){
+    validator.showErrors(errors);
+    return;
+  }
   const data = buildPlanJSON();
   const enteringPreview = !jsonMode;
   if(enteringPreview){
