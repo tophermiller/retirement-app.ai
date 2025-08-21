@@ -254,7 +254,7 @@ function createItem(sectionKey, overrides = {}, lockedFlag /* optional */) {
       showROI: false, roi: '', stdev: '',
   showMortgage: false, loanOrigYear: '', loanTerm: '', loanRate: '', monthlyPayment: '', downPaymentPct: '',
       showRental: false, annualExpenses: '', annualIncome: '', rentGrowth: '',
-      showSale: false, saleYear: '__AS_NEEDED__', purchasePrice: '', improvements: '', sellCost: '',
+      showSale: false, saleYear: '__NEVER_SELL__', purchasePrice: '', improvements: '', sellCost: '',
       saleProceedsAccount: '' // NEW
     });
   } else if (sectionKey === 'epsilon' || sectionKey === 'zeta') {
@@ -854,7 +854,7 @@ else if (sectionKey === 'delta'){
       const years = Array.from({length:51}, (_,i)=> nowY + i);
       const g1 = document.createElement('div'); g1.className='grid-2';
       const {field:saleYearField, select: saleSel} = makeSelectField('Sale Year', years, it.saleYear || years[0], (v)=>{ it.saleYear=v; });
-      saleSel.dataset.defaultToken='__AS_NEEDED__'; saleSel.dataset.isSaleYearSelect='1';
+      saleSel.dataset.defaultToken='__NEVER_SELL__'; saleSel.dataset.isSaleYearSelect='1';
       g1.append(saleYearField); body.append(g1);
 
       const g2 = document.createElement('div'); g2.className='grid';
@@ -1532,6 +1532,7 @@ init();
     RETIREMENT_YEAR: '__RETIREMENT__',
     ALREADY_OWNED: '__ALREADY_OWNED__',
     AS_NEEDED: '__AS_NEEDED__',
+    NEVER_SELL: '__NEVER_SELL__',
     FIRST_SPOUSE_DEATH: '__FIRST_DEATH__',
     FIRST_SPOUSE_DEATH_PLUS_1: '__FIRST_DEATH_P1__',
     END_OF_PLAN: '__END_OF_PLAN__'
@@ -1571,6 +1572,7 @@ init();
     switch(token){
       case TOKENS.ALREADY_OWNED: return '• Before Current Year (Already Owned)';
       case TOKENS.AS_NEEDED: return '• Whenever Needed For Cash Flow';
+      case TOKENS.NEVER_SELL: return '• Never Sell';
       case TOKENS.RETIREMENT_YEAR: return '• Retirement Year';
       case TOKENS.FIRST_SPOUSE_DEATH: return '• First Spouse Death';
       case TOKENS.FIRST_SPOUSE_DEATH_PLUS_1: return '• First Spouse Death + 1';
@@ -1616,6 +1618,7 @@ init();
     const t = (labelText||'').toLowerCase();
     if (t.includes('already') || t.includes('owned')) return TOKENS.ALREADY_OWNED;
     if (t.includes('needed') || t.includes('cash flow')) return TOKENS.AS_NEEDED;
+    if (t.includes('never')) return TOKENS.NEVER_SELL;
     if(t.includes('start') || t.includes('purchase')) return TOKENS.RETIREMENT_YEAR;
     if(t.includes('end') || t.includes('sale')) return TOKENS.END_OF_PLAN;
     return TOKENS.END_OF_PLAN;
@@ -1646,6 +1649,7 @@ init();
       opts.push({value:TOKENS.ALREADY_OWNED, label:labelForToken(TOKENS.ALREADY_OWNED)});
     }
     else if (!yearsOnly && select.dataset.isSaleYearSelect === '1') {
+      opts.push({value:TOKENS.NEVER_SELL, label:labelForToken(TOKENS.NEVER_SELL)});
       opts.push({value:TOKENS.AS_NEEDED, label:labelForToken(TOKENS.AS_NEEDED)});
     }
     else if (!yearsOnly) {
