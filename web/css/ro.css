@@ -853,3 +853,24 @@ select {
   margin: 3px 0;
   line-height: 1.3;
 }
+
+
+/* ===== RO Namespaced Modals (Save/Restore) ===== */
+.ro-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:2000;padding:16px;}
+.ro-modal[aria-hidden="false"]{display:flex;}
+.ro-modal__dialog{background:var(--card-bg,#1e1e1e);color:inherit;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.3);width:min(640px,96vw);max-height:88vh;display:flex;flex-direction:column;}
+.ro-modal__header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08);}
+.ro-modal__body{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:12px;}
+.ro-modal__footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:flex-end;gap:8px;}
+.ro-modal__close{background:none;border:none;font-size:20px;cursor:pointer;opacity:.8;color:inherit}
+.ro-modal__close:hover{opacity:1}
+.saved-plans-list{display:flex;flex-direction:column;gap:8px;}
+.saved-plan-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;}
+.saved-plan-name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.saved-plan-time{font-size:.8em;opacity:.7;}
+.saved-plan-actions .btn{margin-left:6px}
+@media (max-width:480px){
+  .saved-plan-row{grid-template-columns:1fr;grid-auto-rows:auto}
+  .saved-plan-actions{display:flex;gap:8px;justify-content:flex-start}
+}
+body.ro-modal-open{overflow:hidden;}

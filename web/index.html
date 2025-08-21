@@ -30,6 +30,9 @@
         <div class="spacer"></div>
         <!-- CTA BUTTONS ABOVE THE MAIN PANEL -->
         <div class="topbar-cta">
+  <button class="btn" id="savePlanBtn" title="Save current plan">Save</button>
+  <button class="btn ghost" id="restorePlanBtn" title="Restore or delete a saved plan">Restore</button>
+
   <button class="btn ghost" id="previewJsonBtn">Preview JSON</button>
   <button class="btn ok" id="submitBtn">Calculate My RetirementOdds</button>
 </div>
@@ -286,5 +289,40 @@
 <script src="assets/inflationdata.js"></script>
 <script src="assets/realEstateROI.js"></script>
 <script src="js/ro.js"></script>
+
+<!-- Save Plan Modal (namespaced) -->
+<div class="ro-modal" id="saveModal" aria-hidden="true">
+  <div class="ro-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="saveModalTitle">
+    <div class="ro-modal__header">
+      <h3 id="saveModalTitle">Save Plan</h3>
+      <button class="ro-modal__close" data-close-modal="saveModal" aria-label="Close">×</button>
+    </div>
+    <div class="ro-modal__body">
+      <label for="planNameInput" class="label">Plan name</label>
+      <input id="planNameInput" type="text" class="input" placeholder="e.g., My Baseline Plan" />
+      <p class="hint">Saved locally in this browser only.</p>
+    </div>
+    <div class="ro-modal__footer">
+      <button class="btn ghost" data-close-modal="saveModal">Cancel</button>
+      <button class="btn ok" id="modalSaveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Restore/Delete Modal (namespaced) -->
+<div class="ro-modal" id="restoreModal" aria-hidden="true">
+  <div class="ro-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="restoreModalTitle">
+    <div class="ro-modal__header">
+      <h3 id="restoreModalTitle">Restore or Delete Saved Plans</h3>
+      <button class="ro-modal__close" data-close-modal="restoreModal" aria-label="Close">×</button>
+    </div>
+    <div class="ro-modal__body">
+      <div id="savedPlansList" class="saved-plans-list"></div>
+      <p class="hint" id="noPlansHint" hidden>There are no saved plans yet.</p>
+      <p class="hint">These items are stored in your browser's local storage.</p>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -1687,6 +1687,127 @@ init();
 
 
 
+
+/* ===== Plan Save/Restore via localStorage — Namespaced Modals ===== */
+(function(){
+  const PLAN_PREFIX = 'plan:';
+  const INDEX_KEY = 'plan:index';
+  const $ = s => document.querySelector(s);
+  const keyFor = n => PLAN_PREFIX + n;
+
+  function readIndex(){
+    try{ const raw = localStorage.getItem(INDEX_KEY); const arr = raw?JSON.parse(raw):[]; return Array.isArray(arr)?arr.filter(x=>typeof x==='string' && x.trim()):[]; }catch(e){ return []; }
+  }
+  function writeIndex(arr){ localStorage.setItem(INDEX_KEY, JSON.stringify(Array.from(new Set(arr.filter(Boolean))))); }
+
+  function openModal(id){
+    const m = document.getElementById(id); if(!m) return;
+    m.setAttribute('aria-hidden','false'); document.body.classList.add('ro-modal-open');
+    setTimeout(()=>{ m.querySelector('input,button,select,textarea,[tabindex]:not([tabindex="-1"])')?.focus(); },0);
+  }
+  function closeModal(id){
+    const m = document.getElementById(id); if(!m) return;
+    m.setAttribute('aria-hidden','true');
+    // If no other ro-modals are open, unlock scroll
+    if(!document.querySelector('.ro-modal[aria-hidden="false"]')) document.body.classList.remove('ro-modal-open');
+  }
+  window.closeRoModal = closeModal; // for internal calls
+
+  document.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.ro-modal__close,[data-close-modal]');
+    if(btn){ closeModal(btn.getAttribute('data-close-modal') || btn.closest('.ro-modal')?.id); }
+    const dialog = e.target.closest('.ro-modal__dialog');
+    const root = e.target.closest('.ro-modal');
+    if(root && !dialog){ root.setAttribute('aria-hidden','true'); if(!document.querySelector('.ro-modal[aria-hidden="false"]')) document.body.classList.remove('ro-modal-open'); }
+  });
+
+  // Deep assign
+  function deepAssign(target, source){
+    if(source && typeof source==='object'){
+      Object.keys(source).forEach(k=>{
+        if(source[k] && typeof source[k]==='object' && !Array.isArray(source[k])){
+          if(!target[k] || typeof target[k] !== 'object') target[k] = {};
+          deepAssign(target[k], source[k]);
+        }else{ target[k] = source[k]; }
+      });
+    }
+  }
+
+  function doSavePlan(name){
+    if(!name || !name.trim()){ showToast?.('Please enter a plan name.'); return; }
+    const key = keyFor(name);
+    const existing = localStorage.getItem(key);
+    if(existing && !confirm(`A plan named “${name}” already exists. Replace it?`)) return;
+    try{
+      const payload = { updatedAt: Date.now(), data: state };
+      localStorage.setItem(key, JSON.stringify(payload));
+      const idx = readIndex(); if(!idx.includes(name)){ idx.push(name); writeIndex(idx); }
+      showToast?.(`Saved plan “${name}”.`);
+      closeModal('saveModal');
+    }catch(e){ alert('Failed to save plan: ' + (e?.message||e)); }
+  }
+
+  function doRestorePlan(name){
+    try{
+      const raw = localStorage.getItem(keyFor(name)); if(!raw){ alert('Saved plan not found.'); return; }
+      const parsed = JSON.parse(raw); const data = parsed.data || parsed;
+      deepAssign(state, data);
+      if(typeof render === 'function') render();
+      showToast?.(`Restored plan “${name}”.`);
+      document.dispatchEvent(new CustomEvent('plan:restored', { detail:{ name } }));
+      closeModal('restoreModal');
+    }catch(e){ alert('Failed to restore plan: ' + (e?.message||e)); }
+  }
+  function doDeletePlan(name){
+    try{
+      localStorage.removeItem(keyFor(name));
+      const idx = readIndex().filter(n=>n!==name); writeIndex(idx);
+      buildRestoreList();
+      showToast?.(`Deleted “${name}”.`);
+    }catch(e){ alert('Failed to delete plan: ' + (e?.message||e)); }
+  }
+
+  function buildRestoreList(){
+    const wrap = document.getElementById('savedPlansList'); const empty = document.getElementById('noPlansHint'); if(!wrap) return;
+    const names = readIndex();
+    names.sort((a,b)=>{
+      const ra = JSON.parse(localStorage.getItem(keyFor(a))||'{}').updatedAt||0;
+      const rb = JSON.parse(localStorage.getItem(keyFor(b))||'{}').updatedAt||0;
+      return rb-ra;
+    });
+    wrap.innerHTML='';
+    if(names.length===0){ empty?.removeAttribute('hidden'); return; }
+    empty?.setAttribute('hidden','');
+    names.forEach(name=>{
+      const payload = JSON.parse(localStorage.getItem(keyFor(name))||'{}');
+      const updatedAt = payload.updatedAt || Date.now();
+      const row = document.createElement('div'); row.className='saved-plan-row';
+      const info = document.createElement('div');
+      const nm = document.createElement('div'); nm.className='saved-plan-name'; nm.textContent=name;
+      const tm = document.createElement('div'); tm.className='saved-plan-time'; tm.textContent='Last modified: ' + new Date(updatedAt).toLocaleString();
+      info.appendChild(nm); info.appendChild(tm);
+      const actions = document.createElement('div'); actions.className='saved-plan-actions';
+      const r = document.createElement('button'); r.className='btn'; r.textContent='Restore'; r.addEventListener('click', ()=>doRestorePlan(name));
+      const d = document.createElement('button'); d.className='btn ghost'; d.textContent='Delete'; d.addEventListener('click', ()=>{ if(confirm(`Delete saved plan “${name}”?`)) doDeletePlan(name); });
+      actions.appendChild(r); actions.appendChild(d);
+      row.appendChild(info); row.appendChild(actions);
+      wrap.appendChild(row);
+    });
+  }
+
+  function setup(){
+    const saveBtn = document.getElementById('savePlanBtn');
+    const restoreBtn = document.getElementById('restorePlanBtn');
+    const modalSaveBtn = document.getElementById('modalSaveBtn');
+    const input = document.getElementById('planNameInput');
+    saveBtn?.addEventListener('click', ()=>{ if(input) input.value=''; openModal('saveModal'); });
+    restoreBtn?.addEventListener('click', ()=>{ buildRestoreList(); openModal('restoreModal'); });
+    modalSaveBtn?.addEventListener('click', ()=>{ const name=(input?.value||'').trim(); doSavePlan(name); });
+    input?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); modalSaveBtn?.click(); } });
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', setup); } else { setup(); }
+})();
+
 /* ===== Floating Year Picker Enhancer (ro18) ===== */
 (function(){
   const TOKENS = {
