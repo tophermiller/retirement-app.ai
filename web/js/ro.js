@@ -1134,6 +1134,89 @@ function prune(x){
   return x;
 }
 
+function validateState(){
+  const errors = [];
+
+  const basics = state.alpha.single || {};
+  if(!nonEmpty(basics.age)) errors.push('Age is required');
+  if(!nonEmpty(basics.retire)) errors.push('Retirement age is required');
+  if(!nonEmpty(basics.life)) errors.push('Life expectancy is required');
+  if(!nonEmpty(basics.stateCode)) errors.push('State of residence is required');
+
+  const g = state.beta.single || {};
+  if(!nonEmpty(g.inflation?.roi)) errors.push('Inflation value is required');
+  if(!nonEmpty(g.liquid?.roi)) errors.push('Liquid Investments ROI is required');
+
+  //validate liquid assets
+  let totalAssets = 0;
+  (state.gamma.items || []).forEach(a => {
+    //sum up the values of all liquid assets
+    let amount = nonEmpty(a.amount) ? toInt(a.amount) : null;
+    totalAssets += (amount || 0);
+  });
+  if (totalAssets <= 0) {
+      errors.push('At least one liquid asset with a positive value is required');
+  }
+
+  //validate real estate
+  let totalRealEstate = 0;
+  (state.delta.items || []).forEach(p => {
+    const purchaseYear = p.purchaseYear || null;
+    if (purchaseYear === '__ALREADY_OWNED__') {
+      //check if mortgage information is complete
+      const loanOrigYear = nonEmpty(p.loanOrigYear) ? toInt(p.loanOrigYear) : null;
+      const loanTerm = nonEmpty(p.loanTerm) ? toInt(p.loanTerm) : null;
+      const loanRate = nonEmpty(p.loanRate) ? toFloat(p.loanRate) : null;
+      const monthlyPayment = nonEmpty(p.monthlyPayment) ? toInt(p.monthlyPayment) : null;
+      const none = (loanOrigYear === null && loanTerm === null && loanRate === null && monthlyPayment === null);
+      const allFour = (loanOrigYear !== null && loanTerm !== null && loanRate !== null && monthlyPayment !== null);
+      if (!none && !allFour) {
+        errors.push(`Mortgage information is incomplete for property "${p.title || 'Unnamed Property'}"`);
+      }
+    }
+    else {
+      //check if future mortgage information is complete
+      const downPaymentPct = nonEmpty(p.downPaymentPct) ? toFloat(p.downPaymentPct) : null;
+      const loanTerm = nonEmpty(p.loanTerm) ? toInt(p.loanTerm) : null;
+      const loanRate = nonEmpty(p.loanRate) ? toFloat(p.loanRate) : null;
+      const none = (downPaymentPct === null && loanTerm === null && loanRate === null);
+      const allThree = (downPaymentPct !== null && loanTerm !== null && loanRate !== null);
+      if (!none && !allThree) {
+        errors.push(`Mortgage information is incomplete for property "${p.title || 'Unnamed Property'}"`);
+      }
+    }
+
+    //validate sale information
+    const saleYear = p.saleYear || null;
+    if (saleYear && saleYear !== '__NEVER_SELL__') {
+      const purchasePrice = nonEmpty(p.purchasePrice) ? toInt(p.purchasePrice) : null;
+      const improvements = nonEmpty(p.improvements) ? toInt(p.improvements) : null;
+      const sellCost = nonEmpty(p.sellCost) ? toInt(p.sellCost) : null;
+      if (purchasePrice === null) {
+        errors.push(`Purchase price is required for sale of property "${p.title || 'Unnamed Property'}"`);
+      }
+    }
+  });
+
+  //validate income
+  (state.epsilon.items || []).forEach(i => {
+
+  });
+
+  //validate expenses
+  let totalExpenses = 0;
+  (state.zeta.items || []).forEach(e => {
+    const annualAmount = nonEmpty(e.amount) ? toInt(e.amount) : null;
+    totalExpenses += (annualAmount || 0);
+  });
+  if (totalExpenses <= 0) {
+    errors.push('At least one expense with a positive value is required');
+  }
+
+
+  return errors;
+}
+
 function buildPlanJSON(){
   const basics = state.alpha.single || {};
   const g = state.beta.single || {};
@@ -1234,6 +1317,12 @@ function buildPlanJSON(){
 
 /* JSON preview toggle */
 previewBtn.addEventListener('click', ()=>{
+  const errors = validateState();
+  if(errors.length > 0){
+    console.warn('Validation errors:', errors);
+    showToast('Cannot preview JSON: ' + errors.join(', '), false);
+    return;
+  }
   const data = buildPlanJSON();
   const enteringPreview = !jsonMode;
   if(enteringPreview){
