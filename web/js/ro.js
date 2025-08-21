@@ -103,6 +103,54 @@ const backSectionBtn  = document.getElementById('backSectionBtn');
 const nextSectionBtn  = document.getElementById('nextSectionBtn');
 
 const toastEl   = document.getElementById('toast');
+// ---- Error Panel helpers ----
+function ensureErrorPanel(){
+  let panel = document.getElementById('errorPanel');
+  let list  = document.getElementById('errorList');
+  if(!panel){
+    // Fallback: create just under the CTA container if not present
+    const topbarCta = document.querySelector('.topbar-cta');
+    panel = document.createElement('div');
+    panel.id = 'errorPanel';
+    panel.className = 'error-panel';
+    panel.setAttribute('role','alert');
+    panel.setAttribute('aria-live','polite');
+    panel.hidden = true;
+    const header = document.createElement('div');
+    header.className = 'error-header';
+    header.textContent = 'Please fix the following:';
+    list = document.createElement('ul');
+    list.id = 'errorList';
+    panel.appendChild(header);
+    panel.appendChild(list);
+    if(topbarCta && topbarCta.parentNode){
+      topbarCta.parentNode.insertBefore(panel, topbarCta.nextSibling);
+    }else{
+      document.body.prepend(panel);
+    }
+  }
+  if(!list){ list = document.getElementById('errorList'); }
+  return {panel, list};
+}
+
+function showErrorPanel(errors){
+  const {panel, list} = ensureErrorPanel();
+  list.innerHTML = '';
+  errors.forEach(msg=>{
+    const li = document.createElement('li');
+    li.textContent = msg;
+    list.appendChild(li);
+  });
+  panel.hidden = false;
+  // Scroll into view just under the CTA area
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function hideErrorPanel(){
+  const panel = document.getElementById('errorPanel');
+  if(panel){ panel.hidden = true; }
+}
+
 
 document.getElementById('submitBtnDup')?.addEventListener('click', () => submitBtn.click());
 
@@ -1138,14 +1186,19 @@ function validateState(){
   const errors = [];
 
   const basics = state.alpha.single || {};
-  if(!nonEmpty(basics.age)) errors.push('Age is required');
-  if(!nonEmpty(basics.retire)) errors.push('Retirement age is required');
-  if(!nonEmpty(basics.life)) errors.push('Life expectancy is required');
-  if(!nonEmpty(basics.stateCode)) errors.push('State of residence is required');
+  if(!nonEmpty(basics.age)) errors.push('Basics: Age is required');
+  if(!nonEmpty(basics.life)) errors.push('Basics: Life expectancy is required');
+  if(!nonEmpty(basics.retire)) errors.push('Basics: Retirement age is required');
+  if(!nonEmpty(basics.stateCode)) errors.push('Basics: State of residence is required');
+  if (nonEmpty(basics.spouseAge) && !nonEmpty(basics.spouseLife)) {
+    errors.push('Basics: Spouse\'s life expectancy is required if age is provided');
+  } else if (nonEmpty(basics.spouseLife) && !nonEmpty(basics.spouseAge)) {
+    errors.push('Basics: Spouse\'s age is required if life expectancy is provided');
+  }
 
   const g = state.beta.single || {};
-  if(!nonEmpty(g.inflation?.roi)) errors.push('Inflation value is required');
-  if(!nonEmpty(g.liquid?.roi)) errors.push('Liquid Investments ROI is required');
+  if(!nonEmpty(g.inflation?.roi)) errors.push('Growth Rates: Inflation value is required');
+  if(!nonEmpty(g.liquid?.roi)) errors.push('Growth Rates: Liquid Investments ROI is required');
 
   //validate liquid assets
   let totalAssets = 0;
@@ -1155,12 +1208,17 @@ function validateState(){
     totalAssets += (amount || 0);
   });
   if (totalAssets <= 0) {
-      errors.push('At least one liquid asset with a positive value is required');
+      errors.push('Liquid Assets: At least one liquid asset is required');
   }
 
   //validate real estate
   let totalRealEstate = 0;
   (state.delta.items || []).forEach(p => {
+    //check for current value of real estate
+    const currentValue = nonEmpty(p.currentValue) ? toInt(p.currentValue) : null;
+    if (currentValue === null || currentValue <= 0) {
+      errors.push(`Real Estate: Current value is required for property "${p.title || 'Unnamed Property'}"`);
+    } 
     const purchaseYear = p.purchaseYear || null;
     if (purchaseYear === '__ALREADY_OWNED__') {
       //check if mortgage information is complete
@@ -1171,7 +1229,7 @@ function validateState(){
       const none = (loanOrigYear === null && loanTerm === null && loanRate === null && monthlyPayment === null);
       const allFour = (loanOrigYear !== null && loanTerm !== null && loanRate !== null && monthlyPayment !== null);
       if (!none && !allFour) {
-        errors.push(`Mortgage information is incomplete for property "${p.title || 'Unnamed Property'}"`);
+        errors.push(`Real Estate: Mortgage information is incomplete for property "${p.title || 'Unnamed Property'}"`);
       }
     }
     else {
@@ -1182,18 +1240,24 @@ function validateState(){
       const none = (downPaymentPct === null && loanTerm === null && loanRate === null);
       const allThree = (downPaymentPct !== null && loanTerm !== null && loanRate !== null);
       if (!none && !allThree) {
-        errors.push(`Mortgage information is incomplete for property "${p.title || 'Unnamed Property'}"`);
+        errors.push(`Real Estate: Mortgage information is incomplete for property "${p.title || 'Unnamed Property'}"`);
       }
     }
 
     //validate sale information
     const saleYear = p.saleYear || null;
     if (saleYear && saleYear !== '__NEVER_SELL__') {
+      //check purchase price
       const purchasePrice = nonEmpty(p.purchasePrice) ? toInt(p.purchasePrice) : null;
       const improvements = nonEmpty(p.improvements) ? toInt(p.improvements) : null;
       const sellCost = nonEmpty(p.sellCost) ? toInt(p.sellCost) : null;
       if (purchasePrice === null) {
-        errors.push(`Purchase price is required for sale of property "${p.title || 'Unnamed Property'}"`);
+        errors.push(`Real Estate: Purchase price is required for sale of property "${p.title || 'Unnamed Property'}"`);
+      }
+      //check proceeds account
+      const saleProceedsAccount = p.saleProceedsAccount || null;
+      if (!saleProceedsAccount) {
+        errors.push(`Real Estate: Proceeds account is required for sale of property "${p.title || 'Unnamed Property'}"`);
       }
     }
   });
@@ -1210,7 +1274,7 @@ function validateState(){
     totalExpenses += (annualAmount || 0);
   });
   if (totalExpenses <= 0) {
-    errors.push('At least one expense with a positive value is required');
+    errors.push('Expenses: At least one expense is required');
   }
 
 
@@ -1320,9 +1384,10 @@ previewBtn.addEventListener('click', ()=>{
   const errors = validateState();
   if(errors.length > 0){
     console.warn('Validation errors:', errors);
-    showToast('Cannot preview JSON: ' + errors.join(', '), false);
+    showErrorPanel(errors);
     return;
   }
+  hideErrorPanel();
   const data = buildPlanJSON();
   const enteringPreview = !jsonMode;
   if(enteringPreview){
@@ -1338,6 +1403,13 @@ previewBtn.addEventListener('click', ()=>{
 
 /* Submit */
 submitBtn.addEventListener('click', async ()=>{
+  const errors = validateState();
+  if(errors.length > 0){
+    console.warn('Validation errors:', errors);
+    showErrorPanel(errors);
+    return;
+  }
+  hideErrorPanel();
   const data = buildPlanJSON();
   try{
     const res = await fetch('/api/plan', {

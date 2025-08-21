@@ -828,3 +828,28 @@ select {
     border-radius: 12px;
   }
 }
+
+
+/* Error Panel */
+.error-panel{ 
+  margin: 12px 0 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--danger-900, #aa2233);
+  background: var(--danger-100, #ffe6e9);
+  color: var(--danger-900, #6a0f17);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.error-panel .error-header{
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 13.5px;
+}
+.error-panel ul{ 
+  margin: 0; 
+  padding-left: 18px;
+}
+.error-panel li{
+  margin: 3px 0;
+  line-height: 1.3;
+}
