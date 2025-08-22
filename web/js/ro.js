@@ -777,7 +777,7 @@ function renderItem(it, sectionKey){
         if (it.atype==='Taxable Investment') {
       const opts = [
         {value:'ordinary', label:'Ordinary Income'},
-        {value:'capital_gains', label:'Capital Gains'},
+        {value:'capital_gains', label:'Long Term Capital Gains'},
         {value:'fifty_fifty', label:'About 50/50'}
       ];
       if (!it.taxTreatment) { it.taxTreatment = 'ordinary'; }
@@ -970,7 +970,7 @@ else if (sectionKey === 'delta'){
     // Tax Treatment (Income only)
     if (sectionKey === 'epsilon') {
       const taxGrid = document.createElement('div'); taxGrid.className='grid-2';
-      const taxOptions = ['Ordinary Income','Social Security Income','Non-taxable Income'];
+      const taxOptions = ['Ordinary Income','Social Security (85% taxable)','Non-taxable Income'];
       const currentTax = it.taxTreatment || 'Ordinary Income';
       const {field:taxField} = makeSelectField('Tax Treatment', taxOptions, currentTax, (v)=>{ it.taxTreatment = v; });
       taxGrid.append(taxField); body.append(taxGrid);
