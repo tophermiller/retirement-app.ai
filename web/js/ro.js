@@ -1361,6 +1361,7 @@ function buildPlanJSON(){
     const firstYear = future ? toInt(a.inheritanceYear) : calendar.planStartYear;
     if (a.atype === 'Taxable Investment') {
       let savingsSubType = 'stock';
+      let taxTreatment = a.taxTreatment === 'ordinary' ? 'ordinary' : (a.taxTreatment === 'capital_gains' ? 'ltcg' : 'split');
       submittal.savingsAccountList.taxableInvestmentAccounts.push({
         idPrefix: asset,
         savingsSubType: savingsSubType,
@@ -1370,7 +1371,8 @@ function buildPlanJSON(){
         future: future,
         firstYear: firstYear,
         startingValueGains: toInt(a.unrealized) || 0,
-        startingValueCost: toInt(a.costBasis) || 0
+        startingValueCost: toInt(a.costBasis) || 0,
+        taxTreatment: taxTreatment 
 
 /*
           title: a.title,
