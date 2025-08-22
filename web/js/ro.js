@@ -1,4 +1,3 @@
-(function(){try{var g=typeof window!=='undefined'?window:globalThis;g.RO_TOKENS=g.RO_TOKENS||{RETIREMENT_YEAR:'__RETIREMENT__',ALREADY_OWNED:'__ALREADY_OWNED__',AS_NEEDED:'__AS_NEEDED__',NEVER_SELL:'__NEVER_SELL__',FIRST_SPOUSE_DEATH:'__FIRST_DEATH__',FIRST_SPOUSE_DEATH_PLUS_1:'__FIRST_DEATH_P1__',END_OF_PLAN:'__END_OF_PLAN__'};if(typeof g.TOKENS==='undefined')g.TOKENS=g.RO_TOKENS;}catch(e){}})();
 
 /* Icons */
 function icon(name){
