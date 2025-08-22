@@ -1345,15 +1345,20 @@ function buildPlanJSON(){
   let assetNum = 1;
   (state.gamma.items || []).forEach(a => {
     let asset = 'asset' + assetNum;
+    const future = a.inheritanceYear && a.inheritanceYear !== '' && a.inheritanceYear !== '__ALREADY_OWNED__' ? true : false;
+    const firstYear = future ? toInt(a.inheritanceYear) : calendar.planStartYear;
     if (a.atype === 'Taxable Investment') {
       let savingsSubType = 'stock';
-      let future = false;
       submittal.savingsAccountList.taxableInvestmentAccounts.push({
         idPrefix: asset,
         savingsSubType: savingsSubType,
         isDefault: a.title.startsWith('DEFAULT'),
         name: a.title,
-        sortOrder: assetNum
+        sortOrder: assetNum,
+        future: future,
+        firstYear: firstYear,
+        startingValueGains: toInt(a.unrealized) || 0,
+        startingValueCost: toInt(a.costBasis) || 0
 
 /*
           title: a.title,
@@ -1372,13 +1377,15 @@ function buildPlanJSON(){
       let savingsSubType = 'regular';
       if (a.atype === 'Tax Deferred') savingsSubType = 'ira';
       if (a.atype === 'Roth') savingsSubType = 'roth';
-      let future = false;
       submittal.savingsAccountList.savingsAccounts.push({
         idPrefix: asset,
         savingsSubType: savingsSubType,
         isDefault: a.title.startsWith('DEFAULT'),
         name: a.title,
-        sortOrder: assetNum
+        sortOrder: assetNum,
+        future: future,
+        firstYear: firstYear,
+        startingValue: toInt(a.amount) || 0
 
 /*
           title: a.title,
