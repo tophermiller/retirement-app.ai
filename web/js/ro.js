@@ -1267,6 +1267,12 @@ function validateState(){
     //sum up the values of all liquid assets
     let amount = nonEmpty(a.amount) ? toInt(a.amount) : null;
     totalAssets += (amount || 0);
+    //check custom ROI values
+    if (nonEmpty(a.roi) && !nonEmpty(a.stdev)) {
+      errors.push(`Liquid Assets: Standard Deviation is required if ROI is provided for asset "${a.title || 'Unnamed Asset'}"`);
+    } else if (!nonEmpty(a.roi) && nonEmpty(a.stdev)) {
+      errors.push(`Liquid Assets: ROI is required if Standard Deviation is provided for asset "${a.title || 'Unnamed Asset'}"`);
+    }
   });
   if (totalAssets <= 0) {
       errors.push('Liquid Assets: At least one liquid asset is required');
@@ -1304,6 +1310,12 @@ function validateState(){
         errors.push(`Real Estate: Mortgage information is incomplete for property "${p.title || 'Unnamed Property'}"`);
       }
     }
+    //check custom ROI values
+    if (nonEmpty(p.roi) && !nonEmpty(p.stdev)) {
+      errors.push(`Real Estate: Standard Deviation is required if ROI is provided for property "${p.title || 'Unnamed Property'}"`);
+    } else if (!nonEmpty(p.roi) && nonEmpty(p.stdev)) {
+      errors.push(`Real Estate: ROI is required if Standard Deviation is provided for property "${p.title || 'Unnamed Property'}"`);
+    }
 
     //validate sale information
     const saleYear = p.saleYear || null;
@@ -1325,7 +1337,6 @@ function validateState(){
 
   //validate income
   (state.epsilon.items || []).forEach(i => {
-
   });
 
   //validate expenses
