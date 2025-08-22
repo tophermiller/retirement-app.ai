@@ -1282,6 +1282,43 @@ function validateState(){
 }
 
 function buildPlanJSON(){
+  const submittal = {};
+  submittal.version = "5.0";
+  //submittal.clickstream = "";
+  submittal.mode = "advanced";
+  //submittal.name = "";
+  const calendar = {};
+  calendar.planStartYear = new Date().getFullYear();
+  calendar.birthYear = calendar.planStartYear - state.alpha.single.age;
+  calendar.deathAge = state.alpha.single.life;
+  if (state.alpha.single.spouseAge && state.alpha.single.spouseLife) {
+    calendar.birthYearSpouse = calendar.planStartYear - state.alpha.single.spouseAge;
+    calendar.deathAgeSpouse = state.alpha.single.spouseLife;
+  }
+  calendar.retireYear = calendar.birthYear + state.alpha.single.retire;
+  submittal.calendar = {};
+
+  if (nonEmpty(state.alpha.single.heirsTarget)) {
+    submittal.definitionOfSuccess = toInt(state.alpha.single.heirsTarget);
+  }
+  submittal.state = state.alpha.single.stateCode; 
+  //submittal.city = ;
+  const growthRates = {};
+  growthRates.inflation = toFloat(state.beta.single.inflation.roi);
+  growthRates.inflation_stdev = toFloat(state.beta.single.inflation.stdev); //TODO: retrofit back end to handle
+  growthRates.defaultAnnualGainRate = {};
+  growthRates.defaultAnnualGainRate.average = toFloat(state.beta.single.liquid.roi);
+  growthRates.defaultAnnualGainRate.standardDeviation = toFloat(state.beta.single.liquid.stdev) || 0; 
+  //growthRates.ownRealEstate = 'true'; //TODO needed?
+  growthRates.defaultREAnnualGainRate = {}
+  growthRates.defaultREAnnualGainRate.average = toFloat(state.beta.single.realEstate.roi);
+  growthRates.defaultREAnnualGainRate.standardDeviation = toFloat(state.beta.single.realEstate.stdev) || 0; 
+  growthRates.growthRatesCustomize = "true"; //TODO
+  growthRates.customGrowthRates = {};
+  growthRates.customGrowthRates.customGrowthRates = []; //TODO: fill in
+  submittal.growthRates = growthRates;
+  
+
   const basics = state.alpha.single || {};
   const g = state.beta.single || {};
 
@@ -1343,6 +1380,8 @@ function buildPlanJSON(){
   }));
 
   const payload = {
+    submittal: submittal,
+
     basics: {
       age: nonEmpty(basics.age) ? toInt(basics.age) : null,
       retirement_age: nonEmpty(basics.retire) ? toInt(basics.retire) : null,
