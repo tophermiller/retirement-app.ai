@@ -292,6 +292,7 @@ function createItem(sectionKey, overrides = {}, lockedFlag /* optional */) {
       rmdProceedsAccount: '', // NEW
       showROI: false, roi: '', stdev: ''
     ,
+      taxTreatment: 'ordinary',
       inheritance:false,
       inheritanceYear: '__ALREADY_OWNED__'
     });
@@ -773,7 +774,18 @@ function renderItem(it, sectionKey){
     }
     body.append(grid);
 
-    if(it.atype==='Tax Deferred'){
+        if (it.atype==='Taxable Investment') {
+      const opts = [
+        {value:'ordinary', label:'Ordinary Income'},
+        {value:'capital_gains', label:'Capital Gains'},
+        {value:'fifty_fifty', label:'About 50/50'}
+      ];
+      if (!it.taxTreatment) { it.taxTreatment = 'ordinary'; }
+      const {field:fTT} = makeSelectField('Tax Treatment', opts, it.taxTreatment, (v)=>{ it.taxTreatment = v; });
+      const row = document.createElement('div'); row.className = 'row'; row.append(fTT);
+      body.append(row);
+    }
+if(it.atype==='Tax Deferred'){
       const r = document.createElement('div'); r.className='row';
       const sw = document.createElement('label'); sw.className='switch';
       const chk = document.createElement('input'); chk.type='checkbox'; chk.checked = !!it.rmd; chk.id = `rmd-${it.id}`;
