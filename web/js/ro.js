@@ -1267,6 +1267,15 @@ function validateState(){
     //sum up the values of all liquid assets
     let amount = nonEmpty(a.amount) ? toInt(a.amount) : null;
     totalAssets += (amount || 0);
+    //check cash interest rate
+    //if (a.atype === 'Cash') {
+    //  const cashRate = nonEmpty(a.cashRate) ? toFloat(a.cashRate) : null;
+    //  if (cashRate === null) {
+    //    errors.push(`Liquid Assets: Cash interest rate is required for asset "${a.title || 'Unnamed Asset'}"`);
+    //  } else if (cashRate < 0 || cashRate > 100) {
+    //    errors.push(`Liquid Assets: Cash interest rate must be between 0% and 100% for asset "${a.title || 'Unnamed Asset'}"`);
+    //  }
+    //}
     //check custom ROI values
     if (nonEmpty(a.roi) && !nonEmpty(a.stdev)) {
       errors.push(`Liquid Assets: Standard Deviation is required if ROI is provided for asset "${a.title || 'Unnamed Asset'}"`);
@@ -1418,6 +1427,8 @@ function buildPlanJSON(){
     if (a.atype === 'Taxable Investment') {
       let savingsSubType = 'stock';
       let taxTreatment = a.taxTreatment === 'ordinary' ? 'ordinary' : (a.taxTreatment === 'capital_gains' ? 'ltcg' : 'split');
+      let annualGainRateOverride = false;
+      if (nonEmpty(a.roi) && nonEmpty(a.stdev)) annualGainRateOverride = true;
       submittal.savingsAccountList.taxableInvestmentAccounts.push({
         idPrefix: asset,
         savingsSubType: savingsSubType,
@@ -1429,7 +1440,12 @@ function buildPlanJSON(){
         startingValueGains: toInt(a.unrealized) || 0,
         startingValueCost: toInt(a.costBasis) || 0,
         taxTreatment: taxTreatment,
-        preRetireContribution: toInt(a.preRetireAnnualContribution) || 0 
+        preRetireContribution: toInt(a.preRetireAnnualContribution) || 0,
+        annualGainRateOverride: annualGainRateOverride,
+        annualGainRate: annualGainRateOverride ? {
+          average: toFloat(a.roi) || 0,
+          standardDeviation: toFloat(a.stdev) || 0
+        } : null
 
 /*
           title: a.title,
@@ -1448,6 +1464,19 @@ function buildPlanJSON(){
       let savingsSubType = 'regular';
       if (a.atype === 'Tax Deferred') savingsSubType = 'ira';
       if (a.atype === 'Roth') savingsSubType = 'roth';
+      let annualGainRateOverride = false;
+      if (a.atype !== 'Cash' && nonEmpty(a.roi) && nonEmpty(a.stdev)) annualGainRateOverride = true;
+      if (a.atype === 'Cash') annualGainRateOverride = true; //always override for cash
+      let annualGainRate = annualGainRateOverride ? {
+          average: toFloat(a.roi) || 0,
+          standardDeviation: toFloat(a.stdev) || 0
+        } : null ;
+      if (a.atype === 'Cash') {
+        annualGainRate = {
+          average: toFloat(a.interest) || 0,
+          standardDeviation: 0
+        };
+      }
       submittal.savingsAccountList.savingsAccounts.push({
         idPrefix: asset,
         savingsSubType: savingsSubType,
@@ -1457,7 +1486,9 @@ function buildPlanJSON(){
         future: future,
         firstYear: firstYear,
         startingValue: toInt(a.amount) || 0,
-        preRetireContribution: toInt(a.preRetireAnnualContribution) || 0 
+        preRetireContribution: toInt(a.preRetireAnnualContribution) || 0,
+        annualGainRateOverride: annualGainRateOverride,
+        annualGainRate: annualGainRate
 
 /*
           title: a.title,
