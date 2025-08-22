@@ -773,6 +773,29 @@ function renderItem(it, sectionKey){
       }
     }
     body.append(grid);
+    // === Pre-Retirement Contribution (visible only if your age < retirement age) ===
+    (function(){
+      try{
+        if (it.atype === 'Taxable Investment') return;
+const basics = (state.alpha && state.alpha.single) ? state.alpha.single : {};
+        const age = parseInt(numOnly(String(basics.age ?? document.getElementById('ageInput')?.value ?? '')),10);
+        const retireAge = parseInt(numOnly(String(basics.retire ?? document.getElementById('retireInput')?.value ?? '')),10);
+        const showPreRet = Number.isFinite(age) && Number.isFinite(retireAge) && age < retireAge;
+        if (showPreRet) {
+          const prRow = document.createElement('div'); prRow.className='row';
+          const prBtn = document.createElement('button'); prBtn.className='btn secondary';
+          prBtn.textContent = it.preRetContribEnabled ? 'Hide Pre-Retirement Contribution' : 'Add Pre-Retirement Contribution';
+          prBtn.addEventListener('click', ()=>{ it.preRetContribEnabled = !it.preRetContribEnabled; render(); });
+          prRow.append(prBtn); body.append(prRow);
+          if (it.preRetContribEnabled) {
+            const gPR = document.createElement('div'); gPR.className='grid';
+            const {field:prField} = makeTextField('Pre-Retirement Annual Contribution ($)', 'e.g. 6000', it.preRetireAnnualContribution, (v)=>{ it.preRetireAnnualContribution = v; });
+            gPR.append(prField); body.append(gPR);
+          }
+        }
+      }catch(e){ /* no-op */ }
+    })();
+
 
         if (it.atype==='Taxable Investment') {
       const opts = [
@@ -784,6 +807,28 @@ function renderItem(it, sectionKey){
       const {field:fTT} = makeSelectField('Tax Treatment', opts, it.taxTreatment, (v)=>{ it.taxTreatment = v; });
       const row = document.createElement('div'); row.className = 'row'; row.append(fTT);
       body.append(row);
+    // === Pre-Retirement Contribution button placed below Tax Treatment (Taxable Investment only) ===
+    (function(){
+      try{
+        const basics = (state.alpha && state.alpha.single) ? state.alpha.single : {};
+        const age = parseInt(numOnly(String(basics.age ?? document.getElementById('ageInput')?.value ?? '')),10);
+        const retireAge = parseInt(numOnly(String(basics.retire ?? document.getElementById('retireInput')?.value ?? '')),10);
+        const showPreRet = Number.isFinite(age) && Number.isFinite(retireAge) && age < retireAge;
+        if (showPreRet) {
+          const prRow = document.createElement('div'); prRow.className='row';
+          const prBtn = document.createElement('button'); prBtn.className='btn secondary';
+          prBtn.textContent = it.preRetContribEnabled ? 'Hide Pre-Retirement Contribution' : 'Add Pre-Retirement Contribution';
+          prBtn.addEventListener('click', ()=>{ it.preRetContribEnabled = !it.preRetContribEnabled; render(); });
+          prRow.append(prBtn); body.append(prRow);
+          if (it.preRetContribEnabled) {
+            const gPR = document.createElement('div'); gPR.className='grid';
+            const {field:prField} = makeTextField('Pre-Retirement Annual Contribution ($)', 'e.g. 6000', it.preRetireAnnualContribution, (v)=>{ it.preRetireAnnualContribution = v; });
+            gPR.append(prField); body.append(gPR);
+          }
+        }
+      }catch(e){}
+    })();
+
     }
 if(it.atype==='Tax Deferred'){
       const r = document.createElement('div'); r.className='row';
@@ -1372,7 +1417,8 @@ function buildPlanJSON(){
         firstYear: firstYear,
         startingValueGains: toInt(a.unrealized) || 0,
         startingValueCost: toInt(a.costBasis) || 0,
-        taxTreatment: taxTreatment 
+        taxTreatment: taxTreatment,
+        preRetireContribution: toInt(a.preRetireAnnualContribution) || 0 
 
 /*
           title: a.title,
@@ -1399,7 +1445,8 @@ function buildPlanJSON(){
         sortOrder: assetNum,
         future: future,
         firstYear: firstYear,
-        startingValue: toInt(a.amount) || 0
+        startingValue: toInt(a.amount) || 0,
+        preRetireContribution: toInt(a.preRetireAnnualContribution) || 0 
 
 /*
           title: a.title,
