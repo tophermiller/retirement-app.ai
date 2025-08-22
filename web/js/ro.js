@@ -1309,18 +1309,60 @@ function buildPlanJSON(){
   growthRates.inflation = toFloat(state.beta.single.inflation.roi);
   growthRates.inflation_stdev = toFloat(state.beta.single.inflation.stdev); //TODO: retrofit back end to handle
   growthRates.defaultAnnualGainRate = {};
-  growthRates.defaultAnnualGainRate.average = toFloat(state.beta.single.liquid.roi);
+  growthRates.defaultAnnualGainRate.average = toFloat(state.beta.single.liquid.roi) || 0;
   growthRates.defaultAnnualGainRate.standardDeviation = toFloat(state.beta.single.liquid.stdev) || 0; 
   //growthRates.ownRealEstate = 'true'; //TODO needed?
   growthRates.defaultREAnnualGainRate = {}
-  growthRates.defaultREAnnualGainRate.average = toFloat(state.beta.single.realEstate.roi);
+  growthRates.defaultREAnnualGainRate.average = toFloat(state.beta.single.realEstate.roi) || 0;
   growthRates.defaultREAnnualGainRate.standardDeviation = toFloat(state.beta.single.realEstate.stdev) || 0; 
   growthRates.growthRatesCustomize = "true"; //TODO
   growthRates.customGrowthRates = {};
-  growthRates.customGrowthRates.customGrowthRates = []; //TODO: fill in
+  //map custom growth rates to array indexed by year offset from current year
+  let triples = state.beta.single.liquid.customYears || [];
+  const currentYear = new Date().getFullYear();
+  const maxYear = Math.max(...triples.map(t => t.year));
+  const length = maxYear - currentYear + 1;
+  const newTriples = Array(length).fill(null);
+  triples.forEach(({ year, roi, prob }) => {
+    const index = year - currentYear;
+    if (index >= 0 && index < length && nonEmpty(year) && nonEmpty(roi) && nonEmpty(prob)) {
+      newTriples[index] = { year : toInt(year), roi: toFloat(roi) || 0, trialPercentage: toFloat(prob) || 0 };
+    }
+  });
+  if (newTriples.length > 0) {
+    growthRates.customGrowthRates.customGrowthRates = newTriples;
+  } else {
+    delete growthRates.customGrowthRates;
+  }
   submittal.growthRates = growthRates;
-  
 
+/*
+  submittal.savingsAccountList = {};
+  submittal.savingsAccountList.savingsAccounts = [];
+  const savingsAccountList = submittal.savingsAccountList.savingsAccounts;
+  (state.gamma.items || []).forEach(a => {
+    if (nonEmpty(a.amount) && nonEmpty(a.title)) {
+      savingsAccountList.push({
+        title: a.title,
+        type: a.type || 'Other',
+        amount: toInt(a.amount),
+        interestRate: toFloat(a.interest_rate_pct),
+        costBasis: toInt(a.cost_basis),
+        unrealizedGains: toInt(a.unrealized_gains),
+        rmdEnabled: a.rmd_enabled || false,
+        rmdProceedsAccount: a.rmd_proceeds_to_account || null, // NEW
+        roi: toFloat(a.roi_pct),
+        standardDeviation: toFloat(a.stdev_pct)
+      });
+    }
+  });
+  if (savingsAccountList.length === 0) {
+    submittal.savingsAccountList = null; // Remove empty savings account list
+  } else {
+    savingsAccountList.sort((a, b) => a.title.localeCompare(b.title));
+  }
+  
+*/
   const basics = state.alpha.single || {};
   const g = state.beta.single || {};
 
@@ -1417,7 +1459,7 @@ function buildPlanJSON(){
     expenses
   };
 
-  return prune(payload);
+  return payload;
 }
 
 /* JSON preview toggle */
