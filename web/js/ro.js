@@ -518,7 +518,7 @@ if(data.heirsTarget){
   // Ensure the array exists, seed with one empty row if none
   g.liquid.customYears = (g.liquid.customYears && g.liquid.customYears.length)
     ? g.liquid.customYears
-    : [{year:'', roi:'', prob:''}];
+    : [{year:String(new Date().getFullYear()), roi:'', prob:''}];
 
   function renderRows(){
     rowsHost.innerHTML = '';
@@ -543,7 +543,9 @@ if(data.heirsTarget){
       const sY = document.createElement('select');
       sY.className = 'year-compact';
       years.forEach(y=>{ const o=document.createElement('option'); o.value=y; o.textContent=y; sY.appendChild(o); });
-      if (row.year) sY.value = String(row.year);
+      if (!row.year) { row.year = years[0]; }
+    sY.value = String(row.year);
+    if (row.year) sY.value = String(row.year);
       sY.addEventListener('change', ()=>{ row.year = sY.value; });
       fY.append(sY);
 
@@ -608,7 +610,7 @@ if(data.heirsTarget){
 
   addBtn.onclick = ()=>{
     g.liquid.customYears = g.liquid.customYears || [];
-    g.liquid.customYears.push({year:'', roi:'', prob:''});
+    g.liquid.customYears.push({year:String(new Date().getFullYear()), roi:'', prob:''});
     renderRows();
   };
 })();
@@ -2077,6 +2079,8 @@ function renderRows(){
     const sY = document.createElement('select');
     sY.className = 'year-compact';
     years.forEach(y=>{ const o=document.createElement('option'); o.value=y; o.textContent=y; sY.appendChild(o); });
+    if (!row.year) { row.year = years[0]; }
+    sY.value = String(row.year);
     if (row.year) sY.value = String(row.year);
     sY.addEventListener('change', ()=>{ row.year = sY.value; });
     fY.append(sY);
