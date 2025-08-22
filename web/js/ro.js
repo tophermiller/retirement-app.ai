@@ -1,3 +1,4 @@
+(function(){try{var g=typeof window!=='undefined'?window:globalThis;g.RO_TOKENS=g.RO_TOKENS||{RETIREMENT_YEAR:'__RETIREMENT__',ALREADY_OWNED:'__ALREADY_OWNED__',AS_NEEDED:'__AS_NEEDED__',NEVER_SELL:'__NEVER_SELL__',FIRST_SPOUSE_DEATH:'__FIRST_DEATH__',FIRST_SPOUSE_DEATH_PLUS_1:'__FIRST_DEATH_P1__',END_OF_PLAN:'__END_OF_PLAN__'};if(typeof g.TOKENS==='undefined')g.TOKENS=g.RO_TOKENS;}catch(e){}})();
 
 /* Icons */
 function icon(name){
@@ -293,7 +294,7 @@ function createItem(sectionKey, overrides = {}, lockedFlag /* optional */) {
       showROI: false, roi: '', stdev: ''
     ,
       inheritance:false,
-      inheritanceYear: ''
+      inheritanceYear: '__ALREADY_OWNED__'
     });
   } else if (sectionKey === 'delta') {
     Object.assign(base, {
@@ -823,7 +824,9 @@ function renderItem(it, sectionKey){
         const now = new Date().getFullYear();
         const years = Array.from({length:51},(_,i)=> now + i); // include current year + 50
         const {field:inhField, select:inhSel} = makeSelectField('Inheritance Year', years, it.inheritanceYear || '', (v)=>{ it.inheritanceYear = v; });
-        inhSel.dataset.yearsOnly = '1';
+        inhSel.dataset.yearsOnly = '0';
+        inhSel.dataset.isPurchaseYearSelect = '1';
+        inhSel.dataset.defaultToken='__ALREADY_OWNED__';
         inhSel.classList.add('year-select');
         try { rebuildSelect(inhSel, 'Inheritance Year'); } catch(e){}
         inhGrid.append(inhField);
@@ -1416,6 +1419,8 @@ function buildPlanJSON(){
     rmd_proceeds_to_account: a.rmd ? (a.rmdProceedsAccount || null) : undefined, // NEW
     roi_pct: nonEmpty(a.roi) ? toFloat(a.roi) : null,
     stdev_pct: nonEmpty(a.stdev) ? toFloat(a.stdev) : null
+  ,
+    inheritance_year: a.inheritanceYear || null
   }));
 
   const realEstate = (state.delta.items || []).map(p => ({
@@ -1974,8 +1979,8 @@ init();
   function isYear(v){ return /^\d{4}$/.test(String(v)); }
   function labelForToken(token){
     switch(token){
-      case TOKENS.ALREADY_OWNED: return '• Before Current Year (Already Owned)';
-      case TOKENS.AS_NEEDED: return '• Whenever Needed For Cash Flow';
+      case TOKENS.ALREADY_OWNED: return '• Already Owned';
+      case TOKENS.AS_NEEDED: return '• Sell When Needed For Cash Flow';
       case TOKENS.NEVER_SELL: return '• Never Sell';
       case TOKENS.RETIREMENT_YEAR: return '• Retirement Year';
       case TOKENS.FIRST_SPOUSE_DEATH: return '• First Spouse Death';
