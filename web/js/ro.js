@@ -1336,33 +1336,72 @@ function buildPlanJSON(){
   }
   submittal.growthRates = growthRates;
 
-/*
+  //liquid assets
   submittal.savingsAccountList = {};
   submittal.savingsAccountList.savingsAccounts = [];
-  const savingsAccountList = submittal.savingsAccountList.savingsAccounts;
+  submittal.savingsAccountList.taxableInvestmentAccounts = [];
+  let assetNum = 1;
   (state.gamma.items || []).forEach(a => {
-    if (nonEmpty(a.amount) && nonEmpty(a.title)) {
-      savingsAccountList.push({
-        title: a.title,
-        type: a.type || 'Other',
-        amount: toInt(a.amount),
-        interestRate: toFloat(a.interest_rate_pct),
-        costBasis: toInt(a.cost_basis),
-        unrealizedGains: toInt(a.unrealized_gains),
-        rmdEnabled: a.rmd_enabled || false,
-        rmdProceedsAccount: a.rmd_proceeds_to_account || null, // NEW
-        roi: toFloat(a.roi_pct),
-        standardDeviation: toFloat(a.stdev_pct)
+    let asset = 'asset' + assetNum;
+    if (a.atype === 'Taxable Investment') {
+      let savingsSubType = 'stock';
+      let future = false;
+      submittal.savingsAccountList.taxableInvestmentAccounts.push({
+        idPrefix: asset,
+        savingsSubType: savingsSubType,
+        isDefault: a.title.startsWith('DEFAULT'),
+        name: a.title,
+        sortOrder: assetNum
+
+/*
+          title: a.title,
+          amount: toInt(a.amount),
+          interestRate: toFloat(a.interest) || 0, //interest_rate_pct
+          costBasis: toInt(a.costBasis) || 0,
+          unrealizedGains: toInt(a.unrealized) || 0,
+          rmdEnabled: !!a.rmd,
+          rmdProceedsAccount: a.rmd ? (a.rmdProceedsAccount || null) : null, // NEW
+          roi: toFloat(a.roi) || 0,
+          standardDeviation: toFloat(a.stdev) || 0 
+          */ 
       });
     }
+    else {
+      let savingsSubType = 'regular';
+      if (a.atype === 'Tax Deferred') savingsSubType = 'ira';
+      if (a.atype === 'Roth') savingsSubType = 'roth';
+      let future = false;
+      submittal.savingsAccountList.savingsAccounts.push({
+        idPrefix: asset,
+        savingsSubType: savingsSubType,
+        isDefault: a.title.startsWith('DEFAULT'),
+        name: a.title,
+        sortOrder: assetNum
+
+/*
+          title: a.title,
+          amount: toInt(a.amount),
+          interestRate: toFloat(a.interest) || 0, //interest_rate_pct
+          costBasis: toInt(a.costBasis) || 0,
+          unrealizedGains: toInt(a.unrealized) || 0,
+          rmdEnabled: !!a.rmd,
+          rmdProceedsAccount: a.rmd ? (a.rmdProceedsAccount || null) : null, // NEW
+          roi: toFloat(a.roi) || 0
+          standardDeviation: toFloat(a.stdev) || 0  
+          */
+      });
+    }
+    assetNum += 1;
   });
-  if (savingsAccountList.length === 0) {
-    submittal.savingsAccountList = null; // Remove empty savings account list
-  } else {
-    savingsAccountList.sort((a, b) => a.title.localeCompare(b.title));
-  }
-  
-*/
+
+  if (submittal.savingsAccountList.savingsAccounts.length === 0) {
+    submittal.savingsAccountList.savingsAccounts = null; // Remove empty savings account list
+  } 
+  if (submittal.savingsAccountList.taxableInvestmentAccounts.length === 0) {
+    submittal.savingsAccountList.taxableInvestmentAccounts = null; // Remove empty savings account list
+  } 
+
+  //original code below
   const basics = state.alpha.single || {};
   const g = state.beta.single || {};
 
