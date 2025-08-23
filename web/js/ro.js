@@ -289,7 +289,7 @@ function createItem(sectionKey, overrides = {}, lockedFlag /* optional */) {
       amount: '', interest: '',
       costBasis: '', unrealized: '',
       rmd: false,
-      rmdProceedsAccount: '', // NEW
+      rmdProceedsAccount: 'DEFAULT Taxable Investment Account', // NEW
       showROI: false, roi: '', stdev: ''
     ,
       taxTreatment: 'ordinary',
@@ -304,7 +304,7 @@ function createItem(sectionKey, overrides = {}, lockedFlag /* optional */) {
   showMortgage: false, loanOrigYear: '', loanTerm: '', loanRate: '', monthlyPayment: '', downPaymentPct: '',
       showRental: false, annualExpenses: '', annualIncome: '', rentGrowth: '',
       showSale: false, saleYear: '__NEVER_SELL__', purchasePrice: '', improvements: '', sellCost: '',
-      saleProceedsAccount: '' // NEW
+      saleProceedsAccount: 'DEFAULT Taxable Investment Account' // NEW
     });
   } else if (sectionKey === 'epsilon' || sectionKey === 'zeta') {
     Object.assign(base, {
@@ -851,7 +851,7 @@ if(it.atype==='Tax Deferred'){
       if(it.rmd){
         // "Proceeds to account" under RMD when enabled
         const proceedsOptions = getProceedsAccountOptions();
-        const withPlaceholder = [{value:'', label:'— Select account —'}, ...proceedsOptions.map(t => ({value:t, label:t}))];
+        const withPlaceholder = proceedsOptions.map(t => ({value:t, label:t}));
         const gRmd = document.createElement('div'); gRmd.className='grid-2';
         const {field:paField} = makeSelectField('Proceeds to account', withPlaceholder, it.rmdProceedsAccount || '', (v)=>{ it.rmdProceedsAccount = v; });
         
@@ -1016,7 +1016,7 @@ else if (sectionKey === 'delta'){
 
       // Proceeds to account (already added for Real Estate)
       const proceedsOptions = getProceedsAccountOptions();
-      const withPlaceholder = [{value:'', label:'— Select account —'}, ...proceedsOptions.map(t => ({value:t, label:t}))];
+      const withPlaceholder = proceedsOptions.map(t => ({value:t, label:t}));
       const g3 = document.createElement('div'); g3.className='grid-2';
       const {field:paField} = makeSelectField('Proceeds to account', withPlaceholder, it.saleProceedsAccount || '', (v)=>{ it.saleProceedsAccount = v; });
       g3.append(paField); body.append(g3);
