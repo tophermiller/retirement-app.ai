@@ -988,10 +988,10 @@ else if (sectionKey === 'delta'){
 
     if(it.showRental){
       const g = document.createElement('div'); g.className='grid';
-      const {field:expF}  = makeTextField('Annual Expenses ($)', 'e.g. 6000', it.annualExpenses, (v)=>{ it.annualExpenses=v; });
       const {field:incF}  = makeTextField('Annual Rental Income ($)', 'e.g. 30000', it.annualIncome, (v)=>{ it.annualIncome=v; });
+      const {field:expF}  = makeTextField('Annual Expenses ($) (w/o mortgage)', 'e.g. 6000', it.annualExpenses, (v)=>{ it.annualExpenses=v; });
       const {field:grF}   = makeTextField('Growth Rate (%)', 'e.g. 2.5', it.rentGrowth, (v)=>{ it.rentGrowth=v; });
-      g.append(expF, incF, grF); body.append(g);
+      g.append(incF, expF, grF); body.append(g);
     }
 
     /* Sale */
@@ -1011,7 +1011,7 @@ else if (sectionKey === 'delta'){
       const g2 = document.createElement('div'); g2.className='grid';
       const {field:ppF} = makeTextField('Purchase Price ($)', 'e.g. 500000', it.purchasePrice, (v)=>{ it.purchasePrice=v; });
       const {field:impF}= makeTextField('Improvements Value ($)', 'e.g. 75000', it.improvements, (v)=>{ it.improvements=v; });
-      const {field:csF} = makeTextField('Cost of Selling ($)', 'e.g. 30000', it.sellCost, (v)=>{ it.sellCost=v; });
+      const {field:csF} = makeTextField('Cost of Selling (%)', 'e.g. 6', it.sellCost, (v)=>{ it.sellCost=v; });
       g2.append(ppF, impF, csF); body.append(g2);
 
       // Proceeds to account (already added for Real Estate)
@@ -1415,6 +1415,42 @@ function getIdPrefixMap() {
   return map;
 }
 
+/**
+ * Compute the original loan principal from a fixed monthly mortgage payment.
+ *
+ * Formula (level-payment annuity):
+ *   M = P * i / (1 - (1 + i)^(-N))
+ *   => P = M * (1 - (1 + i)^(-N)) / i
+ *
+ * @param {number} monthlyPayment - Fixed monthly payment (M), > 0
+ * @param {number} termYears      - Loan term in years, > 0
+ * @param {number} annualRate     - Annual interest rate as a decimal (e.g., 0.06 for 6%), amortized monthly
+ * @returns {number} Starting principal (P)
+ */
+function getMortgageStartPrincipal(monthlyPayment, termYears, annualRate) {
+  if (!Number.isFinite(monthlyPayment) || monthlyPayment <= 0) {
+    throw new Error("monthlyPayment must be a positive number");
+  }
+  if (!Number.isFinite(termYears) || termYears <= 0) {
+    throw new Error("termYears must be a positive number");
+  }
+  if (!Number.isFinite(annualRate) || annualRate < 0) {
+    throw new Error("annualRate must be a non-negative number (e.g., 0.06 for 6%)");
+  }
+
+  const N = Math.round(termYears * 12); // total number of monthly payments
+  const i = annualRate / 12;            // monthly interest rate
+
+  // Handle zero (or effectively zero) interest as a special case
+  if (Math.abs(i) < 1e-12) {
+    return monthlyPayment * N;
+  }
+
+  const discountFactor = 1 - Math.pow(1 + i, -N);
+  return monthlyPayment * (discountFactor / i);
+}
+
+
 function buildPlanJSON(){
   const submittal = {};
   submittal.version = "5.0";
@@ -1499,18 +1535,6 @@ function buildPlanJSON(){
           average: toFloat(a.roi) || 0,
           standardDeviation: toFloat(a.stdev) || 0
         } : null
-
-/*
-          title: a.title,
-          amount: toInt(a.amount),
-          interestRate: toFloat(a.interest) || 0, //interest_rate_pct
-          costBasis: toInt(a.costBasis) || 0,
-          unrealizedGains: toInt(a.unrealized) || 0,
-          rmdEnabled: !!a.rmd,
-          rmdProceedsAccount: a.rmd ? (a.rmdProceedsAccount || null) : null, // NEW
-          roi: toFloat(a.roi) || 0,
-          standardDeviation: toFloat(a.stdev) || 0 
-          */ 
       });
     }
     else {
@@ -1549,18 +1573,6 @@ function buildPlanJSON(){
         rmdEnabled: rmdEnabled,
         assetOwner: rmdEnabled ? a.rmdOwner : 'you',
         proceedsToAccountId: rmdEnabled ? (idPrefixMap[a.rmdProceedsAccount] || null) : null
-
-/*
-          title: a.title,
-          amount: toInt(a.amount),
-          interestRate: toFloat(a.interest) || 0, //interest_rate_pct
-          costBasis: toInt(a.costBasis) || 0,
-          unrealizedGains: toInt(a.unrealized) || 0,
-          rmdEnabled: !!a.rmd,
-          rmdProceedsAccount: a.rmd ? (a.rmdProceedsAccount || null) : null, // NEW
-          roi: toFloat(a.roi) || 0
-          standardDeviation: toFloat(a.stdev) || 0  
-          */
       });
     }
     assetNum += 1;
@@ -1572,6 +1584,119 @@ function buildPlanJSON(){
   if (submittal.savingsAccountList.taxableInvestmentAccounts.length === 0) {
     submittal.savingsAccountList.taxableInvestmentAccounts = null; // Remove empty savings account list
   } 
+
+  //Real estate
+  submittal.propertyList = {};
+  submittal.propertyList.properties = [];
+  submittal.propertyList.rentalProperties = [];
+  let propNum = 1;
+  (state.delta.items || []).forEach(p => {
+    const future = p.purchaseYear && p.purchaseYear !== '' && p.purchaseYear !== '__ALREADY_OWNED__' ? true : false;
+    const firstYear = future ? toInt(p.purchaseYear) : calendar.planStartYear;
+    let annualGainRateOverride = false;
+    if (nonEmpty(p.roi) && nonEmpty(p.stdev)) annualGainRateOverride = true;
+    const rental = (p.annualExpenses || p.annualIncome || p.rentGrowth) ? true : false;
+    const re = {
+      name: p.title,
+      propertySubType: rental ? 'rental' : 'home',
+      future: future,
+      firstYear: firstYear,
+      startingValue: toInt(p.currentValue) || 0,
+      annualGainRateOverride: annualGainRateOverride,
+      annualGainRate: annualGainRateOverride ? {
+        average: toFloat(p.roi) || 0,
+        standardDeviation: toFloat(p.stdev) || 0
+      } : null,
+      //hasMortgage: below
+      //mortgageStartYear: below
+      //mortgageStartPrincipal: below
+      //mortgageTermYears: below
+      //mortgageInterestRate: below
+      //planToSell: below
+      //sellTrigger: below
+      //annualExpenses: below
+      //annualRentalIncome: below
+      //cashFlowGrowthRate: below
+      idPrefix: 'property' + propNum
+    };
+    //mortgage?
+    const loanOrigYear = nonEmpty(p.loanOrigYear) ? toInt(p.loanOrigYear) : null;
+    const loanTerm = nonEmpty(p.loanTerm) ? toInt(p.loanTerm) : null;
+    const loanRate = nonEmpty(p.loanRate) ? toFloat(p.loanRate) : null;
+    const monthlyPayment = nonEmpty(p.monthlyPayment) ? toInt(p.monthlyPayment) : null;
+    const downPaymentPct = nonEmpty(p.downPaymentPct) ? toFloat(p.downPaymentPct) : null;
+    const hasMortgage = (loanOrigYear !== null && loanTerm !== null && loanRate !== null && monthlyPayment !== null) ||
+                        (downPaymentPct !== null && loanTerm !== null && loanRate !== null);
+    re.hasMortgage = hasMortgage;
+    if (hasMortgage) {
+      if (future) {
+        re.downPaymentPercent = downPaymentPct || 0;
+        re.mortgageStartYear = -1;
+        re.mortgageStartPrincipal = -1;
+        re.mortgageTermYears = loanTerm || 0;
+        re.mortgageInterestRate = loanRate || 0;
+      }
+      else {
+        re.mortgageStartYear = loanOrigYear;
+        re.mortgageStartPrincipal = getMortgageStartPrincipal(monthlyPayment, loanTerm, (loanRate || 0)/100);
+        re.mortgageTermYears = loanTerm;
+        re.mortgageInterestRate = loanRate;
+      }
+    }
+    //rental?
+    const annualExpenses = nonEmpty(p.annualExpenses) ? toInt(p.annualExpenses) : 0;
+    const annualIncome = nonEmpty(p.annualIncome) ? toInt(p.annualIncome) : 0;
+    const rentGrowth = nonEmpty(p.rentGrowth) ? toFloat(p.rentGrowth) : 0;
+    const hasRental = (annualExpenses !== 0 || annualIncome !== 0 || rentGrowth !== 0);
+    if (hasRental) {
+      re.annualRentalIncome = annualIncome;
+      re.annualExpenses = annualExpenses;
+      re.cashFlowGrowthRate = rentGrowth;
+    }
+    //sale?
+    const planToSell = p.saleYear && p.saleYear !== '' && p.saleYear !== '__AS_NEEDED__' && p.saleYear !== '__NEVER_SELL__' ? true : false;
+    const sellTrigger = p.saleYear === '__AS_NEEDED__';
+    re.planToSell = planToSell;
+    re.sellTrigger = sellTrigger;
+    if (planToSell) {
+      re.lastYear = toInt(p.saleYear) || null;
+    }
+    if (planToSell || sellTrigger) {
+      re.purchasePrice = nonEmpty(p.purchasePrice) ? toInt(p.purchasePrice) : 0;
+      re.improvementsValue = nonEmpty(p.improvements) ? toInt(p.improvements) : 0;
+      re.costOfSelling = nonEmpty(p.sellCost) ? toInt(p.sellCost) : 0; //TODO: make percent, not flat
+      const saleProceedsAccount = p.saleProceedsAccount || null;
+      re.proceedsToAccountId = saleProceedsAccount ? (idPrefixMap[saleProceedsAccount] || null) : null
+    }    
+
+
+    if (rental) {
+      submittal.propertyList.rentalProperties.push(re);
+    }
+    else {
+      submittal.propertyList.properties.push(re);
+    }
+    propNum += 1;
+  });
+  if (submittal.propertyList.properties.length === 0) {
+    submittal.propertyList.properties = null; // Remove empty real estate list
+  }
+  if (submittal.propertyList.rentalProperties.length === 0) {
+    submittal.propertyList.rentalProperties = null; // Remove empty rental property list
+  }
+  if (submittal.propertyList.properties === null && submittal.propertyList.rentalProperties === null) {
+    submittal.propertyList = null; // Remove empty property list
+  }
+
+  //income
+
+
+
+
+  //expenses
+
+
+
 
   //original code below
   const basics = state.alpha.single || {};
