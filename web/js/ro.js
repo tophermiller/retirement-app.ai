@@ -1735,13 +1735,13 @@ function buildPlanJSON(){
     propNum += 1;
   });
   if (submittal.propertyList.properties.length === 0) {
-    submittal.propertyList.properties = null; // Remove empty real estate list
+    delete submittal.propertyList.properties; // Remove empty real estate list
   }
   if (submittal.propertyList.rentalProperties.length === 0) {
-    submittal.propertyList.rentalProperties = null; // Remove empty rental property list
+    delete submittal.propertyList.rentalProperties; // Remove empty rental property list
   }
   if (submittal.propertyList.properties === null && submittal.propertyList.rentalProperties === null) {
-    submittal.propertyList = null; // Remove empty property list
+    delete submittal.propertyList; // Remove empty property list
   }
 
   //income
@@ -1767,10 +1767,10 @@ function buildPlanJSON(){
     incomeNum += 1;
   });
   if (submittal.incomeAccountList.incomesAccounts.length === 0) {
-    submittal.incomeAccountList.incomesAccounts = null; // Remove empty income list
+    delete submittal.incomeAccountList.incomesAccounts; // Remove empty income list
   }
   if (submittal.incomeAccountList.incomesAccounts === null) {
-    submittal.incomeAccountList = null; // Remove empty income account list
+    delete submittal.incomeAccountList; // Remove empty income account list
   }
 
 
@@ -1797,10 +1797,10 @@ function buildPlanJSON(){
     expenseNum += 1;
   });
   if (submittal.expenseAccountList.expenseAccounts.length === 0) {
-    submittal.expenseAccountList.expenseAccounts = null; // Remove empty expense list
+    delete submittal.expenseAccountList.expenseAccounts; // Remove empty expense list
   }
   if (submittal.expenseAccountList.expenseAccounts === null) {
-    submittal.expenseAccountList = null; // Remove empty expense account list
+    delete submittal.expenseAccountList; // Remove empty expense account list
   }
 
 
