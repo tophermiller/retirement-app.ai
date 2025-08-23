@@ -880,3 +880,11 @@ select {
   .saved-plan-actions{display:flex;gap:8px;justify-content:flex-start}
 }
 body.ro-modal-open{overflow:hidden;}
+
+
+/* ----- Results & Nav Separator ----- */
+.nav-sep{ margin:14px 0 6px; border-top:1px solid var(--outline); opacity:.6; }
+
+/* Ensure results panel fills the main area similarly to other panels */
+.results-panel .panel-header h2{ margin:0 0 6px; }
+.results-panel .json-box{ max-height: 60vh; }

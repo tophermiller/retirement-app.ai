@@ -1,328 +1,306 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RetirementOdds.com</title>  
-<link rel="stylesheet" href="css/ro.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>RetirementOdds.com</title>
+<link href="css/ro.css" rel="stylesheet"/>
 </head>
-
 <body>
-  <header class="brandbar">
-    <div class="brand">
-      <img src="images/piggy-transparent.png" height="50px" alt="Logo">
-      <h1>What are your Retirement Odds?</h1>
-    </div>
-    <div class="brand-desc lipsum">
+<header class="brandbar">
+<div class="brand">
+<img alt="Logo" height="50px" src="images/piggy-transparent.png"/>
+<h1>What are your Retirement Odds?</h1>
+</div>
+<div class="brand-desc lipsum">
       Enter your financial information and find out the chances that you can live the rest of your like without running out of money. The key to an accurate result lies in the guesses you make in the "Growth Rates" section.
     </div>
-  </header>
-  <div class="app">
-    <aside class="sidebar" id="sidebar">
-      <nav class="nav" id="nav"></nav>
-    </aside>
-
-    <div class="overlay" id="overlay"></div>
-
-    <main class="main">
-      <div class="topbar">
-        <button class="hamburger" id="hamburger" aria-label="Open menu">☰</button>
-        <div class="spacer"></div>
-        <!-- CTA BUTTONS ABOVE THE MAIN PANEL -->
-        <div class="topbar-cta">
-  <button class="btn" id="savePlanBtn" title="Save current plan">Save</button>
-  <button class="btn ghost" id="restorePlanBtn" title="Restore or delete a saved plan">Restore</button>
-
-  <button class="btn ghost" id="previewJsonBtn">Preview JSON</button>
-  <button class="btn ok" id="submitBtn">Calculate My RetirementOdds</button>
+</header>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+<nav class="nav" id="nav"></nav>
+</aside>
+<div class="overlay" id="overlay"></div>
+<main class="main">
+<div class="topbar">
+<button aria-label="Open menu" class="hamburger" id="hamburger">☰</button>
+<div class="spacer"></div>
+<!-- CTA BUTTONS ABOVE THE MAIN PANEL -->
+<div class="topbar-cta">
+<button class="btn" id="savePlanBtn" title="Save current plan">Save</button>
+<button class="btn ghost" id="restorePlanBtn" title="Restore or delete a saved plan">Restore</button>
+<button class="btn ghost" id="previewJsonBtn">Preview JSON</button>
+<button class="btn ok" id="submitBtn">Calculate My RetirementOdds</button>
 </div>
 </div>
 <!-- Error Panel -->
-<div id="errorPanel" class="error-panel" role="alert" aria-live="polite" hidden>
-  <div class="error-header">Please fix the following:</div>
-  <ul id="errorList"></ul>
+<div aria-live="polite" class="error-panel" hidden="" id="errorPanel" role="alert">
+<div class="error-header">Please fix the following:</div>
+<ul id="errorList"></ul>
 </div>
-
 <section class="panel">
-        <div class="panel-header">
-          <h2 id="sectionTitle">Section</h2>
-        </div>
-
-        <p class="lipsum" id="sectionText"></p>
-
-        <!-- BASICS -->
-        <div id="singleBasics" class="single hidden">
-          <div id="basicsForm">
-            <div class="basics-grid">
-              <div class="cardish age">
-                <div class="title">Your Age</div>
-                <div class="ctrl">
-                  <input id="ageInput" type="text" inputmode="numeric" placeholder="" maxlength="3" />
-                  <span class="unit">yrs</span>
-                </div>
-                <div class="hint"></div>
-              </div>
-
-              <div class="cardish life">
-                <div class="title">Life Expectancy</div>
-                <div class="ctrl">
-                  <input id="lifeInput" type="text" inputmode="numeric" placeholder="" maxlength="3" />
-                  <span class="unit">yrs</span>
-                </div>
-                <div class="hint"></div>
-              </div>
-
-              <div class="cardish retire">
-                <div class="title">Retirement Age</div>
-                <div class="ctrl">
-                  <input id="retireInput" type="text" inputmode="numeric" placeholder="" maxlength="3"/>
-                  <span class="unit">yrs</span>
-                </div>
-                <div class="hint"></div>
-              </div>
-
-              <div class="cardish sp-age">
-                <div class="title">Spouse Age</div>
-                <div class="ctrl">
-                  <input id="ageInputSpouse" type="text" inputmode="numeric" placeholder=""  maxlength="3"/>
-                  <span class="unit">yrs</span>
-                </div>
-                <div class="hint"></div>
-              </div>
-
-              <div class="cardish sp-life">
-                <div class="title">Spouse Life Expectancy</div>
-                <div class="ctrl">
-                  <input id="lifeInputSpouse" type="text" inputmode="numeric" placeholder="" maxlength="3" />
-                  <span class="unit">yrs</span>
-                </div>
-                <div class="hint"></div>
-              </div>
-            
+<div class="panel-header">
+<h2 id="sectionTitle">Section</h2>
+</div>
+<p class="lipsum" id="sectionText"></p>
+<!-- BASICS -->
+<div class="single hidden" id="singleBasics">
+<div id="basicsForm">
+<div class="basics-grid">
+<div class="cardish age">
+<div class="title">Your Age</div>
+<div class="ctrl">
+<input id="ageInput" inputmode="numeric" maxlength="3" placeholder="" type="text"/>
+<span class="unit">yrs</span>
+</div>
+<div class="hint"></div>
+</div>
+<div class="cardish life">
+<div class="title">Life Expectancy</div>
+<div class="ctrl">
+<input id="lifeInput" inputmode="numeric" maxlength="3" placeholder="" type="text"/>
+<span class="unit">yrs</span>
+</div>
+<div class="hint"></div>
+</div>
+<div class="cardish retire">
+<div class="title">Retirement Age</div>
+<div class="ctrl">
+<input id="retireInput" inputmode="numeric" maxlength="3" placeholder="" type="text"/>
+<span class="unit">yrs</span>
+</div>
+<div class="hint"></div>
+</div>
+<div class="cardish sp-age">
+<div class="title">Spouse Age</div>
+<div class="ctrl">
+<input id="ageInputSpouse" inputmode="numeric" maxlength="3" placeholder="" type="text"/>
+<span class="unit">yrs</span>
+</div>
+<div class="hint"></div>
+</div>
+<div class="cardish sp-life">
+<div class="title">Spouse Life Expectancy</div>
+<div class="ctrl">
+<input id="lifeInputSpouse" inputmode="numeric" maxlength="3" placeholder="" type="text"/>
+<span class="unit">yrs</span>
+</div>
+<div class="hint"></div>
+</div>
 <div class="cardish sp-retire">
-  <div class="title">Spouse Retirement Age</div>
-  <div class="pill-note" id="spRetireText">Retires with you</div>
+<div class="title">Spouse Retirement Age</div>
+<div class="pill-note" id="spRetireText">Retires with you</div>
 </div>
 </div>
+<!-- Stacked add-ons -->
+<div class="basics-addons">
+<div class="field">
+<label class="label" for="stateSelect">State of Residence in Retirement</label>
+<select id="stateSelect">
+<option value="">Select a state…</option>
+<option value="AL">Alabama</option>
+<option value="AK">Alaska</option>
+<option value="AZ">Arizona</option>
+<option value="AR">Arkansas</option>
+<option value="CA">California</option>
+<option value="CO">Colorado</option>
+<option value="CT">Connecticut</option>
+<option value="DE">Delaware</option>
+<option value="FL">Florida</option>
+<option value="GA">Georgia</option>
+<option value="HI">Hawaii</option>
+<option value="ID">Idaho</option>
+<option value="IL">Illinois</option>
+<option value="IN">Indiana</option>
+<option value="IA">Iowa</option>
+<option value="KS">Kansas</option>
+<option value="KY">Kentucky</option>
+<option value="LA">Louisiana</option>
+<option value="ME">Maine</option>
+<option value="MD">Maryland</option>
+<option value="MA">Massachusetts</option>
+<option value="MI">Michigan</option>
+<option value="MN">Minnesota</option>
+<option value="MS">Mississippi</option>
+<option value="MO">Missouri</option>
+<option value="MT">Montana</option>
+<option value="NE">Nebraska</option>
+<option value="NV">Nevada</option>
+<option value="NH">New Hampshire</option>
+<option value="NJ">New Jersey</option>
+<option value="NM">New Mexico</option>
+<option value="NY">New York</option>
+<option value="NC">North Carolina</option>
+<option value="ND">North Dakota</option>
+<option value="OH">Ohio</option>
+<option value="OK">Oklahoma</option>
+<option value="OR">Oregon</option>
+<option value="PA">Pennsylvania</option>
+<option value="RI">Rhode Island</option>
+<option value="SC">South Carolina</option>
+<option value="SD">South Dakota</option>
+<option value="TN">Tennessee</option>
+<option value="TX">Texas</option>
+<option value="UT">Utah</option>
+<option value="VT">Vermont</option>
+<option value="VA">Virginia</option>
+<option value="WA">Washington</option>
+<option value="WV">West Virginia</option>
+<option value="WI">Wisconsin</option>
+<option value="WY">Wyoming</option>
+</select>
+</div>
+<div class="field">
+<label class="label" for="heirsInput">Define success by how much you want to leave to your heirs</label>
+<input id="heirsInput" inputmode="decimal" placeholder="e.g. $250,000" type="text"/>
+</div>
+</div>
+<!-- /stacked add-ons -->
+</div>
+</div>
+<!-- GROWTH RATES (REDESIGNED) -->
+<div class="single hidden" id="singleGrowth">
+<!-- 1. Inflation -->
+<div class="gr-section">
+<div class="gr-head">
+<h3 class="gr-title">Inflation</h3>
+<button class="btn small" data-help="inflation" type="button">Help me choose</button>
+</div>
+<div class="grid-2">
+<div class="field">
+<label class="label" for="inflationRoi">ROI (%)</label>
+<input class="pct" id="inflationRoi" inputmode="decimal" placeholder="e.g. 3.0" type="text"/>
+</div>
+<div class="field">
+<label class="label" for="inflationSd">Standard Deviation (%)</label>
+<input class="pct" id="inflationSd" inputmode="decimal" placeholder="e.g. 1.0" type="text"/>
+</div>
+</div>
+</div>
+<!-- 2. Liquid Investments -->
+<div class="gr-section">
+<div class="gr-head">
+<h3 class="gr-title">Liquid Investments</h3>
+<button class="btn small" data-help="liquid" type="button">Help me choose</button>
+</div>
+<div class="grid-2">
+<div class="field">
+<label class="label" for="liquidRoi">ROI (%)</label>
+<input class="pct" id="liquidRoi" inputmode="decimal" placeholder="e.g. 6.0" type="text"/>
+</div>
+<div class="field">
+<label class="label" for="liquidSd">Standard Deviation (%)</label>
+<input class="pct" id="liquidSd" inputmode="decimal" placeholder="e.g. 12" type="text"/>
+</div>
+</div>
+<div class="btn-row">
+<button class="btn small" id="liquidCustomizeBtn" type="button">Customize ROI For Specific Years</button>
+</div>
+<div class="custom-rows hidden" id="liquidCustomizeWrap">
+<div class="rows-head note">Set specific rates of return for specific years with the specified probability. Years not specified here or falling outside of the specified probability will be randomized normally. This is useful for simulating recessions or sequence-of-returns risk. Note that any entries you put here will affect your overall realized average ROI and standard deviation.</div>
+<div id="liquidRows"></div>
+<div class="btn-row">
+<button class="btn small" id="addLiquidRowBtn" type="button">+ Add Year</button>
+</div>
+</div>
+</div>
+<!-- 3. Real Estate Investments -->
+<div class="gr-section">
+<div class="gr-head">
+<h3 class="gr-title">Real Estate Investments</h3>
+<button class="btn small" data-help="real_estate" type="button">Help me choose</button>
+</div>
+<div class="grid-2">
+<div class="field">
+<label class="label" for="reRoi">ROI (%)</label>
+<input class="pct" id="reRoi" inputmode="decimal" placeholder="e.g. 4.0" type="text"/>
+</div>
+<div class="field">
+<label class="label" for="reSd">Standard Deviation (%)</label>
+<input class="pct" id="reSd" inputmode="decimal" placeholder="e.g. 8" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<div class="dock-wrap" id="dockWrap">
+<div aria-live="polite" class="dock empty" id="dock">Collapsed items will appear here.</div>
+</div>
+<div class="items" id="items"></div>
+<div class="panel-footer" id="panelFooter">
+<div class="left">
+<!-- Label is set dynamically per section -->
+<button class="btn primary" id="addItemBtn">+ Add item</button>
+<!-- NEW: Collapse All button (shown conditionally for multi sections) -->
+<button class="btn ghost hidden" id="collapseAllBtn">Collapse All</button>
+</div>
+</div>
+<div aria-live="polite" class="panel-next-footer" id="panelNextFooter">
+<button class="nav-like" id="backSectionBtn" type="button"></button>
+<button class="nav-like" id="nextSectionBtn" type="button"></button>
+</div>
+<pre aria-live="polite" class="json-box hidden" id="jsonBox"></pre>
+</section>
+<section aria-live="polite" class="panel results-panel hidden" id="resultsPanel">
+<div class="panel-header">
+<h2>Results</h2>
+</div>
+<div class="lipsum">Server response from your retirement odds calculation.</div>
+<pre aria-live="polite" class="json-box" id="resultsJson"></pre>
+</section>
 
-            <!-- Stacked add-ons -->
-            <div class="basics-addons">
-              <div class="field">
-                <label class="label" for="stateSelect">State of Residence in Retirement</label>
-                <select id="stateSelect">
-                  <option value="">Select a state…</option>
-                  <option value="AL">Alabama</option>
-                  <option value="AK">Alaska</option>
-                  <option value="AZ">Arizona</option>
-                  <option value="AR">Arkansas</option>
-                  <option value="CA">California</option>
-                  <option value="CO">Colorado</option>
-                  <option value="CT">Connecticut</option>
-                  <option value="DE">Delaware</option>
-                  <option value="FL">Florida</option>
-                  <option value="GA">Georgia</option>
-                  <option value="HI">Hawaii</option>
-                  <option value="ID">Idaho</option>
-                  <option value="IL">Illinois</option>
-                  <option value="IN">Indiana</option>
-                  <option value="IA">Iowa</option>
-                  <option value="KS">Kansas</option>
-                  <option value="KY">Kentucky</option>
-                  <option value="LA">Louisiana</option>
-                  <option value="ME">Maine</option>
-                  <option value="MD">Maryland</option>
-                  <option value="MA">Massachusetts</option>
-                  <option value="MI">Michigan</option>
-                  <option value="MN">Minnesota</option>
-                  <option value="MS">Mississippi</option>
-                  <option value="MO">Missouri</option>
-                  <option value="MT">Montana</option>
-                  <option value="NE">Nebraska</option>
-                  <option value="NV">Nevada</option>
-                  <option value="NH">New Hampshire</option>
-                  <option value="NJ">New Jersey</option>
-                  <option value="NM">New Mexico</option>
-                  <option value="NY">New York</option>
-                  <option value="NC">North Carolina</option>
-                  <option value="ND">North Dakota</option>
-                  <option value="OH">Ohio</option>
-                  <option value="OK">Oklahoma</option>
-                  <option value="OR">Oregon</option>
-                  <option value="PA">Pennsylvania</option>
-                  <option value="RI">Rhode Island</option>
-                  <option value="SC">South Carolina</option>
-                  <option value="SD">South Dakota</option>
-                  <option value="TN">Tennessee</option>
-                  <option value="TX">Texas</option>
-                  <option value="UT">Utah</option>
-                  <option value="VT">Vermont</option>
-                  <option value="VA">Virginia</option>
-                  <option value="WA">Washington</option>
-                  <option value="WV">West Virginia</option>
-                  <option value="WI">Wisconsin</option>
-                  <option value="WY">Wyoming</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label class="label" for="heirsInput">Define success by how much you want to leave to your heirs</label>
-                <input id="heirsInput" type="text" inputmode="decimal" placeholder="e.g. $250,000">
-              </div>
-            </div>
-            <!-- /stacked add-ons -->
-
-          </div>
-        </div>
-
-        <!-- GROWTH RATES (REDESIGNED) -->
-        <div id="singleGrowth" class="single hidden">
-          <!-- 1. Inflation -->
-          <div class="gr-section">
-            <div class="gr-head">
-              <h3 class="gr-title">Inflation</h3>
-              <button type="button" class="btn small" data-help="inflation">Help me choose</button>
-            </div>
-            <div class="grid-2">
-              <div class="field">
-                <label class="label" for="inflationRoi">ROI (%)</label>
-                <input id="inflationRoi" class="pct" type="text" inputmode="decimal" placeholder="e.g. 3.0">
-              </div>
-              <div class="field">
-                <label class="label" for="inflationSd">Standard Deviation (%)</label>
-                <input id="inflationSd" class="pct" type="text" inputmode="decimal" placeholder="e.g. 1.0">
-              </div>
-            </div>
-          </div>
-
-          <!-- 2. Liquid Investments -->
-          <div class="gr-section">
-            <div class="gr-head">
-              <h3 class="gr-title">Liquid Investments</h3>
-              <button type="button" class="btn small" data-help="liquid">Help me choose</button>
-            </div>
-            <div class="grid-2">
-              <div class="field">
-                <label class="label" for="liquidRoi">ROI (%)</label>
-                <input id="liquidRoi" class="pct" type="text" inputmode="decimal" placeholder="e.g. 6.0">
-              </div>
-              <div class="field">
-                <label class="label" for="liquidSd">Standard Deviation (%)</label>
-                <input id="liquidSd" class="pct" type="text" inputmode="decimal" placeholder="e.g. 12">
-              </div>
-            </div>
-            <div class="btn-row">
-              <button id="liquidCustomizeBtn" type="button" class="btn small">Customize ROI For Specific Years</button>
-            </div>
-            <div id="liquidCustomizeWrap" class="custom-rows hidden">
-              <div class="rows-head note">Set specific rates of return for specific years with the specified probability. Years not specified here or falling outside of the specified probability will be randomized normally. This is useful for simulating recessions or sequence-of-returns risk. Note that any entries you put here will affect your overall realized average ROI and standard deviation.</div>
-              <div id="liquidRows"></div>
-              <div class="btn-row">
-                <button id="addLiquidRowBtn" type="button" class="btn small">+ Add Year</button>
-              </div>
-            </div>
-          </div>
-
-
-          <!-- 3. Real Estate Investments -->
-          <div class="gr-section">
-            <div class="gr-head">
-              <h3 class="gr-title">Real Estate Investments</h3>
-              <button type="button" class="btn small" data-help="real_estate">Help me choose</button>
-            </div>
-            <div class="grid-2">
-              <div class="field">
-                <label class="label" for="reRoi">ROI (%)</label>
-                <input id="reRoi" class="pct" type="text" inputmode="decimal" placeholder="e.g. 4.0">
-              </div>
-              <div class="field">
-                <label class="label" for="reSd">Standard Deviation (%)</label>
-                <input id="reSd" class="pct" type="text" inputmode="decimal" placeholder="e.g. 8">
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dock-wrap" id="dockWrap">
-          <div class="dock empty" id="dock" aria-live="polite">Collapsed items will appear here.</div>
-        </div>
-
-        <div class="items" id="items"></div>
-
-        <div class="panel-footer" id="panelFooter">
-          <div class="left">
-            <!-- Label is set dynamically per section -->
-            <button class="btn primary" id="addItemBtn">+ Add item</button>
-            <!-- NEW: Collapse All button (shown conditionally for multi sections) -->
-            <button class="btn ghost hidden" id="collapseAllBtn">Collapse All</button>
-          </div>
-        </div>
-
-
-        <div class="panel-next-footer" id="panelNextFooter" aria-live="polite">
-          <button class="nav-like" id="backSectionBtn" type="button"></button>
-          <button class="nav-like" id="nextSectionBtn" type="button"></button>
-        </div>
-        <pre id="jsonBox" class="json-box hidden" aria-live="polite"></pre>
-
-      </section>
-    </main>
-  </div>
-
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-  <!-- ======= HELP ME CHOOSE MODAL ======= -->
-  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true"></div>
-  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
-    <div class="modal-header">
-      <h3 id="modalTitle" class="modal-title">Help me choose</h3><button id="modalXBtn" class="modal-x" aria-label="Close dialog" title="Close">×</button>
-    </div>
-    <div id="modalBody" class="modal-body">
-      <!-- dynamic -->
-    </div>
-    <div class="modal-footer">
-      <button id="modalCloseBtn" class="btn">Close &amp; Apply</button>
-    </div>
-  </div>
-  <!-- ======= /HELP ME CHOOSE MODAL ======= -->
-
+</main>
+</div>
+<div aria-live="polite" class="toast" id="toast" role="status"></div>
+<!-- ======= HELP ME CHOOSE MODAL ======= -->
+<div aria-hidden="true" class="modal-backdrop" id="modalBackdrop"></div>
+<div aria-describedby="modalDesc" aria-labelledby="modalTitle" aria-modal="true" class="modal" id="modal" role="dialog">
+<div class="modal-header">
+<h3 class="modal-title" id="modalTitle">Help me choose</h3><button aria-label="Close dialog" class="modal-x" id="modalXBtn" title="Close">×</button>
+</div>
+<div class="modal-body" id="modalBody">
+<!-- dynamic -->
+</div>
+<div class="modal-footer">
+<button class="btn" id="modalCloseBtn">Close &amp; Apply</button>
+</div>
+</div>
+<!-- ======= /HELP ME CHOOSE MODAL ======= -->
 <script src="assets/marketreturns.js"></script>
 <script src="assets/inflationdata.js"></script>
 <script src="assets/realEstateROI.js"></script>
 <script src="js/ro.js"></script>
-
 <!-- Save Plan Modal (namespaced) -->
-<div class="ro-modal" id="saveModal" aria-hidden="true">
-  <div class="ro-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="saveModalTitle">
-    <div class="ro-modal__header">
-      <h3 id="saveModalTitle">Save Plan</h3>
-      <button class="ro-modal__close" data-close-modal="saveModal" aria-label="Close">×</button>
-    </div>
-    <div class="ro-modal__body">
-      <label for="planNameInput" class="label">Plan name</label>
-      <input id="planNameInput" type="text" class="input" placeholder="e.g., My Baseline Plan" />
-      <p class="hint">Saved locally in this browser only.</p>
-    </div>
-    <div class="ro-modal__footer">
-      <button class="btn ghost" data-close-modal="saveModal">Cancel</button>
-      <button class="btn ok" id="modalSaveBtn">Save</button>
-    </div>
-  </div>
+<div aria-hidden="true" class="ro-modal" id="saveModal">
+<div aria-labelledby="saveModalTitle" aria-modal="true" class="ro-modal__dialog" role="dialog">
+<div class="ro-modal__header">
+<h3 id="saveModalTitle">Save Plan</h3>
+<button aria-label="Close" class="ro-modal__close" data-close-modal="saveModal">×</button>
 </div>
-
+<div class="ro-modal__body">
+<label class="label" for="planNameInput">Plan name</label>
+<input class="input" id="planNameInput" placeholder="e.g., My Baseline Plan" type="text">
+<p class="hint">Saved locally in this browser only.</p>
+</input></div>
+<div class="ro-modal__footer">
+<button class="btn ghost" data-close-modal="saveModal">Cancel</button>
+<button class="btn ok" id="modalSaveBtn">Save</button>
+</div>
+</div>
+</div>
 <!-- Restore/Delete Modal (namespaced) -->
-<div class="ro-modal" id="restoreModal" aria-hidden="true">
-  <div class="ro-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="restoreModalTitle">
-    <div class="ro-modal__header">
-      <h3 id="restoreModalTitle">Restore or Delete Saved Plans</h3>
-      <button class="ro-modal__close" data-close-modal="restoreModal" aria-label="Close">×</button>
-    </div>
-    <div class="ro-modal__body">
-      <div id="savedPlansList" class="saved-plans-list"></div>
-      <p class="hint" id="noPlansHint" hidden>There are no saved plans yet.</p>
-      <p class="hint">These items are stored in your browser's local storage.</p>
-    </div>
-  </div>
+<div aria-hidden="true" class="ro-modal" id="restoreModal">
+<div aria-labelledby="restoreModalTitle" aria-modal="true" class="ro-modal__dialog" role="dialog">
+<div class="ro-modal__header">
+<h3 id="restoreModalTitle">Restore or Delete Saved Plans</h3>
+<button aria-label="Close" class="ro-modal__close" data-close-modal="restoreModal">×</button>
 </div>
-
+<div class="ro-modal__body">
+<div class="saved-plans-list" id="savedPlansList"></div>
+<p class="hint" hidden="" id="noPlansHint">There are no saved plans yet.</p>
+<p class="hint">These items are stored in your browser's local storage.</p>
+</div>
+</div>
+</div>
 </body>
 </html>

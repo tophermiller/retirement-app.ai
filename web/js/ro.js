@@ -8,6 +8,14 @@ function icon(name){
         <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7aa2f7"/><stop offset="1" stop-color="#89dceb"/></linearGradient></defs>
         <path fill="url(#g1)" d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2.239-8 5v1h16v-1c0-2.761-3.58-5-8-5Z"/>
       </svg>`,
+    results: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <g fill="#7aa2f7">
+          <rect x="4" y="13" width="3" height="7" rx="1"/>
+          <rect x="10.5" y="9" width="3" height="11" rx="1"/>
+          <rect x="17" y="5" width="3" height="15" rx="1"/>
+        </g>
+      </svg>`,
     growth: `
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path fill="#cba6f7" d="M3 17h2.5V8.5L10 13l4-4 3.5 3.5L21 10v7h-2v-3.59l-2.5 2.5L13 12.5l-4 4-3.5-3.5V17Z"/>
@@ -187,7 +195,12 @@ function gotoSection(key){
 /* Build nav */
 function buildNav(){
   navEl.innerHTML = '';
+  let sepInserted = false;
   sections.forEach(s=>{
+    if(s.key==='results' && !sepInserted){
+      const sep = document.createElement('div'); sep.className='nav-sep';
+      navEl.appendChild(sep); sepInserted = true;
+    }
     const b = document.createElement('button');
     b.dataset.key = s.key;
     b.appendChild(icon(s.icon));
@@ -214,6 +227,26 @@ sidebar.classList.remove('open');
     navEl.appendChild(b);
   });
 }
+
+/* Results support */
+let resultsData = null;
+function ensureResultsSection(){
+  const exists = sections.some(s=>s.key==='results');
+  if(!exists){
+    sections.push({ key:'results', label:'Results', mode:'results', lipsum:'Server results for your plan.', icon:'results' });
+  }
+}
+function showResults(data){
+  resultsData = data || resultsData;
+  const rp = document.getElementById('resultsPanel');
+  const rj = document.getElementById('resultsJson');
+  if(rj) rj.textContent = JSON.stringify(resultsData ?? {}, null, 2);
+  if(rp){ rp.classList.remove('hidden'); }
+  active = 'results';
+  buildNav();
+  render();
+}
+
 buildNav();
 
 /* Mobile sidebar */
@@ -356,6 +389,22 @@ Array.from(navEl.children).forEach(btn => {
 
 
 function render(){
+  const resultsPanel = document.getElementById('resultsPanel');
+  const mainPanel = document.querySelector('main .panel:not(#resultsPanel)');
+  if(active==='results'){
+    if(mainPanel) mainPanel.classList.add('hidden');
+    if(resultsPanel) resultsPanel.classList.remove('hidden');
+    // Hide next/back footer in results view
+    if(panelNextFooter) panelNextFooter.classList.add('hidden');
+    // Set title/lipsum
+    if(titleEl) titleEl.textContent = 'Results';
+    if(lipsumEl) lipsumEl.textContent = 'Server response from your retirement odds calculation.';
+    return;
+  }else{
+    if(resultsPanel) resultsPanel.classList.add('hidden');
+    if(mainPanel) mainPanel.classList.remove('hidden');
+  }
+
   const section = sections.find(s=>s.key===active);
 
   titleEl.textContent = section.label;
@@ -1798,6 +1847,7 @@ submitBtn.addEventListener('click', async ()=>{
     });
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     showToast('Submitted successfully.', true);
+    try{ ensureResultsSection(); showResults(data); }catch(_e){}
   }catch(err){
     showToast('Submit failed: ' + (err?.message || 'Unknown error'), false);
   }
