@@ -1847,7 +1847,7 @@ submitBtn.addEventListener('click', async ()=>{
     });
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     showToast('Submitted successfully.', true);
-    try{ ensureResultsSection(); showResults(data); }catch(_e){}
+    try{ const respData = await res.json(); ensureResultsSection(); showResults(respData); }catch(_e){}
   }catch(err){
     showToast('Submit failed: ' + (err?.message || 'Unknown error'), false);
   }
