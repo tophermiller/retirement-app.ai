@@ -749,10 +749,20 @@ function renderItem(it, sectionKey){
     opts.forEach((opt, idx) => {
       const id = `${name}-${idx}`;
       const input = document.createElement('input'); input.type = 'radio'; input.name = name; input.id = id; input.value = opt;
-      input.checked = (it.atype || 'Cash') === opt;
-      input.addEventListener('change', () => { if(input.checked){ it.atype = opt; render(); } });
+      if (it.locked) input.disabled = true;
+      if (it.locked) { input.disabled = true; input.setAttribute('aria-disabled','true'); input.title = 'Account type is fixed for default accounts'; }
+input.addEventListener('change', () => {
+        if(input.checked){
+          it.atype = opt;
+          // update visual selection without waiting for full render
+          Array.from(fieldset.querySelectorAll('label')).forEach(l=>l.classList.remove('selected'));
+          label.classList.add('selected');
+          render();
+        }
+      });
 
       const label = document.createElement('label'); label.setAttribute('for', id); label.textContent = opt;
+      if ((it.atype || 'Cash') === opt) { label.classList.add('selected'); label.setAttribute('aria-checked','true'); }
       fieldset.append(input, label);
     });
 
