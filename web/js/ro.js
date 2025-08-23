@@ -835,7 +835,7 @@ if(it.atype==='Tax Deferred'){
       const sw = document.createElement('label'); sw.className='switch';
       const chk = document.createElement('input'); chk.type='checkbox'; chk.checked = !!it.rmd; chk.id = `rmd-${it.id}`;
       chk.addEventListener('change', ()=>{ it.rmd = chk.checked; render(); });
-      const lb = document.createElement('label'); lb.className='label'; lb.setAttribute('for', chk.id); lb.textContent='Enable RMDs';
+      const lb = document.createElement('label'); lb.className='label'; lb.setAttribute('for', chk.id); lb.textContent='Take Required Minimum Distributions (RMDs)';
       sw.append(chk, lb); r.append(sw); body.append(r);
 
       if(it.rmd){
@@ -844,7 +844,39 @@ if(it.atype==='Tax Deferred'){
         const withPlaceholder = [{value:'', label:'— Select account —'}, ...proceedsOptions.map(t => ({value:t, label:t}))];
         const gRmd = document.createElement('div'); gRmd.className='grid-2';
         const {field:paField} = makeSelectField('Proceeds to account', withPlaceholder, it.rmdProceedsAccount || '', (v)=>{ it.rmdProceedsAccount = v; });
-        gRmd.append(paField); body.append(gRmd);
+        
+        // If spouse age and life expectancy are defined, add Account Owner radio group
+        try {
+          const basics = state.alpha?.single || {};
+          const hasSpouse = nonEmpty(basics.spouseAge) && nonEmpty(basics.spouseLife);
+          if (hasSpouse) {
+            const fieldset = document.createElement('fieldset');
+            fieldset.className = 'segmented';
+            fieldset.setAttribute('role','radiogroup');
+            fieldset.setAttribute('aria-label','Account Owner');
+            const legend = document.createElement('legend'); legend.className = 'sr-only'; legend.textContent = 'Account Owner'; fieldset.appendChild(legend);
+            const inlineCaption = document.createElement('span'); inlineCaption.className = 'legend-inline label'; inlineCaption.textContent = 'Account Owner'; fieldset.appendChild(inlineCaption);
+
+            const name = `rmd-owner-${it.id}`;
+            const opts = [{val:'you', label:'You'}, {val:'spouse', label:'Spouse'}];
+            const current = (it.rmdOwner === 'spouse') ? 'spouse' : 'you';
+            opts.forEach((o, idx) => {
+              const id = `${name}-${idx}`;
+              const input = document.createElement('input'); input.type='radio'; input.name=name; input.id=id; input.value=o.val;
+              input.checked = (current === o.val);
+              input.addEventListener('change', ()=>{ if(input.checked){ it.rmdOwner = o.val; } });
+              const label = document.createElement('label'); label.setAttribute('for', id); label.textContent = o.label;
+              fieldset.append(input, label);
+            });
+
+            const ownerFieldWrap = document.createElement('div'); ownerFieldWrap.className = 'field';
+            ownerFieldWrap.append(fieldset);
+            body.append(ownerFieldWrap);
+          } else {
+            it.rmdOwner = 'you'; // default to 'you' if no spouse info
+          }
+        } catch(e) { /* no-op */ }
+gRmd.append(paField); body.append(gRmd);
         const tip = document.createElement('div'); tip.className='subtle'; tip.textContent = 'RMD withdrawals will be deposited to this account.';
         body.append(tip);
       }
