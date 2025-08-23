@@ -1791,7 +1791,7 @@ submitBtn.addEventListener('click', async ()=>{
   hideErrorPanel();
   const data = buildPlanJSON();
   try{
-    const res = await fetch('/api/plan', {
+    const res = await fetch('https://api.retirementodds.info/calculate/staging/calculate', {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify(data)
