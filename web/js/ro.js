@@ -1394,6 +1394,17 @@ function validateState(){
   return errors;
 }
 
+function getIdPrefixMap() {
+  //For each asset, map its title to an idPrefix used in the back end
+  const map = {};
+  (state.gamma.items || []).forEach((a, index) => {
+    const assetNum = index + 1;
+    const idPrefix = 'asset' + assetNum;
+    map[a.title] = idPrefix;
+  });
+  return map;
+}
+
 function buildPlanJSON(){
   const submittal = {};
   submittal.version = "5.0";
@@ -1448,12 +1459,12 @@ function buildPlanJSON(){
   submittal.growthRates = growthRates;
 
   //liquid assets
+  idPrefixMap = getIdPrefixMap(); //map of asset title to idPrefix
   submittal.savingsAccountList = {};
   submittal.savingsAccountList.savingsAccounts = [];
   submittal.savingsAccountList.taxableInvestmentAccounts = [];
   let assetNum = 1;
   (state.gamma.items || []).forEach(a => {
-    let asset = 'asset' + assetNum;
     const future = a.inheritanceYear && a.inheritanceYear !== '' && a.inheritanceYear !== '__ALREADY_OWNED__' ? true : false;
     const firstYear = future ? toInt(a.inheritanceYear) : calendar.planStartYear;
     if (a.atype === 'Taxable Investment') {
@@ -1462,7 +1473,7 @@ function buildPlanJSON(){
       let annualGainRateOverride = false;
       if (nonEmpty(a.roi) && nonEmpty(a.stdev)) annualGainRateOverride = true;
       submittal.savingsAccountList.taxableInvestmentAccounts.push({
-        idPrefix: asset,
+        idPrefix: idPrefixMap[a.title] || ('asset' + assetNum),
         savingsSubType: savingsSubType,
         isDefault: a.title.startsWith('DEFAULT'),
         name: a.title,
@@ -1494,7 +1505,11 @@ function buildPlanJSON(){
     }
     else {
       let savingsSubType = 'regular';
-      if (a.atype === 'Tax Deferred') savingsSubType = 'ira';
+      let rmdEnabled = !!a.rmd;
+      if (a.atype === 'Tax Deferred') {
+        savingsSubType = 'ira';
+        rmdEnabled = !!a.rmd;
+      }
       if (a.atype === 'Roth') savingsSubType = 'roth';
       let annualGainRateOverride = false;
       if (a.atype !== 'Cash' && nonEmpty(a.roi) && nonEmpty(a.stdev)) annualGainRateOverride = true;
@@ -1510,7 +1525,7 @@ function buildPlanJSON(){
         };
       }
       submittal.savingsAccountList.savingsAccounts.push({
-        idPrefix: asset,
+        idPrefix: idPrefixMap[a.title] || ('asset' + assetNum),
         savingsSubType: savingsSubType,
         isDefault: a.title.startsWith('DEFAULT'),
         name: a.title,
@@ -1520,7 +1535,10 @@ function buildPlanJSON(){
         startingValue: toInt(a.amount) || 0,
         preRetireContribution: toInt(a.preRetireAnnualContribution) || 0,
         annualGainRateOverride: annualGainRateOverride,
-        annualGainRate: annualGainRate
+        annualGainRate: annualGainRate,
+        rmdEnabled: rmdEnabled,
+        assetOwner: rmdEnabled ? a.rmdOwner : 'you',
+        proceedsToAccountId: rmdEnabled ? (idPrefixMap[a.rmdProceedsAccount] || null) : null
 
 /*
           title: a.title,
