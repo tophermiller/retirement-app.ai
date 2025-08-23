@@ -1450,6 +1450,13 @@ function getMortgageStartPrincipal(monthlyPayment, termYears, annualRate) {
   return monthlyPayment * (discountFactor / i);
 }
 
+function codeForYearSelection(yearSelection) {
+  if (yearSelection === '__RETIREMENT__') return -1;
+  if (yearSelection === '__FIRST_DEATH__') return -2;
+  if (yearSelection === '__FIRST_DEATH_P1__') return -3;
+  if (yearSelection === '__END_OF_PLAN__') return -4;
+  return toInt(yearSelection);
+}
 
 function buildPlanJSON(){
   const submittal = {};
@@ -1689,115 +1696,66 @@ function buildPlanJSON(){
   }
 
   //income
+  submittal.incomeAccountList = {};
+  submittal.incomeAccountList.incomesAccounts = [];
+  let incomeNum = 1;
+  (state.epsilon.items || []).forEach(i => {
+    const inc = {
+      idPrefix: 'income' + incomeNum,
+      name: i.title,
+      taxable: i.taxTreatment === 'Ordinary Income',
+      socialSecurity: i.taxTreatment === 'Social Security (85% taxable)', //TODO NEW SERVER SIDE
+      startYear: codeForYearSelection(i.startYear),
+      endYear: codeForYearSelection(i.endYear),
+      annualAmount: toInt(i.amount) || 0,
+      annualGainRateOverride: nonEmpty(i.roi),
+      annualGainRate: nonEmpty(i.roi) ? {
+        average: toFloat(i.roi) || 0,
+        standardDeviation: 0
+      } : null,
+    };
+    submittal.incomeAccountList.incomesAccounts.push(inc);
+    incomeNum += 1;
+  });
+  if (submittal.incomeAccountList.incomesAccounts.length === 0) {
+    submittal.incomeAccountList.incomesAccounts = null; // Remove empty income list
+  }
+  if (submittal.incomeAccountList.incomesAccounts === null) {
+    submittal.incomeAccountList = null; // Remove empty income account list
+  }
 
 
 
 
   //expenses
+  submittal.expenseAccountList = {};
+  submittal.expenseAccountList.expenseAccounts = [];
+  let expenseNum = 1;
+  (state.zeta.items || []).forEach(e => {
+    const exp = {
+      idPrefix: 'expense' + expenseNum,
+      name: e.title,
+      startYear: codeForYearSelection(e.startYear),
+      endYear: codeForYearSelection(e.endYear),
+      annualAmount: toInt(e.amount) || 0,
+      annualGainRateOverride: nonEmpty(e.roi),
+      annualGainRate: nonEmpty(e.roi) ? {
+        average: toFloat(e.roi) || 0,
+        standardDeviation: 0
+      } : null,
+    };
+    submittal.expenseAccountList.expenseAccounts.push(exp);
+    expenseNum += 1;
+  });
+  if (submittal.expenseAccountList.expenseAccounts.length === 0) {
+    submittal.expenseAccountList.expenseAccounts = null; // Remove empty expense list
+  }
+  if (submittal.expenseAccountList.expenseAccounts === null) {
+    submittal.expenseAccountList = null; // Remove empty expense account list
+  }
 
 
-
-
-  //original code below
-  const basics = state.alpha.single || {};
-  const g = state.beta.single || {};
-
-  const liquid = (state.gamma.items || []).map(a => ({
-    title: a.title || null,
-    type: a.atype || null,
-    amount: nonEmpty(a.amount) ? toInt(a.amount) : null,
-    interest_rate_pct: nonEmpty(a.interest) ? toFloat(a.interest) : null,
-    cost_basis: nonEmpty(a.costBasis) ? toInt(a.costBasis) : null,
-    unrealized_gains: nonEmpty(a.unrealized) ? toInt(a.unrealized) : null,
-    rmd_enabled: !!a.rmd,
-    rmd_proceeds_to_account: a.rmd ? (a.rmdProceedsAccount || null) : undefined, // NEW
-    roi_pct: nonEmpty(a.roi) ? toFloat(a.roi) : null,
-    stdev_pct: nonEmpty(a.stdev) ? toFloat(a.stdev) : null
-  ,
-    inheritance_year: a.inheritanceYear || null
-  }));
-
-  const realEstate = (state.delta.items || []).map(p => ({
-    title: p.title || null,
-    current_value: nonEmpty(p.currentValue) ? toInt(p.currentValue) : null,
-    purchase_year: p.purchaseYear || null,
-    roi_pct: nonEmpty(p.roi) ? toFloat(p.roi) : null,
-    stdev_pct: nonEmpty(p.stdev) ? toFloat(p.stdev) : null,
-    mortgage: (p.showMortgage || (p.loanOrigYear||p.loanTerm||p.loanRate||p.monthlyPayment)) ? {
-      origination_year: nonEmpty(p.loanOrigYear) ? toInt(p.loanOrigYear) : null,
-      term_years: nonEmpty(p.loanTerm) ? toInt(p.loanTerm) : null,
-      interest_rate_pct: nonEmpty(p.loanRate) ? toFloat(p.loanRate) : null,
-      monthly_payment: nonEmpty(p.monthlyPayment) ? toInt(p.monthlyPayment) : null,
-      percent_down_payment: nonEmpty(p.downPaymentPct) ? toFloat(p.downPaymentPct) : null
-    } : undefined,
-    rental: (p.showRental || (p.annualExpenses||p.annualIncome||p.rentGrowth)) ? {
-      annual_expenses: nonEmpty(p.annualExpenses) ? toInt(p.annualExpenses) : null,
-      annual_income: nonEmpty(p.annualIncome) ? toInt(p.annualIncome) : null,
-      growth_rate_pct: nonEmpty(p.rentGrowth) ? toFloat(p.rentGrowth) : null
-    } : undefined,
-    sale: (p.showSale || p.saleYear || p.purchasePrice || p.improvements || p.sellCost || p.saleProceedsAccount) ? {
-      year: p.saleYear || null,
-      purchase_price: nonEmpty(p.purchasePrice) ? toInt(p.purchasePrice) : null,
-      improvements_value: nonEmpty(p.improvements) ? toInt(p.improvements) : null,
-      selling_cost: nonEmpty(p.sellCost) ? toInt(p.sellCost) : null,
-      proceeds_to_account: p.saleProceedsAccount || null
-    } : undefined
-  }));
-
-  const income = (state.epsilon.items || []).map(i => ({
-    title: i.title || null,
-    start_year: i.startYear || null,
-    end_year: i.endYear || null,
-    annual_amount: nonEmpty(i.amount) ? toInt(i.amount) : null,
-    tax_treatment: i.taxTreatment || 'Ordinary Income',
-    inflation_override_pct: i.showInflation && nonEmpty(i.roi) ? toFloat(i.roi) : undefined
-  }));
-
-  const expenses = (state.zeta.items || []).map(e => ({
-    title: e.title || null,
-    start_year: e.startYear || null,
-    end_year: e.endYear || null,
-    annual_amount: nonEmpty(e.amount) ? toInt(e.amount) : null,
-    inflation_override_pct: e.showInflation && nonEmpty(e.roi) ? toFloat(e.roi) : undefined
-  }));
-
-  const payload = {
-    submittal: submittal,
-
-    basics: {
-      age: nonEmpty(basics.age) ? toInt(basics.age) : null,
-      retirement_age: nonEmpty(basics.retire) ? toInt(basics.retire) : null,
-      life_expectancy: nonEmpty(basics.life) ? toInt(basics.life) : null,
-      state_of_residence: basics.stateCode || null,
-      heirs_target_amount: nonEmpty(basics.heirsTarget) ?
-        toInt(basics.heirsTarget) : null
-    },
-    growth_rates: {
-      inflation: {
-        roi_pct: nonEmpty(g?.inflation?.roi) ? toFloat(g.inflation.roi) : null,
-        stdev_pct: nonEmpty(g?.inflation?.stdev) ? toFloat(g.inflation.stdev) : null
-      },
-      liquid_investments: {
-        custom_years: (g?.liquid?.customYears || []).map(r => ({
-          year: r.year || null,
-          roi_pct: nonEmpty(r.roi) ? toFloat(r.roi) : null,
-          probability_pct: nonEmpty(r.prob) ? toFloat(r.prob) : null
-        })),
-        roi_pct: nonEmpty(g?.liquid?.roi) ? toFloat(g.liquid.roi) : null,
-        stdev_pct: nonEmpty(g?.liquid?.stdev) ? toFloat(g.liquid.stdev) : null
-      },
-      real_estate_investments: {
-        roi_pct: nonEmpty(g?.realEstate?.roi) ? toFloat(g.realEstate.roi) : null,
-        stdev_pct: nonEmpty(g?.realEstate?.stdev) ? toFloat(g.realEstate.stdev) : null
-      }
-    },
-    liquid_assets: liquid,
-    real_estate: realEstate,
-    income,
-    expenses
-  };
-
-  return payload;
+  return submittal;
 }
 
 /* JSON preview toggle */
