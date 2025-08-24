@@ -389,6 +389,7 @@ Array.from(navEl.children).forEach(btn => {
 
 
 function render(){
+  hideProcessingModal();
   const resultsPanel = document.getElementById('resultsPanel');
   const mainPanel = document.querySelector('main .panel:not(#resultsPanel)');
   if(active==='results'){
@@ -1841,6 +1842,7 @@ submitBtn.addEventListener('click', async ()=>{
   const data = buildPlanJSON();
   const body = btoa(JSON.stringify(data))
   try{
+    showProcessingModal();
     const response = await fetch('https://api.retirementodds.info/calculate/staging/calculate', {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       mode: 'cors', // no-cors, *cors, same-origin
@@ -1857,9 +1859,10 @@ submitBtn.addEventListener('click', async ()=>{
     });
     //return response.json(); // parses JSON response into native JavaScript objects
     if(!response.ok) throw new Error(`HTTP ${response.status}`);
-    showToast('Submitted successfully.', true);
+    //showToast('Submitted successfully.', true);
     try{ 
       const respData = await response.json(); 
+      hideProcessingModal()
       ensureResultsSection(); 
       showResults(respData); 
     }catch(_e){}
@@ -1868,6 +1871,14 @@ submitBtn.addEventListener('click', async ()=>{
   }
 });
 document.getElementById('submitBtnDup')?.addEventListener('click', () => submitBtn.click());
+
+function showProcessingModal() {
+  document.getElementById('processingModal').style.display = 'flex';
+}
+
+function hideProcessingModal() {
+  document.getElementById('processingModal').style.display = 'none';
+}
 
 function showToast(msg, ok){
   toastEl.textContent = msg;

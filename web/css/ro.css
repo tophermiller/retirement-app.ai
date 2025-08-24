@@ -888,3 +888,27 @@ body.ro-modal-open{overflow:hidden;}
 /* Ensure results panel fills the main area similarly to other panels */
 .results-panel .panel-header h2{ margin:0 0 6px; }
 .results-panel .json-box{ max-height: 60vh; }
+
+
+#processingModal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000; /* Above everything else */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#processingModal .modal-content {
+  background: #222; /* Dark mode style */
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
