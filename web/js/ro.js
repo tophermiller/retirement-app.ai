@@ -1515,14 +1515,14 @@ function buildPlanJSON(){
   //submittal.name = "";
   const calendar = {};
   calendar.planStartYear = new Date().getFullYear();
-  calendar.birthYear = calendar.planStartYear - state.alpha.single.age;
-  calendar.deathAge = state.alpha.single.life;
+  calendar.birthYear = Number(calendar.planStartYear) - Number(state.alpha.single.age);
+  calendar.deathAge = Number(state.alpha.single.life);
   if (state.alpha.single.spouseAge && state.alpha.single.spouseLife) {
-    calendar.birthYearSpouse = calendar.planStartYear - state.alpha.single.spouseAge;
-    calendar.deathAgeSpouse = state.alpha.single.spouseLife;
+    calendar.birthYearSpouse = Number(calendar.planStartYear) - Number(state.alpha.single.spouseAge);
+    calendar.deathAgeSpouse = Number(state.alpha.single.spouseLife);
   }
-  calendar.retireYear = calendar.birthYear + state.alpha.single.retire;
-  submittal.calendar = {};
+  calendar.retireYear = Number(calendar.birthYear) + Number(state.alpha.single.retire);
+  submittal.calendar = calendar;
 
   if (nonEmpty(state.alpha.single.heirsTarget)) {
     submittal.definitionOfSuccess = toInt(state.alpha.single.heirsTarget);
@@ -1628,7 +1628,7 @@ function buildPlanJSON(){
         annualGainRate: annualGainRate,
         rmdEnabled: rmdEnabled,
         assetOwner: rmdEnabled ? a.rmdOwner : 'you',
-        proceedsToAccountId: rmdEnabled ? (idPrefixMap[a.rmdProceedsAccount] || null) : null
+        proceedsToAccountId: rmdEnabled && a.atype === "Tax Deferred" ? (idPrefixMap[a.rmdProceedsAccount] || null) : null
       });
     }
     assetNum += 1;
@@ -1839,15 +1839,30 @@ submitBtn.addEventListener('click', async ()=>{
   }
   hideErrorPanel();
   const data = buildPlanJSON();
+  const body = btoa(JSON.stringify(data))
   try{
-    const res = await fetch('https://api.retirementodds.info/calculate/staging/calculate', {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify(data)
+    const response = await fetch('https://api.retirementodds.info/calculate/staging/calculate', {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, *cors, same-origin
+      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: 'same-origin', // include, *same-origin, omit
+      headers: {
+        'Content-Type': 'text/plain',
+        'Referer': document.referrer || window.location.href
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      redirect: 'follow', // manual, *follow, error
+      referrerPolicy: '', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: body // body data type must match "Content-Type" header
     });
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    //return response.json(); // parses JSON response into native JavaScript objects
+    if(!response.ok) throw new Error(`HTTP ${response.status}`);
     showToast('Submitted successfully.', true);
-    try{ const respData = await res.json(); ensureResultsSection(); showResults(respData); }catch(_e){}
+    try{ 
+      const respData = await response.json(); 
+      ensureResultsSection(); 
+      showResults(respData); 
+    }catch(_e){}
   }catch(err){
     showToast('Submit failed: ' + (err?.message || 'Unknown error'), false);
   }
