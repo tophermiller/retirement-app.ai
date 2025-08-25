@@ -90,10 +90,10 @@ if (typeof(results) === "undefined") {
         const filenameFixed = "RetirementOdds_" + timestamp + "_fixedROI.csv";
         downloadFixedSampleLink.setAttribute('href', urlFixed);
         downloadFixedSampleLink.setAttribute('download', filenameFixed);
-        /*
+        
         //charts
         results.showCharts(resultData.chartData, submittal);
-        */
+        
       }
  
       const rp = document.getElementById('resultsPanel');
