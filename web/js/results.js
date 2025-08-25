@@ -15,6 +15,7 @@ function mergeDark(layout) {
     if (!("plot_bgcolor" in result)) result.plot_bgcolor = __DARK_LAYOUT__.plot_bgcolor;
     if (!("paper_bgcolor" in result)) result.paper_bgcolor = __DARK_LAYOUT__.paper_bgcolor;
     if (!("font" in result)) result.font = __DARK_LAYOUT__.font;
+    if (!("autosize" in result)) result.autosize = true;
     result.xaxis = Object.assign({},
       layout.xaxis || {},
       { tickfont: Object.assign({ color: "#FFFFFF" }, (layout.xaxis && layout.xaxis.tickfont) || {}),
@@ -419,7 +420,7 @@ if (typeof(results) === "undefined") {
 
       // Add click event listeners to each element
       chartsData.forEach(({buttonId, plotId, data, layout}) => {
-        document.getElementById(buttonId).addEventListener("click", () => Plotly.newPlot(plotId, data, mergeDark(layout)));
+        document.getElementById(buttonId).addEventListener("click", () => Plotly.newPlot(plotId, data, mergeDark(mergeDark(layout, {autosize:true}, {responsive:true}), {responsive:true})));
       });
 
       document.getElementById("plot-assets-choice-liquid").click();
@@ -447,7 +448,7 @@ if (typeof(results) === "undefined") {
           yaxis: {title: "ROI", tickformat: ',.1%'},
           legend: {orientation: "h", xanchor: "center", x: 0.5, y: -0.2,}
         };
-        Plotly.newPlot("plot-randomroi", randomROIData, mergeDark(randomROILayout));
+        Plotly.newPlot("plot-randomroi", randomROIData, mergeDark(mergeDark(randomROILayout, {autosize:true}, {responsive:true}), {responsive:true}));
         document.getElementById("plot-randomroi-actual-number").innerHTML = rateArray.length;
         document.getElementById("plot-randomroi-actual-average").innerHTML = util.formatPercentageVal(100 * util.arrayAverage(rateArray));
         document.getElementById("plot-randomroi-actual-display").style.display = "block";
