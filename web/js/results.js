@@ -3,12 +3,24 @@ if (typeof(results) === "undefined") {
   results = {
 
     buildPgh1: (resultData) => {
+      ret = "We executed your retirement plan 1000 times with returns randomized each time.  ";
+      ret += "The values you provided for average ROI and standard deviation were used to ";
+      ret += "generate the randomization, so that your results will not always be 0% or 100%. ";
+      ret += "The above indicates your overall odds of having enough money to ";
+      ret += "last through your life expectancy.   ";
+      //ret += "Now you may try changing some of your values and see how it ";
+      //ret += "affects your results.  ";
+      return ret;
+    },  
+
+    buildPgh2: (resultData) => {
+      let ret = "";
       let tnwStatement = "";
-      let isRetiredAtStart = state.alpha.age >= state.alpha.retireAge;
-      let retireYear = new Date().getFullYear() + state.alpha.retireAge;
+      let isRetiredAtStart = state.alpha.single.age >= state.alpha.single.retire;
+      let retireYear = new Date().getFullYear() + state.alpha.single.retire;
     
       if (isRetiredAtStart) {
-        tnwStatement += "Congratulations, you indicated you are already retired as of the plan starting year.  ";
+        tnwStatement += "You indicated you are already retired as of the plan starting year.  ";
         tnwStatement += "Your total net worth at the start of this plan is " ;
         tnwStatement += util.formatCurrencyVal(resultData.tnw);
         tnwStatement += " (if you include income property equity it is " + util.formatCurrencyVal(resultData.tnwWithIncomeProperty);
@@ -30,22 +42,9 @@ if (typeof(results) === "undefined") {
       return tnwStatement;
     },
 
-    buildPgh2: (resultData) => {
-      let ret = "";
-      ret += "<p>The values you provided (or left at their defaults) for standard deviation and average ROI were used to generate a random set of market returns, so that your results will not always be 0% or 100%.</p>  ";
-      return ret;
-    },
 
     buildPgh3: (resultData) => {
-      ret = "We executed your retirement plan 1000 times with returns randomized each time.  ";
-      ret += "The above indicates your overall odds of having enough money to ";
-      ret += "last through your life expectancy.   ";
-      ret += "Now you may ";
-      ret += '<a href="#">scroll back to the top</a> ';
-      ret += "to try changing some of your values and see how it ";
-      ret += "affects your results.  ";
-      ret + "Or, try running multiple scenarios at once by ";
-      ret += "<a class=\"switch-to-whatif-link\" href=\"#\">switching to \"What-If\" mode.</a>";
+      ret = "";
       return ret;
     },
 
@@ -70,11 +69,13 @@ if (typeof(results) === "undefined") {
 
         //if you're finding this tool useful...
         document.getElementById("results-support-top").style.display = "block";
+        document.getElementById("results-result").innerHTML = util.formatPercentageVal(Number(resultData.overallResult)*100);
 
+        
         document.getElementById("results-pgh1").innerHTML = results.buildPgh1(resultData);
         document.getElementById("results-pgh2").innerHTML = results.buildPgh2(resultData);
-        document.getElementById("results-result").innerHTML = util.formatPercentageVal(Number(resultData.overallResult)*100);
         document.getElementById("results-pgh3").innerHTML = results.buildPgh3(resultData);
+
         document.getElementById("results-download-csv").style.display = "block";
         const downloadSampleLink = document.getElementById("downloadSampleLink");
         const blob = new Blob([resultData.sample], { type: 'text/csv' });
@@ -89,9 +90,10 @@ if (typeof(results) === "undefined") {
         const filenameFixed = "RetirementOdds_" + timestamp + "_fixedROI.csv";
         downloadFixedSampleLink.setAttribute('href', urlFixed);
         downloadFixedSampleLink.setAttribute('download', filenameFixed);
-
+        /*
         //charts
         results.showCharts(resultData.chartData, submittal);
+        */
       }
  
       const rp = document.getElementById('resultsPanel');
@@ -106,7 +108,7 @@ if (typeof(results) === "undefined") {
 
     showNoResults: function (message) {
       results.clearCharts();
-      document.getElementById("results-error").innerHTML = data.message + "  Please try again.";
+      document.getElementById("results-error").innerHTML = (message || "No results.") + "  Please try again.";
       document.getElementById("results-error").style.display = "block";
       document.getElementById("results-success").style.display = "none";
       document.getElementById("results-container").style.display = "block";

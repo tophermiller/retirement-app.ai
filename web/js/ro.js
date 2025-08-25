@@ -241,6 +241,7 @@ function showResults(data){
   const rp = document.getElementById('resultsPanel');
   const rj = document.getElementById('resultsJson');
   if(rj) rj.textContent = JSON.stringify(resultsData ?? {}, null, 2);
+    /* JSON display removed per new UI */
   if(rp){ rp.classList.remove('hidden'); }
   active = 'results';
   buildNav();
@@ -1755,9 +1756,9 @@ function buildPlanJSON(){
       name: i.title,
       taxable: i.taxTreatment === 'Ordinary Income',
       socialSecurity: i.taxTreatment === 'Social Security (85% taxable)', //TODO NEW SERVER SIDE
-      startYear: codeForYearSelection(i.startYear),
-      endYear: codeForYearSelection(i.endYear),
-      annualAmount: toInt(i.amount) || 0,
+      firstYear: codeForYearSelection(i.startYear),
+      lastYear: codeForYearSelection(i.endYear),
+      startingValue: toInt(i.amount) || 0,
       annualGainRateOverride: nonEmpty(i.roi),
       annualGainRate: nonEmpty(i.roi) ? {
         average: toFloat(i.roi) || 0,
@@ -1785,9 +1786,9 @@ function buildPlanJSON(){
     const exp = {
       idPrefix: 'expense' + expenseNum,
       name: e.title,
-      startYear: codeForYearSelection(e.startYear),
-      endYear: codeForYearSelection(e.endYear),
-      annualAmount: toInt(e.amount) || 0,
+      firstYear: codeForYearSelection(e.startYear),
+      lastYear: codeForYearSelection(e.endYear),
+      startingValue: toInt(e.amount) || 0,
       annualGainRateOverride: nonEmpty(e.roi),
       annualGainRate: nonEmpty(e.roi) ? {
         average: toFloat(e.roi) || 0,
@@ -1863,6 +1864,7 @@ submitBtn.addEventListener('click', async ()=>{
   hideProcessingModal()
   ensureResultsSection(); 
   results.showResults(respData.result, data); 
+  //showResults(respData);
 });
 document.getElementById('submitBtnDup')?.addEventListener('click', () => submitBtn.click());
 
