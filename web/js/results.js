@@ -1,4 +1,58 @@
 
+
+// ---- Dark mode helpers injected ----
+const __DARK_LAYOUT__ = {
+  template: "plotly_dark",
+  plot_bgcolor: "#1e1e1e",
+  paper_bgcolor: "#1e1e1e",
+  font: { color: "#FFFFFF" },
+};
+function mergeDark(layout) {
+  try {
+    if (!layout || typeof layout !== "object") layout = {};
+    const result = Object.assign({}, layout);
+    if (!("template" in result)) result.template = __DARK_LAYOUT__.template;
+    if (!("plot_bgcolor" in result)) result.plot_bgcolor = __DARK_LAYOUT__.plot_bgcolor;
+    if (!("paper_bgcolor" in result)) result.paper_bgcolor = __DARK_LAYOUT__.paper_bgcolor;
+    if (!("font" in result)) result.font = __DARK_LAYOUT__.font;
+    result.xaxis = Object.assign({},
+      layout.xaxis || {},
+      { tickfont: Object.assign({ color: "#FFFFFF" }, (layout.xaxis && layout.xaxis.tickfont) || {}),
+        title: (layout.xaxis && layout.xaxis.title)
+          ? Object.assign({}, layout.xaxis.title, { font: Object.assign({ color: "#FFFFFF" }, (layout.xaxis.title.font||{})) })
+          : { text: (layout.xaxis && layout.xaxis.title && layout.xaxis.title.text) || (layout.xaxis && layout.xaxis.title) || undefined, font: { color: "#FFFFFF" } },
+        gridcolor: (layout.xaxis && layout.xaxis.gridcolor) || "#444"
+      }
+    );
+    result.yaxis = Object.assign({},
+      layout.yaxis || {},
+      { tickfont: Object.assign({ color: "#FFFFFF" }, (layout.yaxis && layout.yaxis.tickfont) || {}),
+        title: (layout.yaxis && layout.yaxis.title)
+          ? Object.assign({}, layout.yaxis.title, { font: Object.assign({ color: "#FFFFFF" }, (layout.yaxis.title.font||{})) })
+          : { text: (layout.yaxis && layout.yaxis.title && layout.yaxis.title.text) || (layout.yaxis && layout.yaxis.title) || undefined, font: { color: "#FFFFFF" } },
+        gridcolor: (layout.yaxis && layout.yaxis.gridcolor) || "#444"
+      }
+    );
+    result.legend = Object.assign({},
+      layout.legend || {},
+      { font: Object.assign({ color: "#FFFFFF" }, (layout.legend && layout.legend.font) || {}) }
+    );
+    if (result.title) {
+      if (typeof result.title === "string") {
+        result.title = { text: result.title, font: { color: "#FFFFFF" } };
+      } else {
+        result.title = Object.assign({}, result.title);
+        result.title.font = Object.assign({ color: "#FFFFFF" }, result.title.font || {});
+      }
+    }
+    return result;
+  } catch (e) {
+    return Object.assign({ template: "plotly_dark" }, layout || {});
+  }
+}
+// ---- End dark mode helpers ----
+
+
 if (typeof(results) === "undefined") {
   results = {
 
@@ -365,7 +419,7 @@ if (typeof(results) === "undefined") {
 
       // Add click event listeners to each element
       chartsData.forEach(({buttonId, plotId, data, layout}) => {
-        document.getElementById(buttonId).addEventListener("click", () => Plotly.newPlot(plotId, data, layout));
+        document.getElementById(buttonId).addEventListener("click", () => Plotly.newPlot(plotId, data, mergeDark(layout)));
       });
 
       document.getElementById("plot-assets-choice-liquid").click();
@@ -393,7 +447,7 @@ if (typeof(results) === "undefined") {
           yaxis: {title: "ROI", tickformat: ',.1%'},
           legend: {orientation: "h", xanchor: "center", x: 0.5, y: -0.2,}
         };
-        Plotly.newPlot("plot-randomroi", randomROIData, randomROILayout);
+        Plotly.newPlot("plot-randomroi", randomROIData, mergeDark(randomROILayout));
         document.getElementById("plot-randomroi-actual-number").innerHTML = rateArray.length;
         document.getElementById("plot-randomroi-actual-average").innerHTML = util.formatPercentageVal(100 * util.arrayAverage(rateArray));
         document.getElementById("plot-randomroi-actual-display").style.display = "block";
