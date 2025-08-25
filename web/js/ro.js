@@ -1841,34 +1841,28 @@ submitBtn.addEventListener('click', async ()=>{
   hideErrorPanel();
   const data = buildPlanJSON();
   const body = btoa(JSON.stringify(data))
-  try{
-    showProcessingModal();
-    const response = await fetch('https://api.retirementodds.info/calculate/staging/calculate', {
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
-      headers: {
-        'Content-Type': 'text/plain',
-        'Referer': document.referrer || window.location.href
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: '', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: body // body data type must match "Content-Type" header
-    });
-    //return response.json(); // parses JSON response into native JavaScript objects
-    if(!response.ok) throw new Error(`HTTP ${response.status}`);
-    //showToast('Submitted successfully.', true);
-    try{ 
-      const respData = await response.json(); 
-      hideProcessingModal()
-      ensureResultsSection(); 
-      showResults(respData); 
-    }catch(_e){}
-  }catch(err){
-    showToast('Submit failed: ' + (err?.message || 'Unknown error'), false);
-  }
+  showProcessingModal();
+  const response = await fetch('https://api.retirementodds.info/calculate/staging/calculate', {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    mode: 'cors', // no-cors, *cors, same-origin
+    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: 'same-origin', // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'text/plain',
+      'Referer': document.referrer || window.location.href
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: 'follow', // manual, *follow, error
+    referrerPolicy: '', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: body // body data type must match "Content-Type" header
+  });
+  //return response.json(); // parses JSON response into native JavaScript objects
+  if(!response.ok) throw new Error(`HTTP ${response.status}`);
+  //showToast('Submitted successfully.', true);
+  const respData = await response.json(); 
+  hideProcessingModal()
+  ensureResultsSection(); 
+  results.showResults(respData.result, data); 
 });
 document.getElementById('submitBtnDup')?.addEventListener('click', () => submitBtn.click());
 

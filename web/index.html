@@ -240,6 +240,8 @@
 <button class="nav-like" id="nextSectionBtn" type="button"></button>
 </div>
 <pre aria-live="polite" class="json-box hidden" id="jsonBox"></pre>
+
+<!--
 </section>
 <section aria-live="polite" class="panel results-panel hidden" id="resultsPanel">
 <div class="panel-header">
@@ -248,6 +250,119 @@
 <div class="lipsum">Server response from your retirement odds calculation.</div>
 <pre aria-live="polite" class="json-box" id="resultsJson"></pre>
 </section>
+-->
+
+<!-- Results -->
+<section aria-live="polite" class="panel results-panel hidden" id="resultsPanel">
+  <span id="results-error" class="result-error"></span>
+  <div id="results-success">
+    Your retirement odds are:<br>
+    <span id="results-result" class="results-value"></span><br/>
+    <p id="results-support-top" class="results-support-msg">
+      Hello!  I hope you are finding this tool useful!
+      If you have questions or would like to make sure you're 
+      getting the best results, please email me.
+      And if you love this tool, please <a class="donation-link" href="#">consider supporting it</a>.
+    </p>
+    <p id="results-pgh1"></p>
+    <p id="results-pgh2"></p>
+    <p id="results-pgh3"></p>  
+    <div id="results-download-csv">
+      You can also download a sample .csv file from a single run:
+      <ul>
+        <li><a id="downloadSampleLink"  href="alert('No sample data available')">with ROI randomized by standard deviation</a></li>
+        <li><a id="downloadFixedSampleLink"  href="alert('No sample data available')">with ROI fixed at the average</a></li>
+      </ul>
+    </div>
+    <p id="results-do-not-refresh">
+      <b>Note:</b> Do not refresh the web page without saving or you will lose your data.
+    </p>
+    <div class="space-above-20"></div>
+    <p>Now here's some bling...</p>
+    <div id="plots">
+      <hr>
+      <div class="chart-heading">Net Worth</div>
+      <div class="chart-selector">
+        <input type="radio"  name="plot-assets-choice" id="plot-assets-choice-liquid" value="plot-assets-choice-liquid" uie="plot-assets-choice-liquid">
+        <label for="plot-assets-choice-liquid"><span>Liquid Net Worth</span></label>
+        <input type="radio"  name="plot-assets-choice" id="plot-assets-choice-tnw" value="plot-assets-choice-tnw" uie="plot-assets-choice-tnw">
+        <label for="plot-assets-choice-tnw"><span>Total Net Worth</span></label>
+      </div>
+      <div id="plot-assets"></div>
+      <hr>
+      <div class="chart-heading">Retirement Spending</div>
+      <div class="chart-selector">
+        <input type="radio"  name="plot-spending-choice" id="plot-spending-choice-source" value="plot-spending-choice-source" uie="plot-spending-choice-source">
+        <label for="plot-spending-choice-source"><span>Cash Source</span></label>
+        <input type="radio"  name="plot-spending-choice" id="plot-spending-choice-taxview" value="plot-spending-choice-taxview" uie="plot-spending-choice-taxview">
+        <label for="plot-spending-choice-taxview"><span>Tax View</span></label>
+        <input type="radio"  name="plot-spending-choice" id="plot-spending-choice-withdrawalrate" value="plot-spending-choice-withdrawalrate" uie="plot-spending-choice-withdrawalrate">
+        <label for="plot-spending-choice-withdrawalrate"><span>Withdrawal Rate</span></label>
+      </div>
+      <div id="plot-spending"></div>
+      <hr>
+      <div class="chart-heading">Tax Detail</div>
+      <div class="chart-selector">
+        <input type="radio"  name="plot-taxview-choice" id="plot-taxview-choice-taxes" value="plot-taxview-choice-taxes" uie="plot-taxview-choice-taxes">
+        <label for="plot-taxview-choice-taxes"><span>Taxes Paid</span></label>
+        <input type="radio" name="plot-taxview-choice" id="plot-taxview-choice-taxableincome" value="plot-taxview-choice-taxableincome" uie="plot-taxview-choice-taxableincome">
+        <label for="plot-taxview-choice-taxableincome"><span>Taxable Income</span></label>
+      </div>
+      <div id="plot-taxes"></div>
+      <hr>
+      <div class="chart-heading">ROI Randomization</div>
+      <div class="plot-randomroi-info">
+        To simulate the market, this tool uses average and standard deviation values to randomize ROI over 1000 trials.  
+        You can visualize a sample run of this below.<br>
+        <b>Note: </b>This particular randomization was not used in your calculation.
+        <br>
+        <div>
+          <label for="plot-randomroi-average">Average:</label>
+          <span>
+            <input
+            type="text"
+            id="plot-randomroi-average"
+            class="percentageinput"
+            data-type="percentage"
+            placeholder="%"
+          />
+          </span>
+        </div>
+        <div>
+          <label for="plot-randomroi-stdev">Standard Deviation:</label>
+          <span>
+            <input
+              type="text"
+              id="plot-randomroi-stdev"
+              class="currencyinput"
+              data-type="percentage"
+              placeholder="%"
+            />
+          </span>
+        </div>
+        <div>
+          <label for="plot-randomroi-regenerate"></label>
+          <button id="plot-randomroi-regenerate">Re-generate</button>
+        </div>
+        <div id="plot-randomroi"></div>
+        <div id="plot-randomroi-actual-display" style="display: none;">
+          Actual realized average over <span id="plot-randomroi-actual-number"></span> years: <span id="plot-randomroi-actual-average"></span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
 
 </main>
 </div>
@@ -308,6 +423,9 @@
 <script src="assets/marketreturns.js"></script>
 <script src="assets/inflationdata.js"></script>
 <script src="assets/realEstateROI.js"></script>
+<script src="js/thirdparty/plotly-2.16.1.min.js"></script>
+<script src="js/util.js"></script>
+<script src="js/results.js"></script>
 <script src="js/ro.js"></script>
 </body>
 </html>

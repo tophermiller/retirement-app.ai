@@ -888,6 +888,63 @@ body.ro-modal-open{overflow:hidden;}
 /* Ensure results panel fills the main area similarly to other panels */
 .results-panel .panel-header h2{ margin:0 0 6px; }
 .results-panel .json-box{ max-height: 60vh; }
+.result-error {
+  display: none;
+  color: red;
+}
+.results-value {
+  font-size: 5em;
+  font-weight: bold;
+}
+.results-support-msg {
+  color: blue;
+  font-weight: bold;
+  font-style: italic;
+}
+.space-above-20 {
+  margin-top: 20px;
+}
+.chart-heading {
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.chart-selector {
+  text-align: center;
+}
+
+.chart-selector input[type="radio"] {
+  display: none;
+}
+
+.chart-selector label {
+  display: inline-block;
+  padding: 2px 10px;
+  margin: 5px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.chart-selector input[type="radio"]:checked + label {
+  background-color: #007BFF;
+  color: white;
+  border-color: #007BFF;
+}
+
+.plot-randomroi-info label {
+  display: inline-block;
+    width: 160px;
+}
+
+.plot-randomroi-info input {
+  margin: 2px;
+  height: 20px;
+  width: 80px;
+}
 
 
 #processingModal {
