@@ -1748,7 +1748,7 @@ function buildPlanJSON(){
 
   //income
   submittal.incomeAccountList = {};
-  submittal.incomeAccountList.incomesAccounts = [];
+  submittal.incomeAccountList.incomeAccounts = [];
   let incomeNum = 1;
   (state.epsilon.items || []).forEach(i => {
     const inc = {
@@ -1765,13 +1765,13 @@ function buildPlanJSON(){
         standardDeviation: 0
       } : null,
     };
-    submittal.incomeAccountList.incomesAccounts.push(inc);
+    submittal.incomeAccountList.incomeAccounts.push(inc);
     incomeNum += 1;
   });
-  if (submittal.incomeAccountList.incomesAccounts.length === 0) {
-    delete submittal.incomeAccountList.incomesAccounts; // Remove empty income list
+  if (submittal.incomeAccountList.incomeAccounts.length === 0) {
+    delete submittal.incomeAccountList.incomeAccounts; // Remove empty income list
   }
-  if (submittal.incomeAccountList.incomesAccounts === null) {
+  if (submittal.incomeAccountList.incomeAccounts === null) {
     delete submittal.incomeAccountList; // Remove empty income account list
   }
 
