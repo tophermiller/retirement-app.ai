@@ -637,6 +637,53 @@ const fieldPairs = [
         sdEl.onfocus  = ()=> onFocusNumeric(sdEl);
         sdEl.onblur   = ()=> { onBlurPercent(sdEl);  obj[k].stdev = sdEl.dataset.raw || ''; };
       });
+    // === Real Estate inline state selector (replaces Help Me Choose modal) ===
+    (function(){
+      try{
+        const sel = document.getElementById('reStateSelect');
+        const roiEl = document.getElementById('reRoi');
+        const sdEl  = document.getElementById('reSd');
+        if (!sel || !roiEl || !sdEl || typeof realEstateROI === 'undefined') return;
+        // Populate options once
+        if (!sel.dataset.populated) {
+          const byName = Object.entries(realEstateROI)
+            .map(([abbr, v])=>({abbr, name: v.stateName}))
+            .sort((a,b)=> a.name.localeCompare(b.name));
+          const defaultAbbr = (state.alpha?.single?.stateCode) || 'CA';
+          const placeholder = document.createElement('option');
+          placeholder.textContent = '--Choose a state--';
+          placeholder.value = '';
+          sel.appendChild(placeholder);
+          byName.forEach(({abbr, name})=>{
+            const o = document.createElement('option');
+            o.value = abbr;
+            o.textContent = name;
+            if (abbr === defaultAbbr) o.selected = true;
+            sel.appendChild(o);
+          });
+          sel.dataset.populated = '1';
+        }
+        const apply = ()=>{
+          const abbr = sel.value;
+          const data = realEstateROI[abbr];
+          if (!data) return;
+          const roi = (100*Number(data.average)).toFixed(2);
+          const sd  = (100*Number(data.stdev)).toFixed(2);
+          roiEl.dataset.raw = String(roi); roiEl.value = `${roi}%`;
+          sdEl.dataset.raw  = String(sd);  sdEl.value  = `${sd}%`;
+          // Persist
+          const g = state.beta.single;
+          if (g && g.realEstate) {
+            g.realEstate.roi = String(roi);
+            g.realEstate.stdev = String(sd);
+          }
+        };
+        sel.addEventListener('change', apply);
+        // Apply immediately if a default was selected
+        if (sel.value) apply();
+      }catch(e){ /* no-op */ }
+    })();
+
     })();
 
 

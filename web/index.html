@@ -165,18 +165,18 @@
 <!-- 1. Inflation -->
 <div class="gr-section">
 <div class="gr-head">
-  <h3 class="gr-title">Inflation</h3>
+<h3 class="gr-title">Inflation</h3>
 </div>
 <!--<p class="lipsum" id="inflationTimePeriodHint"></p>-->
 <div class="field">
-  <label class="label" for="inflationTimePeriod">Choose Presets Based On Historical Time Period</label>
-  <select id="inflationTimePeriod">
-    <option selected="selected" value="100">• The last 100 years</option>
-    <option value="50">• The last 50 years</option>
-    <option value="25">• The last 25 years</option>
-    <option value="10">• The last 10 years</option>
-    <option value="5">• The last 5 years</option>
-  </select>
+<label class="label" for="inflationTimePeriod">Choose Presets Based On Historical Time Period</label>
+<select id="inflationTimePeriod">
+<option selected="selected" value="100">• The last 100 years</option>
+<option value="50">• The last 50 years</option>
+<option value="25">• The last 25 years</option>
+<option value="10">• The last 10 years</option>
+<option value="5">• The last 5 years</option>
+</select>
 </div>
 <div class="grid-2">
 <div class="field">
@@ -194,46 +194,50 @@
 <div class="gr-head">
 <h3 class="gr-title">Liquid Investments</h3></div>
 <p class="label">
-  Here you'll predict the returns of common asset classes.   
+  Here you'll predict your returns by asset class.   
   Later, you'll specify the asset allocation for your accounts.
   The calculator will derive random returns using these values, weighted by your asset allocation,
   and using <a href="https://www.youtube.com/watch?v=4OunaCjm2YM" target="_new">Cholesky Decomposition</a> to provide correlation.
 </p>
 <div class="field">
-  <label class="label" for="liquidTimePeriod">Choose Presets Based On Historical Time Period</label>
-  <select id="liquidTimePeriod">
-    <option selected="selected" value="1976-present">• 1976 - 2024</option>
-    <option value="1990-present">• 1990 - 2024</option>
-    <option value="2000-present">• 2000 - 2024</option>
-    <option value="2000-2010">• 2000 - 2010</option>
-    <option value="2010-present">• 2010 - 2024</option>
-    <option value="2020-present">• 2020 - 2024</option>
-  </select>
+<label class="label" for="liquidTimePeriod">Choose Presets Based On Historical Time Period</label>
+<select id="liquidTimePeriod">
+<option selected="selected" value="1976-present">• 1976 - 2024</option>
+<option value="1990-present">• 1990 - 2024</option>
+<option value="2000-present">• 2000 - 2024</option>
+<option value="2000-2010">• 2000 - 2010</option>
+<option value="2010-present">• 2010 - 2024</option>
+<option value="2020-present">• 2020 - 2024</option>
+</select>
 </div>
 <div class="asset-grid" id="liquidAssetGrid">
-  <div class="corner"></div>
-  <div class="col-head label">ROI (%)</div>
-  <div class="col-head label">Standard Deviation (%)</div>
-
-  <div class="row-head label">US Stocks</div>
-  <div class="cell"><input class="pct" id="liquidUsStocksRoi" inputmode="decimal" placeholder="e.g. 9.0" type="text"/></div>
-  <div class="cell"><input class="pct" id="liquidUsStocksSd"  inputmode="decimal" placeholder="e.g. 18" type="text"/></div>
-
-  <div class="row-head label">US Bonds</div>
-  <div class="cell"><input class="pct" id="liquidUsBondsRoi" inputmode="decimal" placeholder="e.g. 4.0" type="text"/></div>
-  <div class="cell"><input class="pct" id="liquidUsBondsSd"  inputmode="decimal" placeholder="e.g. 7" type="text"/></div>
-
-  <div class="row-head label">International Stocks</div>
-  <div class="cell"><input class="pct" id="liquidIntlStocksRoi" inputmode="decimal" placeholder="e.g. 8.0" type="text"/></div>
-  <div class="cell"><input class="pct" id="liquidIntlStocksSd"  inputmode="decimal" placeholder="e.g. 20" type="text"/></div>
+<div class="corner"></div>
+<div class="col-head label">ROI (%)</div>
+<div class="col-head label">Standard Deviation (%)</div>
+<div class="row-head label">US Stocks</div>
+<div class="cell"><input class="pct" id="liquidUsStocksRoi" inputmode="decimal" placeholder="e.g. 9.0" type="text"/></div>
+<div class="cell"><input class="pct" id="liquidUsStocksSd" inputmode="decimal" placeholder="e.g. 18" type="text"/></div>
+<div class="row-head label">US Bonds</div>
+<div class="cell"><input class="pct" id="liquidUsBondsRoi" inputmode="decimal" placeholder="e.g. 4.0" type="text"/></div>
+<div class="cell"><input class="pct" id="liquidUsBondsSd" inputmode="decimal" placeholder="e.g. 7" type="text"/></div>
+<div class="row-head label">International Stocks</div>
+<div class="cell"><input class="pct" id="liquidIntlStocksRoi" inputmode="decimal" placeholder="e.g. 8.0" type="text"/></div>
+<div class="cell"><input class="pct" id="liquidIntlStocksSd" inputmode="decimal" placeholder="e.g. 20" type="text"/></div>
 </div>
 </div>
 <!-- 3. Real Estate Investments -->
 <div class="gr-section">
 <div class="gr-head">
 <h3 class="gr-title">Real Estate Investments</h3>
-<button class="btn small" data-help="real_estate" type="button">Help me choose</button>
-</div>
+<p class="label">
+  State-level historical appreciation of residential real estate is based on 
+  the <a href="https://www.fhfa.gov/data/hpi" target="_new">FHFA House Price Index</a>
+  from Q1 1991 to Q3 2022.
+</p>
+<div class="field">
+  <label class="label" for="reStateSelect">Choose Presets Based On Historical Time Period For Your State</label>
+  <select id="reStateSelect"></select>
+</div></div>
 <div class="grid-2">
 <div class="field">
 <label class="label" for="reRoi">ROI (%)</label>
@@ -347,7 +351,7 @@
         To simulate the market, this tool uses average and standard deviation values to randomize ROI over 1000 trials.  
         You can visualize a sample run of this below.<br/>
 <b>Note: </b>This particular randomization was not used in your calculation.
-        <br>
+        <br/>
 <div>
 <label for="plot-randomroi-average">Average:</label>
 <span>
@@ -368,7 +372,7 @@
 <div id="plot-randomroi-actual-display" style="display: none;">
           Actual realized average over <span id="plot-randomroi-actual-number"></span> years: <span id="plot-randomroi-actual-average"></span>.
         </div>
-</br></div>
+</div>
 </div>
 <p class="results-support-msg" id="results-support-top">
       I hope you are finding this tool useful!
