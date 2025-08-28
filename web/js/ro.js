@@ -641,7 +641,68 @@ const fieldPairs = [
 
 
     
-    /* --- Liquid: Customize ROI for Specific Years --- */
+    
+    /* --- Liquid: Time Period preset handler (markethistory.js) --- */
+    (function(){
+      try {
+        const sel = document.getElementById('liquidTimePeriod');
+        if (!sel || typeof markethistory === 'undefined' || !Array.isArray(markethistory.data)) return;
+
+        // Map UI -> dataset keys & input ids
+        const classes = [
+          { key: "US_Stocks_SP500_TR", roiId: "liquidUsStocksRoi", sdId: "liquidUsStocksSd", stateKey: "usStocks" },
+          { key: "US_Bonds_Agg_TR", roiId: "liquidUsBondsRoi", sdId: "liquidUsBondsSd", stateKey: "usBonds" },
+          { key: "Intl_Stocks_MSCI_EAFE_NR_USD", roiId: "liquidIntlStocksRoi", sdId: "liquidIntlStocksSd", stateKey: "internationalStocks" },
+        ];
+
+        // Helpers
+        const years = markethistory.data.map(r => Number(r.Year)).filter(Number.isFinite);
+        const minY = Math.min.apply(null, years), maxY = Math.max.apply(null, years);
+
+        function parseRange(v){
+          // v examples: "1976-present", "2000-2010"
+          const m = String(v || '').trim().toLowerCase().match(/^(\d{4})\s*-\s*(present|\d{4})$/);
+          if (!m) return {first:minY, last:maxY};
+          const first = Number(m[1]);
+          const last  = (m[2] === 'present') ? maxY : Number(m[2]);
+          return { first: Math.max(minY, Math.min(first, maxY)), last: Math.max(minY, Math.min(last, maxY)) };
+        }
+
+        function pct(x){ return (Number.isFinite(x) ? (x*100).toFixed(2) : ""); }
+
+        function applyFromSelection(){
+          const {first, last} = parseRange(sel.value);
+          // For each asset, compute mean & stdev from markethistory
+          classes.forEach(({key, roiId, sdId, stateKey})=>{
+            const mean  = (markethistory.getAverage && markethistory.getAverage(first, last, key)) ?? null;
+            const stdev = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, key)) ?? null;
+
+            const roiEl = document.getElementById(roiId);
+            const sdEl  = document.getElementById(sdId);
+            if (!roiEl || !sdEl) return;
+
+            const meanPct  = mean  === null ? "" : pct(mean);
+            const stdevPct = stdev === null ? "" : pct(stdev);
+
+            // Write inputs (show with % but store raw number in dataset.raw)
+            if (meanPct !== "") { roiEl.dataset.raw = meanPct;  roiEl.value = meanPct + "%";  }
+            if (stdevPct !== ""){ sdEl.dataset.raw = stdevPct;  sdEl.value = stdevPct + "%"; }
+
+            // Persist to state
+            if (g && g.liquid && g.liquid[stateKey]){
+              if (meanPct !== "")  g.liquid[stateKey].roi   = meanPct;
+              if (stdevPct !== "") g.liquid[stateKey].stdev = stdevPct;
+            }
+          });
+        }
+
+        sel.addEventListener('change', applyFromSelection);
+        // Initialize on first render using currently selected option
+        applyFromSelection();
+      } catch(e) { /* no-op */ }
+    })();
+    
+/* --- Liquid: Customize ROI for Specific Years --- */
     (function(){
   const btn  = document.getElementById('liquidCustomizeBtn') /* may be null now */;
   const wrap = document.getElementById('liquidCustomizeWrap');
