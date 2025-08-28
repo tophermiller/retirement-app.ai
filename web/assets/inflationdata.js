@@ -111,8 +111,7 @@ if (typeof(inflationdata) === "undefined") {
             "2021": 4.7,
             "2022": 8.0,
             "2023": 4.1,
-            "2024": 2.9,
-            "2025": null
+            "2024": 2.9
         },
 
         /**
@@ -142,7 +141,67 @@ if (typeof(inflationdata) === "undefined") {
                 return acc + diff * diff;
             }, 0);
             return Math.sqrt(squaredDiffSum / n).toFixed(2);
-        }        
+        },      
+
+
+        // === Range-based helpers ===
+
+        /**
+         * Returns the max year available in the dataset as a number.
+         */
+        getMaxYear: function() {
+            const years = Object.keys(inflationdata.numbers).map(y => parseInt(y, 10)).filter(Number.isFinite);
+            return years.length ? Math.max(...years) : null;
+        },
+
+        /**
+         * Returns the min year available in the dataset as a number.
+         */
+        getMinYear: function() {
+            const years = Object.keys(inflationdata.numbers).map(y => parseInt(y, 10)).filter(Number.isFinite);
+            return years.length ? Math.min(...years) : null;
+        },
+
+        /**
+         * Compute the mean inflation over an inclusive range [firstYear, lastYear].
+         * Non-numeric entries are ignored.
+         * Returns a string with 2 decimals (e.g., "3.14").
+         */
+        computeMeanRange: function(firstYear, lastYear) {
+            const a = parseInt(firstYear, 10);
+            const b = parseInt(lastYear, 10);
+            if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+            const start = Math.min(a, b), end = Math.max(a, b);
+            let values = [];
+            for (let y = start; y <= end; y++) {
+                const v = inflationdata.numbers[String(y)];
+                if (typeof v === 'number' && Number.isFinite(v)) values.push(v);
+            }
+            if (!values.length) return null;
+            const sum = values.reduce((acc, val) => acc + val, 0);
+            return (sum / values.length).toFixed(2);
+        },
+
+        /**
+         * Compute the population standard deviation over an inclusive range [firstYear, lastYear].
+         * Returns a string with 2 decimals.
+         */
+        computeStdDevRange: function(firstYear, lastYear) {
+            const a = parseInt(firstYear, 10);
+            const b = parseInt(lastYear, 10);
+            if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+            const start = Math.min(a, b), end = Math.max(a, b);
+            let values = [];
+            for (let y = start; y <= end; y++) {
+                const v = inflationdata.numbers[String(y)];
+                if (typeof v === 'number' && Number.isFinite(v)) values.push(v);
+            }
+            const n = values.length;
+            if (!n) return null;
+            const mean = values.reduce((acc, v) => acc + v, 0) / n;
+            const variance = values.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0) / n;
+            return Math.sqrt(variance).toFixed(2);
+        }
 
     }
 }
