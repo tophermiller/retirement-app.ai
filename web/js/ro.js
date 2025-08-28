@@ -560,12 +560,12 @@ if(data.heirsTarget){
     
     /* --- Liquid: Customize ROI for Specific Years --- */
     (function(){
-  const btn  = document.getElementById('liquidCustomizeBtn');
+  const btn  = document.getElementById('liquidCustomizeBtn') /* may be null now */;
   const wrap = document.getElementById('liquidCustomizeWrap');
   const rowsHost = document.getElementById('liquidRows');
   const addBtn = document.getElementById('addLiquidRowBtn');
 
-  if (!btn || !wrap || !rowsHost || !addBtn) return;
+  if (!wrap || !rowsHost || !addBtn) return;
 
   // Ensure the array exists, seed with one empty row if none
   g.liquid.customYears = (g.liquid.customYears && g.liquid.customYears.length)
@@ -653,7 +653,7 @@ if(data.heirsTarget){
   // Initial render if visible
   if (!wrap.classList.contains('hidden')) renderRows();
 
-  btn.onclick = ()=>{
+  if (btn) btn.onclick = ()=>{
     const isHidden = wrap.classList.contains('hidden'); // currently hidden?
     wrap.classList.toggle('hidden');
     btn.textContent = isHidden ? 'Hide Customized ROI Years' : 'Customize ROI For Specific Years';
