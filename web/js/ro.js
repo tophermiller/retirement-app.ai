@@ -73,7 +73,7 @@ const state = Object.fromEntries(sections.map(s => [s.key, s.mode==='single'
       // Growth Rates defaults
       : { single:{
             inflation:{ roi:'', stdev:'' },
-            liquid:{ roi:'', stdev:'', customYears:[] },
+            liquid:{ usStocks:{roi:'', stdev:''}, usBonds:{roi:'', stdev:''}, internationalStocks:{roi:'', stdev:''}, customYears:[] },
             realEstate:{ roi:'', stdev:'' }
         } } )
   : { items:[], nextId:1 }
@@ -584,7 +584,6 @@ if(data.heirsTarget){
   } catch(e) { /* no-op */ }
 const fieldPairs = [
       {roiId:'inflationRoi', sdId:'inflationSd', obj:g.inflation},
-      {roiId:'liquidRoi',    sdId:'liquidSd',    obj:g.liquid},
       {roiId:'reRoi',        sdId:'reSd',        obj:g.realEstate},
     ];
 
@@ -608,6 +607,38 @@ const fieldPairs = [
       sdEl.onfocus = ()=> onFocusNumeric(sdEl);
       sdEl.onblur  = ()=> { onBlurPercent(sdEl); obj.stdev = sdEl.dataset.raw || ''; };
     });
+    // --- Liquid: 2x3 grid wiring ---
+    (function(){
+      const ids = {
+        usStocks: { roi:'liquidUsStocksRoi', sd:'liquidUsStocksSd' },
+        usBonds:  { roi:'liquidUsBondsRoi',  sd:'liquidUsBondsSd'  },
+        internationalStocks:{ roi:'liquidIntlStocksRoi', sd:'liquidIntlStocksSd' }
+      };
+      const obj = g.liquid;
+      if (!obj.usStocks) obj.usStocks = {roi:'', stdev:''};
+      if (!obj.usBonds) obj.usBonds = {roi:'', stdev:''};
+      if (!obj.internationalStocks) obj.internationalStocks = {roi:'', stdev:''};
+
+      Object.entries(ids).forEach(([k, pair])=>{
+        const roiEl = document.getElementById(pair.roi);
+        const sdEl  = document.getElementById(pair.sd);
+        if (!roiEl || !sdEl) return;
+
+        // populate
+        if (nonEmpty(obj[k].roi)) { roiEl.dataset.raw = String(obj[k].roi); roiEl.value = `${obj[k].roi}%`; }
+        else { roiEl.value=''; roiEl.dataset.raw=''; }
+        if (nonEmpty(obj[k].stdev)) { sdEl.dataset.raw = String(obj[k].stdev); sdEl.value = `${obj[k].stdev}%`; }
+        else { sdEl.value=''; sdEl.dataset.raw=''; }
+
+        // handlers
+        roiEl.onfocus = ()=> onFocusNumeric(roiEl);
+        roiEl.onblur  = ()=> { onBlurPercent(roiEl); obj[k].roi   = roiEl.dataset.raw || ''; };
+
+        sdEl.onfocus  = ()=> onFocusNumeric(sdEl);
+        sdEl.onblur   = ()=> { onBlurPercent(sdEl);  obj[k].stdev = sdEl.dataset.raw || ''; };
+      });
+    })();
+
 
     
     /* --- Liquid: Customize ROI for Specific Years --- */
@@ -1404,7 +1435,7 @@ function validateState(){
 
   const g = state.beta.single || {};
   if(!nonEmpty(g.inflation?.roi)) errors.push('Growth Rates: Inflation value is required');
-  if(!nonEmpty(g.liquid?.roi)) errors.push('Growth Rates: Liquid Investments ROI is required');
+  if(!nonEmpty(g.liquid?.usStocks?.roi) || !nonEmpty(g.liquid?.usBonds?.roi) || !nonEmpty(g.liquid?.internationalStocks?.roi)) errors.push('Growth Rates: Each Liquid Investment ROI (US Stocks, US Bonds, International Stocks) is required');
 
   //validate liquid assets
   let totalAssets = 0;

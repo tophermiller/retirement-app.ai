@@ -169,7 +169,7 @@
 </div>
 <!--<p class="lipsum" id="inflationTimePeriodHint"></p>-->
 <div class="field">
-  <label class="label" for="inflationTimePeriod">Set Based On Historical Time Period</label>
+  <label class="label" for="inflationTimePeriod">Choose Presets Based On Historical Time Period</label>
   <select id="inflationTimePeriod">
     <option selected="selected" value="100">• The last 100 years</option>
     <option value="50">• The last 50 years</option>
@@ -193,8 +193,14 @@
 <div class="gr-section">
 <div class="gr-head">
 <h3 class="gr-title">Liquid Investments</h3></div>
+<p class="label">
+  Here you'll predict your returns by asset class.   
+  Later, you'll specify the asset allocation for your accounts.
+  The calculator will derive random returns using these values, weighted by your asset allocation,
+  and using <a href="https://www.youtube.com/watch?v=4OunaCjm2YM" target="_new">Cholesky Decomposition</a> to provide correlation.
+</p>
 <div class="field">
-  <label class="label" for="liquidTimePeriod">Set Based On Historical Time Period</label>
+  <label class="label" for="liquidTimePeriod">Choose Presets Based On Historical Time Period</label>
   <select id="liquidTimePeriod">
     <option selected="selected" value="1976-present">• 1976 - Present</option>
     <option value="1990-present">• 1990 - Present</option>
@@ -204,15 +210,22 @@
     <option value="2020-present">• 2020 - Present</option>
   </select>
 </div>
-<div class="grid-2">
-<div class="field">
-<label class="label" for="liquidRoi">ROI (%)</label>
-<input class="pct" id="liquidRoi" inputmode="decimal" placeholder="e.g. 6.0" type="text"/>
-</div>
-<div class="field">
-<label class="label" for="liquidSd">Standard Deviation (%)</label>
-<input class="pct" id="liquidSd" inputmode="decimal" placeholder="e.g. 12" type="text"/>
-</div>
+<div class="asset-grid" id="liquidAssetGrid">
+  <div class="corner"></div>
+  <div class="col-head label">ROI (%)</div>
+  <div class="col-head label">Standard Deviation (%)</div>
+
+  <div class="row-head label">US Stocks</div>
+  <div class="cell"><input class="pct" id="liquidUsStocksRoi" inputmode="decimal" placeholder="e.g. 9.0" type="text"/></div>
+  <div class="cell"><input class="pct" id="liquidUsStocksSd"  inputmode="decimal" placeholder="e.g. 18" type="text"/></div>
+
+  <div class="row-head label">US Bonds</div>
+  <div class="cell"><input class="pct" id="liquidUsBondsRoi" inputmode="decimal" placeholder="e.g. 4.0" type="text"/></div>
+  <div class="cell"><input class="pct" id="liquidUsBondsSd"  inputmode="decimal" placeholder="e.g. 7" type="text"/></div>
+
+  <div class="row-head label">International Stocks</div>
+  <div class="cell"><input class="pct" id="liquidIntlStocksRoi" inputmode="decimal" placeholder="e.g. 8.0" type="text"/></div>
+  <div class="cell"><input class="pct" id="liquidIntlStocksSd"  inputmode="decimal" placeholder="e.g. 20" type="text"/></div>
 </div>
 </div>
 <!-- 3. Real Estate Investments -->
