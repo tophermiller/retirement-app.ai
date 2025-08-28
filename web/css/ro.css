@@ -983,3 +983,35 @@ body.ro-modal-open{overflow:hidden;}
   text-align: center;
 }
 
+
+
+
+/* === Compact 2x3 asset grid === */
+.asset-grid{
+  display:grid;
+  grid-template-columns: minmax(110px, 1fr) minmax(90px, 1fr) minmax(120px, 1fr);
+  gap: 8px 10px;
+  align-items:center;
+  margin-top: 8px;
+}
+.asset-grid .corner{}
+
+.asset-grid .col-head{
+  
+}
+
+.asset-grid .row-head{
+  white-space:nowrap;
+
+}
+.asset-grid .cell input.pct{
+  width:100%;
+}
+@media (max-width: 480px){
+  .asset-grid{
+    grid-template-columns: minmax(90px, 1fr) minmax(70px, 1fr) minmax(110px, 1fr);
+    gap:6px 8px;
+  }
+  .asset-grid .col-head{ font-size:0.9rem; }
+  .asset-grid .row-head{ font-size:0.9rem; }
+}
