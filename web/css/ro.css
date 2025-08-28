@@ -192,7 +192,7 @@
     border:1px solid var(--outline); border-radius:12px; background:var(--surface-2);
     padding:14px 12px 16px; margin-bottom:12px
   }
-  .single h3{margin:0 0 6px; font-size:15px; color:#cbd3e1; letter-spacing:.2px}
+  .single h3{ font-size:15px; color:#cbd3e1; letter-spacing:.2px}
 
   /* ---- BASICS INPUT SIZING ---- */
   #basicsForm .ctrl input{ flex:0 0 6ch; width:3ch; }
@@ -555,7 +555,7 @@ select {
   align-items: end;
 }
 .triple-row .field { min-width: 0; }
-.triple-row .field .label { display: block; margin-bottom: 2px; font-weight: 600; }
+.triple-row .field .label { display: block; margin-bottom: 2px;  }
 
 /* First row acts like headers */
 .triple-row.header-row .field .label {
