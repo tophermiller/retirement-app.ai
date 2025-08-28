@@ -6,7 +6,7 @@
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>RetirementOdds.com</title>
 <link href="css/ro.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/responsive_plots.css"/>
+<link href="css/responsive_plots.css" rel="stylesheet"/>
 </head>
 <body>
 <header class="brandbar">
@@ -165,12 +165,22 @@
 <!-- 1. Inflation -->
 <div class="gr-section">
 <div class="gr-head">
-<h3 class="gr-title">Inflation</h3>
-<button class="btn small" data-help="inflation" type="button">Help me choose</button>
+  <h3 class="gr-title">Inflation</h3>
+</div>
+<!--<p class="lipsum" id="inflationTimePeriodHint"></p>-->
+<div class="field">
+  <label class="label" for="inflationTimePeriod">Set Based On Historical Time Period</label>
+  <select id="inflationTimePeriod">
+    <option selected="selected" value="100">• The last 100 years</option>
+    <option value="50">• The last 50 years</option>
+    <option value="25">• The last 25 years</option>
+    <option value="10">• The last 10 years</option>
+    <option value="5">• The last 5 years</option>
+  </select>
 </div>
 <div class="grid-2">
 <div class="field">
-<label class="label" for="inflationRoi">ROI (%)</label>
+<label class="label" for="inflationRoi">Inflation (%)</label>
 <input class="pct" id="inflationRoi" inputmode="decimal" placeholder="e.g. 3.0" type="text"/>
 </div>
 <div class="field">
@@ -195,7 +205,6 @@
 <input class="pct" id="liquidSd" inputmode="decimal" placeholder="e.g. 12" type="text"/>
 </div>
 </div>
-
 </div>
 <!-- 3. Real Estate Investments -->
 <div class="gr-section">
@@ -214,13 +223,12 @@
 </div>
 </div>
 </div>
-
 <div class="gr-section">
-  <div class="gr-head">
-    <h3 class="gr-title">Customize ROI For Specific Years</h3>
-  </div>
-  <div class="custom-rows" id="liquidCustomizeWrap">
-<div class="rows-head note">
+<div class="gr-head">
+<h3 class="gr-title">Customize ROI For Specific Years</h3>
+</div>
+<div class="custom-rows" id="liquidCustomizeWrap">
+<div class="rows-head lipsum">
   For your liquid assets, you can set specific, non-randomized rates of return for specific years
   to occur with a specified probability.  This can be useful for modeling sequence-of-returns risk 
   or future market crashes.  For example, you might want to set a -20% return with a 50% probability
@@ -233,10 +241,6 @@
 </div>
 </div>
 </div>
-
-
-
-
 <div class="dock-wrap" id="dockWrap">
 <div aria-live="polite" class="dock empty" id="dock">Collapsed items will appear here.</div>
 </div>
@@ -254,10 +258,7 @@
 <button class="nav-like" id="nextSectionBtn" type="button"></button>
 </div>
 <pre aria-live="polite" class="json-box hidden" id="jsonBox"></pre>
-
-
 </section>
-
 <!--
 <section aria-live="polite" class="panel results-panel hidden" id="resultsPanel">
 <div class="panel-header">
@@ -267,124 +268,93 @@
 <pre aria-live="polite" class="json-box" id="resultsJson"></pre>
 </section>
 -->
-
 <!-- Results -->
- 
 <section aria-live="polite" class="panel results-panel hidden" id="resultsPanel">
-
- 
-  <span id="results-error" class="result-error"></span>
-  <div id="results-success">
-    Your retirement odds are:<br>
-    <span id="results-result" class="results-value"></span><br/>
-    <p id="results-pgh1"></p>
-    <p id="results-pgh2"></p>
-    <p id="results-pgh3"></p>
-      
-    <div id="results-download-csv">
+<span class="result-error" id="results-error"></span>
+<div id="results-success">
+    Your retirement odds are:<br/>
+<span class="results-value" id="results-result"></span><br/>
+<p id="results-pgh1"></p>
+<p id="results-pgh2"></p>
+<p id="results-pgh3"></p>
+<div id="results-download-csv">
       Feel free to change your inputs and try again.  You can also download a sample .csv file from a single run:
       <ul>
-        <li><a id="downloadSampleLink"  href="alert('No sample data available')">with ROI randomized by standard deviation</a></li>
-        <li><a id="downloadFixedSampleLink"  href="alert('No sample data available')">with ROI fixed at the average</a></li>
-      </ul>
-    </div>
-    <p id="results-do-not-refresh">
-      <b>Note:</b> Do not refresh the web page without saving or you will lose your data.
+<li><a href="alert('No sample data available')" id="downloadSampleLink">with ROI randomized by standard deviation</a></li>
+<li><a href="alert('No sample data available')" id="downloadFixedSampleLink">with ROI fixed at the average</a></li>
+</ul>
+</div>
+<p id="results-do-not-refresh">
+<b>Note:</b> Do not refresh the web page without saving or you will lose your data.
     </p>
-    <div class="space-above-20"></div>
-    <p>Now here's some bling...</p>
-  
-    <div id="plots">
-      <hr>
-      <div class="chart-heading">Net Worth</div>
-      <div class="chart-selector">
-        <input type="radio"  name="plot-assets-choice" id="plot-assets-choice-liquid" value="plot-assets-choice-liquid" uie="plot-assets-choice-liquid">
-        <label for="plot-assets-choice-liquid"><span>Liquid Net Worth</span></label>
-        <input type="radio"  name="plot-assets-choice" id="plot-assets-choice-tnw" value="plot-assets-choice-tnw" uie="plot-assets-choice-tnw">
-        <label for="plot-assets-choice-tnw"><span>Total Net Worth</span></label>
-      </div>
-      <div id="plot-assets"></div>
-      <hr>
-      <div class="chart-heading">Retirement Spending</div>
-      <div class="chart-selector">
-        <input type="radio"  name="plot-spending-choice" id="plot-spending-choice-source" value="plot-spending-choice-source" uie="plot-spending-choice-source">
-        <label for="plot-spending-choice-source"><span>Cash Source</span></label>
-        <input type="radio"  name="plot-spending-choice" id="plot-spending-choice-taxview" value="plot-spending-choice-taxview" uie="plot-spending-choice-taxview">
-        <label for="plot-spending-choice-taxview"><span>Tax View</span></label>
-        <input type="radio"  name="plot-spending-choice" id="plot-spending-choice-withdrawalrate" value="plot-spending-choice-withdrawalrate" uie="plot-spending-choice-withdrawalrate">
-        <label for="plot-spending-choice-withdrawalrate"><span>Withdrawal Rate</span></label>
-      </div>
-      <div id="plot-spending"></div>
-      <hr>
-      <div class="chart-heading">Tax Detail</div>
-      <div class="chart-selector">
-        <input type="radio"  name="plot-taxview-choice" id="plot-taxview-choice-taxes" value="plot-taxview-choice-taxes" uie="plot-taxview-choice-taxes">
-        <label for="plot-taxview-choice-taxes"><span>Taxes Paid</span></label>
-        <input type="radio" name="plot-taxview-choice" id="plot-taxview-choice-taxableincome" value="plot-taxview-choice-taxableincome" uie="plot-taxview-choice-taxableincome">
-        <label for="plot-taxview-choice-taxableincome"><span>Taxable Income</span></label>
-      </div>
-      <div id="plot-taxes"></div>
-      <hr>
-      <div class="chart-heading">ROI Randomization</div>
-      <div class="plot-randomroi-info">
+<div class="space-above-20"></div>
+<p>Now here's some bling...</p>
+<div id="plots">
+<hr/>
+<div class="chart-heading">Net Worth</div>
+<div class="chart-selector">
+<input id="plot-assets-choice-liquid" name="plot-assets-choice" type="radio" uie="plot-assets-choice-liquid" value="plot-assets-choice-liquid"/>
+<label for="plot-assets-choice-liquid"><span>Liquid Net Worth</span></label>
+<input id="plot-assets-choice-tnw" name="plot-assets-choice" type="radio" uie="plot-assets-choice-tnw" value="plot-assets-choice-tnw"/>
+<label for="plot-assets-choice-tnw"><span>Total Net Worth</span></label>
+</div>
+<div id="plot-assets"></div>
+<hr/>
+<div class="chart-heading">Retirement Spending</div>
+<div class="chart-selector">
+<input id="plot-spending-choice-source" name="plot-spending-choice" type="radio" uie="plot-spending-choice-source" value="plot-spending-choice-source"/>
+<label for="plot-spending-choice-source"><span>Cash Source</span></label>
+<input id="plot-spending-choice-taxview" name="plot-spending-choice" type="radio" uie="plot-spending-choice-taxview" value="plot-spending-choice-taxview"/>
+<label for="plot-spending-choice-taxview"><span>Tax View</span></label>
+<input id="plot-spending-choice-withdrawalrate" name="plot-spending-choice" type="radio" uie="plot-spending-choice-withdrawalrate" value="plot-spending-choice-withdrawalrate"/>
+<label for="plot-spending-choice-withdrawalrate"><span>Withdrawal Rate</span></label>
+</div>
+<div id="plot-spending"></div>
+<hr/>
+<div class="chart-heading">Tax Detail</div>
+<div class="chart-selector">
+<input id="plot-taxview-choice-taxes" name="plot-taxview-choice" type="radio" uie="plot-taxview-choice-taxes" value="plot-taxview-choice-taxes"/>
+<label for="plot-taxview-choice-taxes"><span>Taxes Paid</span></label>
+<input id="plot-taxview-choice-taxableincome" name="plot-taxview-choice" type="radio" uie="plot-taxview-choice-taxableincome" value="plot-taxview-choice-taxableincome"/>
+<label for="plot-taxview-choice-taxableincome"><span>Taxable Income</span></label>
+</div>
+<div id="plot-taxes"></div>
+<hr/>
+<div class="chart-heading">ROI Randomization</div>
+<div class="plot-randomroi-info">
         To simulate the market, this tool uses average and standard deviation values to randomize ROI over 1000 trials.  
-        You can visualize a sample run of this below.<br>
-        <b>Note: </b>This particular randomization was not used in your calculation.
+        You can visualize a sample run of this below.<br/>
+<b>Note: </b>This particular randomization was not used in your calculation.
         <br>
-        <div>
-          <label for="plot-randomroi-average">Average:</label>
-          <span>
-            <input
-            type="text"
-            id="plot-randomroi-average"
-            class="percentageinput"
-            data-type="percentage"
-            placeholder="%"
-          />
-          </span>
-        </div>
-        <div>
-          <label for="plot-randomroi-stdev">Standard Deviation:</label>
-          <span>
-            <input
-              type="text"
-              id="plot-randomroi-stdev"
-              class="currencyinput"
-              data-type="percentage"
-              placeholder="%"
-            />
-          </span>
-        </div>
-        <div>
-          <label for="plot-randomroi-regenerate"></label>
-          <button id="plot-randomroi-regenerate" class="btn primary">Re-generate</button>
-        </div>
-        <div id="plot-randomroi"></div>
-        <div id="plot-randomroi-actual-display" style="display: none;">
+<div>
+<label for="plot-randomroi-average">Average:</label>
+<span>
+<input class="percentageinput" data-type="percentage" id="plot-randomroi-average" placeholder="%" type="text"/>
+</span>
+</div>
+<div>
+<label for="plot-randomroi-stdev">Standard Deviation:</label>
+<span>
+<input class="currencyinput" data-type="percentage" id="plot-randomroi-stdev" placeholder="%" type="text"/>
+</span>
+</div>
+<div>
+<label for="plot-randomroi-regenerate"></label>
+<button class="btn primary" id="plot-randomroi-regenerate">Re-generate</button>
+</div>
+<div id="plot-randomroi"></div>
+<div id="plot-randomroi-actual-display" style="display: none;">
           Actual realized average over <span id="plot-randomroi-actual-number"></span> years: <span id="plot-randomroi-actual-average"></span>.
         </div>
-      </div>
-    </div>
-  
-    <p id="results-support-top" class="results-support-msg">
+</br></div>
+</div>
+<p class="results-support-msg" id="results-support-top">
       I hope you are finding this tool useful!
       If you have questions or would like to make sure you're 
-      getting the best results, please email me: retirementodds at gmail.com</a>.
+      getting the best results, please email me: retirementodds at gmail.com.
     </p>
-  </div>
+</div>
 </section>
-
-
-
-
-
-
-
-
-
-
-
-
 </main>
 </div>
 <div aria-live="polite" class="toast" id="toast" role="status"></div>
@@ -411,9 +381,9 @@
 </div>
 <div class="ro-modal__body">
 <label class="label" for="planNameInput">Plan name</label>
-<input class="input" id="planNameInput" placeholder="e.g., My Baseline Plan" type="text">
+<input class="input" id="planNameInput" placeholder="e.g., My Baseline Plan" type="text"/>
 <p class="hint">Saved locally in this browser only.</p>
-</input></div>
+</div>
 <div class="ro-modal__footer">
 <button class="btn ghost" data-close-modal="saveModal">Cancel</button>
 <button class="btn ok" id="modalSaveBtn">Save</button>
@@ -436,10 +406,10 @@
 </div>
 <!-- processing modal -->
 <div id="processingModal">
-  <div class="modal-content">
-    <p>Calculating...</p>
-    <img src="images/processing3.gif" alt="Processing...">
-  </div>
+<div class="modal-content">
+<p>Calculating...</p>
+<img alt="Processing..." src="images/processing3.gif"/>
+</div>
 </div>
 <script src="assets/marketreturns.js"></script>
 <script src="assets/inflationdata.js"></script>

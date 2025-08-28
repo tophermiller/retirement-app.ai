@@ -60,7 +60,7 @@ function icon(name){
 /* Sections & State */
 const sections = [
   { key:'alpha',   label:'Basics',        mode:'single', lipsum:'Enter some basics about your retirement plan here.', icon:'basics' },
-  { key:'beta',    label:'Growth Rates',  mode:'single', lipsum:'Enter your inflation and return on investment assumptions here.   These are the most important inputs for best results.   Click the "Help me choose" buttons for help.', icon:'growth' },
+  { key:'beta',    label:'Growth Rates',  mode:'single', lipsum:'Enter your money growth assumptions here.  Use the selection lists to base your choices on historical data.', icon:'growth' },
   { key:'gamma',   label:'Liquid Assets', mode:'multi',  lipsum:'Enter your cash/liquid assets here by account type.   To set retirement withdrawal order, drag and drop in the collapsed area.', icon:'liquid' },
   { key:'delta',   label:'Real Estate',   mode:'multi',  lipsum:'Add properties you own, including your home and any rental/income properties.', icon:'realestate' },
   { key:'epsilon', label:'Income',        mode:'multi',  lipsum:'Enter any retirement income, including pensions, Social Security, etc., with date ranges.', icon:'income' },
@@ -530,7 +530,59 @@ if(data.heirsTarget){
     /* ===== Render Growth Rates ===== */
     const g = state.beta.single;
 
-    const fieldPairs = [
+    
+  
+  // === Inflation Time Period selector handler ===
+  (function(){
+    try{
+      const sel = document.getElementById('inflationTimePeriod');
+      const roiEl = document.getElementById('inflationRoi');
+      const sdEl  = document.getElementById('inflationSd');
+      if (!sel || !roiEl || !sdEl || typeof inflationdata === 'undefined') return;
+
+      const applyFromSelection = ()=>{
+        const n = parseInt(sel.value, 10);
+        if (!Number.isFinite(n)) return;
+        // Use the latest complete year available in the dataset
+        const maxY = (inflationdata.getMaxYear && inflationdata.getMaxYear()) || (new Date().getFullYear()-1);
+        const first = maxY - n + 1;
+        const last  = maxY;
+        const mean = (inflationdata.computeMeanRange && inflationdata.computeMeanRange(first, last)) || '';
+        const stdev = (inflationdata.computeStdDevRange && inflationdata.computeStdDevRange(first, last)) || '';
+
+        if (mean !== null && mean !== '') {
+          roiEl.dataset.raw = String(mean);
+          roiEl.value = `${mean}%`;
+          if (g && g.inflation) g.inflation.roi = String(mean);
+        }
+        if (stdev !== null && stdev !== '') {
+          sdEl.dataset.raw = String(stdev);
+          sdEl.value = `${stdev}%`;
+          if (g && g.inflation) g.inflation.stdev = String(stdev);
+        }
+
+      };
+
+      // Wire change and apply immediately (default is 100 years)
+      sel.addEventListener('change', applyFromSelection);
+      // Ensure default shows up on first render
+      if (!sel.value) sel.value = '100';
+      applyFromSelection();
+    }catch(e){ /* no-op */ }
+  })();
+// Auto-fill default Inflation values if empty (moved from Help Me Choose)
+  try {
+    g.inflation = g.inflation || {};
+    if (!g.inflation.roi || g.inflation.roi === '') {
+      const avg = (typeof inflationdata !== 'undefined' && inflationdata.computeAverage) ? inflationdata.computeAverage() : '3.00';
+      g.inflation.roi = String(avg);
+    }
+    if (!g.inflation.stdev || g.inflation.stdev === '') {
+      const sd = (typeof inflationdata !== 'undefined' && inflationdata.computeStdDev) ? inflationdata.computeStdDev() : '1.00';
+      g.inflation.stdev = String(sd);
+    }
+  } catch(e) { /* no-op */ }
+const fieldPairs = [
       {roiId:'inflationRoi', sdId:'inflationSd', obj:g.inflation},
       {roiId:'liquidRoi',    sdId:'liquidSd',    obj:g.liquid},
       {roiId:'reRoi',        sdId:'reSd',        obj:g.realEstate},
