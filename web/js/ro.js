@@ -649,7 +649,7 @@ const fieldPairs = [
           const byName = Object.entries(realEstateROI)
             .map(([abbr, v])=>({abbr, name: v.stateName}))
             .sort((a,b)=> a.name.localeCompare(b.name));
-          const defaultAbbr = (state.alpha?.single?.stateCode) || 'CA';
+          const defaultAbbr = (typeof geoplugin_regionCode === 'function' && geoplugin_regionCode()) || (state.alpha?.single?.stateCode) || 'CA';
           const placeholder = document.createElement('option');
           placeholder.textContent = '--Choose a state--';
           placeholder.value = '';
@@ -2460,7 +2460,7 @@ init();
     FIRST_SPOUSE_DEATH: '__FIRST_DEATH__',
     FIRST_SPOUSE_DEATH_PLUS_1: '__FIRST_DEATH_P1__',
     END_OF_PLAN: '__END_OF_PLAN__'
-  };
+};
   function numOnly(x){ return (String(x||'').match(/\d+/g)||[]).join(''); }
   function getInt(val){ const n=parseInt(numOnly(val),10); return Number.isFinite(n)?n:null; }
   function computeModel(){
