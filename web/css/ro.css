@@ -1020,7 +1020,7 @@ body.ro-modal-open{overflow:hidden;}
 /* === Tri Allocation Slider === */
 .tri-alloc{ width:100%; max-width:430px; margin: 6px 0; }
 .tri-alloc-slider{ position:relative; height:28px; }
-.tri-alloc-slider input[type="range"]{ position:absolute; left:0; right:0; top:0; bottom:0; width:100%; -webkit-appearance:none; background:transparent; pointer-events:all; }
+.tri-alloc-slider input[type="range"]{ pointer-events:none; position:absolute; left:0; right:0; top:0; bottom:0; width:100%; -webkit-appearance:none; background:transparent; pointer-events:all; }
 .tri-alloc-slider input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--accent, #8ecae6); border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.25); }
 .tri-alloc-slider input[type="range"]::-moz-range-thumb{ width:18px; height:18px; border-radius:50%; background:var(--accent, #8ecae6); border:2px solid #fff; }
 .tri-alloc-bar{ position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:8px; background:var(--border-muted,#333); border-radius:999px; overflow:hidden; pointer-events:none; }
