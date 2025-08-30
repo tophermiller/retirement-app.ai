@@ -1960,33 +1960,53 @@ function buildPlanJSON(){
   submittal.state = state.alpha.single.stateCode; 
   //submittal.city = ;
   const growthRates = {};
-  growthRates.inflation = toFloat(state.beta.single.inflation.roi);
-  growthRates.inflation_stdev = toFloat(state.beta.single.inflation.stdev); //TODO: retrofit back end to handle
-  growthRates.defaultAnnualGainRate = {};
-  growthRates.defaultAnnualGainRate.average = toFloat(state.beta.single.liquid.roi) || 0;
-  growthRates.defaultAnnualGainRate.standardDeviation = toFloat(state.beta.single.liquid.stdev) || 0; 
+  growthRates.assetBasedGrowthRates = "true"; 
+  growthRates.inflationGainRate = {};
+  growthRates.inflationGainRate.average = toFloat(state.beta.single.inflation.roi);
+  growthRates.inflationGainRate.standardDeviation = toFloat(state.beta.single.inflation.stdev); //TODO: retrofit back end to handle
+  growthRates.inflation = toFloat(state.beta.single.inflation.roi); //legacy
+
+  //NEW: Asset class gain rates
+  growthRates.usStocksGainRate = {};
+  growthRates.usStocksGainRate.average = toFloat(state.beta.single.liquid.usStocks.roi) || 0;
+  growthRates.usStocksGainRate.standardDeviation = toFloat(state.beta.single.liquid.usStocks.stdev) || 0; 
+  growthRates.usBondsGainRate = {};
+  growthRates.usBondsGainRate.average = toFloat(state.beta.single.liquid.usBonds.roi) || 0;
+  growthRates.usBondsGainRate.standardDeviation = toFloat(state.beta.single.liquid.usBonds.stdev) || 0; 
+  growthRates.internationalStocksGainRate = {};
+  growthRates.internationalStocksGainRate.average = toFloat(state.beta.single.liquid.internationalStocks.roi) || 0;
+  growthRates.internationalStocksGainRate.standardDeviation = toFloat(state.beta.single.liquid.internationalStocks.stdev) || 0;
+  
+  //growthRates.defaultAnnualGainRate = {};
+  //growthRates.defaultAnnualGainRate.average = toFloat(state.beta.single.liquid.roi) || 0;
+  //growthRates.defaultAnnualGainRate.standardDeviation = toFloat(state.beta.single.liquid.stdev) || 0; 
   //growthRates.ownRealEstate = 'true'; //TODO needed?
+  
   growthRates.defaultREAnnualGainRate = {}
   growthRates.defaultREAnnualGainRate.average = toFloat(state.beta.single.realEstate.roi) || 0;
   growthRates.defaultREAnnualGainRate.standardDeviation = toFloat(state.beta.single.realEstate.stdev) || 0; 
-  growthRates.growthRatesCustomize = "true"; //TODO
+  
   growthRates.customGrowthRates = {};
   //map custom growth rates to array indexed by year offset from current year
   let triples = state.beta.single.liquid.customYears || [];
   const currentYear = new Date().getFullYear();
   const maxYear = Math.max(...triples.map(t => t.year));
-  const length = maxYear - currentYear + 1;
-  const newTriples = Array(length).fill(null);
-  triples.forEach(({ year, roi, prob }) => {
-    const index = year - currentYear;
-    if (index >= 0 && index < length && nonEmpty(year) && nonEmpty(roi) && nonEmpty(prob)) {
-      newTriples[index] = { year : toInt(year), roi: toFloat(roi) || 0, trialPercentage: toFloat(prob) || 0 };
+  if (maxYear >= 0) {
+    const length = maxYear - currentYear + 1;
+    const newTriples = Array(length).fill(null);
+    triples.forEach(({ year, roi, prob }) => {
+       const index = year - currentYear;
+       if (index >= 0 && index < length && nonEmpty(year) && nonEmpty(roi) && nonEmpty(prob)) {
+         newTriples[index] = { year : toInt(year), roi: toFloat(roi) || 0, trialPercentage: toFloat(prob) || 0 };
+         growthRates.growthRatesCustomize = "true"; //TODO
+       }
+    });
+    if (newTriples.length > 0) {
+      growthRates.customGrowthRates.customGrowthRates = newTriples;
+    } else {
+      delete growthRates.customGrowthRates;
+      growthRates.growthRatesCustomize = "false";
     }
-  });
-  if (newTriples.length > 0) {
-    growthRates.customGrowthRates.customGrowthRates = newTriples;
-  } else {
-    delete growthRates.customGrowthRates;
   }
   submittal.growthRates = growthRates;
 
