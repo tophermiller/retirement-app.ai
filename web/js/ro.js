@@ -164,11 +164,11 @@ document.getElementById('submitBtnDup')?.addEventListener('click', () => submitB
 
 /* Helpers for section-specific labels/titles */
 function addLabelFor(sectionKey){
-  const map = { gamma:'Add Asset', delta:'Add Property', epsilon:'Add Income', zeta:'Add Expense' };
+  const map = { gamma:'Add Account', delta:'Add Property', epsilon:'Add Income', zeta:'Add Spending' };
   return map[sectionKey] || 'Add Item';
 }
 function baseNounFor(sectionKey){
-  const map = { gamma:'Asset', delta:'Property', epsilon:'Income', zeta:'Expense' };
+  const map = { gamma:'Account', delta:'Property', epsilon:'Income', zeta:'Spending' };
   return map[sectionKey] || 'Item';
 }
 function defaultTitle(sectionKey, id){
@@ -955,7 +955,7 @@ function createTriAllocationControl(it){
   };
 
   const wrap = document.createElement('div'); wrap.className = 'tri-alloc';
-  const lab = document.createElement('div'); lab.className = 'label'; lab.textContent = 'Asset Allocation';
+  const lab = document.createElement('div'); lab.className = 'label'; lab.textContent = 'Asset Allocation (must add to 100%)';
   wrap.append(lab);
 
   const sliderWrap = document.createElement('div'); sliderWrap.className = 'tri-alloc-slider';
