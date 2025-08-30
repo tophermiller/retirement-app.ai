@@ -932,6 +932,122 @@ function renderMiniCard(it, sectionKey){
 }
 function makeBadge(text){ const b=document.createElement('span'); b.className='badge'; b.textContent=text; return b; }
 
+
+
+/* ===== Tri-Allocation Slider Control ===== */
+function createTriAllocationControl(it){
+  if(!Number.isFinite(+it.allocUS) && !Number.isFinite(+it.allocBonds) && !Number.isFinite(+it.allocIntl)){
+    it.allocUS = 60; it.allocBonds = 30; it.allocIntl = 10;
+  }
+  const total = (n)=> Math.max(0, Math.min(100, Math.round(+n || 0)));
+  const toCuts = ()=> {
+    const us = total(it.allocUS), bonds = total(it.allocBonds);
+    let intl = total(100 - us - bonds);
+    if(us + bonds + intl !== 100){ intl = Math.max(0, 100 - us - bonds); }
+    return [us, us + bonds];
+  };
+  const fromCuts = (a,b)=>{
+    a = total(a); b = total(b);
+    if(b < a) b = a;
+    it.allocUS = a;
+    it.allocBonds = Math.max(0, b - a);
+    it.allocIntl = Math.max(0, 100 - b);
+  };
+
+  const wrap = document.createElement('div'); wrap.className = 'tri-alloc';
+  const lab = document.createElement('div'); lab.className = 'label'; lab.textContent = 'Asset Allocation';
+  wrap.append(lab);
+
+  const sliderWrap = document.createElement('div'); sliderWrap.className = 'tri-alloc-slider';
+  const [initA, initB] = toCuts();
+
+  const r1 = document.createElement('input'); r1.type = 'range'; r1.min = '0'; r1.max = '100'; r1.value = String(initA);
+  const r2 = document.createElement('input'); r2.type = 'range'; r2.min = '0'; r2.max = '100'; r2.value = String(initB);
+  r1.className = 'tri-alloc-range a'; r2.className = 'tri-alloc-range b';
+
+  let lastActive = 'r2';
+  function setZ(){
+    const a = parseInt(r1.value,10), b = parseInt(r2.value,10);
+    if(a === b){
+      if(lastActive === 'r1'){ r1.style.zIndex='4'; r2.style.zIndex='3'; }
+      else { r2.style.zIndex='4'; r1.style.zIndex='3'; }
+    }else{
+      r2.style.zIndex='4'; r1.style.zIndex='3';
+    }
+  }
+  setZ();
+
+  function syncFromRanges(active){
+    let a = parseInt(r1.value,10);
+    let b = parseInt(r2.value,10);
+    if(active === 'r1' && a > b){ a = b; r1.value = String(a); }
+    if(active === 'r2' && b < a){ b = a; r2.value = String(b); }
+    fromCuts(parseInt(r1.value,10), parseInt(r2.value,10));
+    updateBars();
+    syncInputs();
+    setZ();
+  }
+
+  ['pointerdown','mousedown','touchstart'].forEach(evt=>{
+    r1.addEventListener(evt, ()=>{ lastActive='r1'; setZ(); }, {passive:true});
+    r2.addEventListener(evt, ()=>{ lastActive='r2'; setZ(); }, {passive:true});
+  });
+
+  r1.addEventListener('input', ()=>{ lastActive='r1'; syncFromRanges('r1'); });
+  r2.addEventListener('input', ()=>{ lastActive='r2'; syncFromRanges('r2'); });
+
+  const bar = document.createElement('div'); bar.className = 'tri-alloc-bar';
+  const segUS = document.createElement('div'); segUS.className = 'seg us';
+  const segB = document.createElement('div'); segB.className = 'seg bonds';
+  const segI = document.createElement('div'); segI.className = 'seg intl';
+  bar.append(segUS, segB, segI);
+
+  function updateBars(){
+    const a = parseInt(r1.value,10), b = parseInt(r2.value,10);
+    segUS.style.width = a + '%';
+    segB.style.width = (b - a) + '%';
+    segI.style.width = (100 - b) + '%';
+  }
+
+  sliderWrap.append(bar, r1, r2);
+  wrap.append(sliderWrap);
+
+  const inputs = document.createElement('div'); inputs.className = 'tri-alloc-inputs';
+  function makePctField(label, getVal, setVal){
+    const f = document.createElement('div'); f.className = 'tri-field';
+    const l = document.createElement('label'); l.textContent = label;
+    const inp = document.createElement('input'); inp.type = 'number'; inp.min='0'; inp.max='100'; inp.step='1';
+    inp.value = String(total(getVal()));
+    inp.addEventListener('input', ()=>{
+      const v = total(inp.value);
+      setVal(v);
+      const [a,b] = toCuts();
+      r1.value = String(a); r2.value = String(b);
+      updateBars();
+      syncInputs(true);
+      setZ();
+    });
+    f.append(l, inp);
+    return {field:f, input:inp};
+  }
+  function syncInputs(skipRound){
+    usBox.input.value = String(total(it.allocUS));
+    bBox.input.value = String(total(it.allocBonds));
+    iBox.input.value = String(total(it.allocIntl));
+    if(!skipRound){
+      const [a,b] = toCuts();
+      fromCuts(a,b);
+    }
+  }
+  const usBox = makePctField('US Stocks (%)', ()=>it.allocUS, (v)=>{ it.allocUS = v; });
+  const bBox  = makePctField('US Bonds (%)', ()=>it.allocBonds, (v)=>{ it.allocBonds = v; });
+  const iBox  = makePctField('International (%)', ()=>it.allocIntl, (v)=>{ it.allocIntl = v; });
+  inputs.append(usBox.field, bBox.field, iBox.field);
+  wrap.append(inputs);
+
+  updateBars();
+  return wrap;
+}
 /* Expanded item card (multi) */
 function renderItem(it, sectionKey){
   const wrap = document.createElement('div'); wrap.className = 'item'; wrap.dataset.id = it.id;
@@ -1025,6 +1141,18 @@ input.addEventListener('change', () => {
       }
     }
     body.append(grid);
+
+    // === Asset Allocation Slider (only for Taxable Investment, Tax Deferred, Roth) ===
+    (function(){
+      const t = it.atype || 'Cash';
+      if(t==='Taxable Investment' || t==='Tax Deferred' || t==='Roth'){
+        const allocWrap = createTriAllocationControl(it);
+        const row = document.createElement('div'); row.className='row'; row.append(allocWrap);
+        body.append(row);
+      }
+    })();
+
+
     // === Pre-Retirement Contribution (visible only if your age < retirement age) ===
     (function(){
       try{
