@@ -1724,27 +1724,7 @@ function validateState(){
   if(!nonEmpty(g.liquid?.usStocks?.roi) || !nonEmpty(g.liquid?.usBonds?.roi) || !nonEmpty(g.liquid?.internationalStocks?.roi)) errors.push('Growth Rates: Each Liquid Investment ROI (US Stocks, US Bonds, International Stocks) is required');
 
   //validate liquid assets
-  let totalAssets = 0;
-  (state.gamma.items || []).forEach(a => {
-    //sum up the values of all liquid assets
-    let amount = nonEmpty(a.amount) ? toInt(a.amount) : null;
-    totalAssets += (amount || 0);
-    //check cash interest rate
-    //if (a.atype === 'Cash') {
-    //  const cashRate = nonEmpty(a.cashRate) ? toFloat(a.cashRate) : null;
-    //  if (cashRate === null) {
-    //    errors.push(`Liquid Assets: Cash interest rate is required for asset "${a.title || 'Unnamed Asset'}"`);
-    //  } else if (cashRate < 0 || cashRate > 100) {
-    //    errors.push(`Liquid Assets: Cash interest rate must be between 0% and 100% for asset "${a.title || 'Unnamed Asset'}"`);
-    //  }
-    //}
-    //check custom ROI values
-    if (nonEmpty(a.roi) && !nonEmpty(a.stdev)) {
-      errors.push(`Liquid Assets: Standard Deviation is required if ROI is provided for asset "${a.title || 'Unnamed Asset'}"`);
-    } else if (!nonEmpty(a.roi) && nonEmpty(a.stdev)) {
-      errors.push(`Liquid Assets: ROI is required if Standard Deviation is provided for asset "${a.title || 'Unnamed Asset'}"`);
-    }
-  });
+  let totalAssets = getTotalAssets();
   if (totalAssets <= 0) {
       errors.push('Liquid Assets: At least one liquid asset is required');
   }
@@ -1811,11 +1791,7 @@ function validateState(){
   });
 
   //validate expenses
-  let totalExpenses = 0;
-  (state.zeta.items || []).forEach(e => {
-    const annualAmount = nonEmpty(e.amount) ? toInt(e.amount) : null;
-    totalExpenses += (annualAmount || 0);
-  });
+  let totalExpenses = getTotalExpenses();
   if (totalExpenses <= 0) {
     errors.push('Expenses: At least one expense is required');
   }
@@ -2992,3 +2968,37 @@ const states = [
     console.error("Error populating states", e);
   }
 })();
+
+
+function getTotalAssets(){
+  try{
+    const items = (state.gamma && Array.isArray(state.gamma.items)) ? state.gamma.items : [];
+    let total = 0;
+    for (const it of items){
+      const atype = it.atype || '';
+      if (atype === 'Taxable Investment'){
+        const cb = parseFloat(numOnly(it.costBasis ?? '')) || 0;
+        const ug = parseFloat(numOnly(it.unrealized ?? '')) || 0;
+        total += cb + ug;
+      } else {
+        const amt = parseFloat(numOnly(it.amount ?? '')) || 0;
+        total += amt;
+      }
+    }
+    return total;
+  }catch(e){ return 0; }
+}
+
+function getTotalExpenses(){
+  try{
+    const items = (state.zeta && Array.isArray(state.zeta.items)) ? state.zeta.items : [];
+    let total = 0;
+    for (const it of items){
+      const amt = parseFloat(numOnly(it.amount ?? '')) || 0;
+      total += amt;
+    }
+    return total;
+  }catch(e){ return 0; }
+}
+
+
