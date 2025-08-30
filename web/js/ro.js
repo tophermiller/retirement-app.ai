@@ -977,6 +977,56 @@ function createTriAllocationControl(it){
   }
   setZ();
 
+  // Handle pointer interactions on the whole slider so either thumb can be chosen by proximity
+  let dragging = null;
+  function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+  function pctFromEvent(e){
+    const rect = sliderWrap.getBoundingClientRect();
+    const clientX = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+    const ratio = clamp01((clientX - rect.left) / Math.max(1, rect.width));
+    return Math.round(ratio * 100);
+  }
+  function chooseHandleByProximity(pct){
+    const a = Math.abs(pct - parseInt(r1.value,10));
+    const b = Math.abs(pct - parseInt(r2.value,10));
+    if(a === b){ return lastActive; }
+    return (a < b) ? 'r1' : 'r2';
+  }
+  function onDown(e){
+    e.preventDefault();
+    const pct = pctFromEvent(e);
+    dragging = chooseHandleByProximity(pct);
+    lastActive = dragging;
+    if(dragging === 'r1'){
+      r1.value = String(Math.min(pct, parseInt(r2.value,10)));
+      syncFromRanges('r1');
+    }else{
+      r2.value = String(Math.max(pct, parseInt(r1.value,10)));
+      syncFromRanges('r2');
+    }
+    setZ();
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('touchmove', onMove, {passive:false});
+    window.addEventListener('pointerup', onUp, {once:true});
+    window.addEventListener('touchend', onUp, {once:true});
+  }
+  function onMove(e){
+    if(!dragging) return;
+    e.preventDefault();
+    const pct = pctFromEvent(e);
+    if(dragging === 'r1'){
+      r1.value = String(Math.min(pct, parseInt(r2.value,10)));
+      syncFromRanges('r1');
+    }else{
+      r2.value = String(Math.max(pct, parseInt(r1.value,10)));
+      syncFromRanges('r2');
+    }
+  }
+  function onUp(){ dragging = null; }
+  sliderWrap.addEventListener('pointerdown', onDown);
+  sliderWrap.addEventListener('touchstart', onDown, {passive:false});
+
+
   function syncFromRanges(active){
     let a = parseInt(r1.value,10);
     let b = parseInt(r2.value,10);
