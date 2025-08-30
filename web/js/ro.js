@@ -79,6 +79,87 @@ const state = Object.fromEntries(sections.map(s => [s.key, s.mode==='single'
   : { items:[], nextId:1 }
 ]));
 
+
+// --- Ensure Growth Rates defaults are initialized on first load (idempotent) ---
+function ensureGrowthDefaultsInitialized(){
+  try{
+    const g = (state && state.beta && state.beta.single) ? state.beta.single : null;
+    if(!g) return;
+
+    // Helper: safe set percent strings
+    function pctStr(v){ 
+      if(v===null || v===undefined || v==='' || !Number.isFinite(v)) return null;
+      return String((v*100).toFixed(2));
+    }
+
+    // ---- Inflation defaults (last 100 years) ----
+    try{
+      g.inflation = g.inflation || {};
+      if(!g.inflation.roi || !g.inflation.stdev){
+        const maxY = (typeof inflationdata!=='undefined' && inflationdata.getMaxYear && inflationdata.getMaxYear()) || (new Date().getFullYear()-1);
+        const first = maxY - 100 + 1;
+        const mean  = (typeof inflationdata!=='undefined' && inflationdata.computeMeanRange) ? Number(inflationdata.computeMeanRange(first, maxY)) : null;
+        const sd    = (typeof inflationdata!=='undefined' && inflationdata.computeStdDevRange) ? Number(inflationdata.computeStdDevRange(first, maxY)) : null;
+        if(!g.inflation.roi && mean!==null)   g.inflation.roi   = String(mean?.toFixed(2));
+        if(!g.inflation.stdev && sd!==null)   g.inflation.stdev = String(sd?.toFixed(2));
+      }
+    }catch(e){ /* noop */ }
+
+    // ---- Liquid asset defaults based on selector default (1976-present) ----
+    try{
+      g.liquid = g.liquid || { usStocks:{}, usBonds:{}, internationalStocks:{}, customYears:[] };
+      const minY = (typeof markethistory!=='undefined' && Array.isArray(markethistory.data) && markethistory.data.length)
+        ? Math.min.apply(null, markethistory.data.map(r=>r.Year))
+        : 1976;
+      const maxY = (typeof markethistory!=='undefined' && Array.isArray(markethistory.data) && markethistory.data.length)
+        ? Math.max.apply(null, markethistory.data.map(r=>r.Year))
+        : (new Date().getFullYear()-1);
+      const first = Math.max(minY, 1976);
+      const last  = maxY;
+
+      function setIfEmpty(obj, key, val){ if(!obj[key] || obj[key]==='') obj[key] = val; }
+
+      const meanUS   = (markethistory.getAverage && markethistory.getAverage(first, last, 'US_Stocks_SP500_TR')) ?? null;
+      const stdevUS  = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, 'US_Stocks_SP500_TR')) ?? null;
+      const meanBnd  = (markethistory.getAverage && markethistory.getAverage(first, last, 'US_Bonds_Agg_TR')) ?? null;
+      const stdevBnd = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, 'US_Bonds_Agg_TR')) ?? null;
+      const meanINT  = (markethistory.getAverage && markethistory.getAverage(first, last, 'Intl_Stocks_MSCI_EAFE_NR_USD')) ?? null;
+      const stdevINT = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, 'Intl_Stocks_MSCI_EAFE_NR_USD')) ?? null;
+
+      g.liquid.usStocks = g.liquid.usStocks || {};
+      g.liquid.usBonds  = g.liquid.usBonds  || {};
+      g.liquid.internationalStocks = g.liquid.internationalStocks || {};
+
+      setIfEmpty(g.liquid.usStocks, 'roi',   pctStr(meanUS));
+      setIfEmpty(g.liquid.usStocks, 'stdev', pctStr(stdevUS));
+      setIfEmpty(g.liquid.usBonds,  'roi',   pctStr(meanBnd));
+      setIfEmpty(g.liquid.usBonds,  'stdev', pctStr(stdevBnd));
+      setIfEmpty(g.liquid.internationalStocks, 'roi',   pctStr(meanINT));
+      setIfEmpty(g.liquid.internationalStocks, 'stdev', pctStr(stdevINT));
+
+      if(!Array.isArray(g.liquid.customYears)) g.liquid.customYears = [];
+    }catch(e){ /* noop */ }
+
+    // ---- Real Estate defaults based on user's state (geoplugin), fallback CA ----
+    try{
+      g.realEstate = g.realEstate || {};
+      const code = (typeof geoplugin_regionCode==='function' && (function(){ try{return geoplugin_regionCode();}catch(_){return null;} })()) || 'CA';
+      if(typeof realEstateROI!=='undefined' && realEstateROI[code]){
+        const avg = Number(realEstateROI[code].average);
+        const sd  = Number(realEstateROI[code].stdev);
+        if(!g.realEstate.roi)   g.realEstate.roi   = pctStr(avg);
+        if(!g.realEstate.stdev) g.realEstate.stdev = pctStr(sd);
+      }
+    }catch(e){ /* noop */ }
+
+  }catch(e){ /* noop */ }
+}
+
+
+// Initialize growth defaults immediately
+try{ ensureGrowthDefaultsInitialized(); }catch(e){}
+
+
 let active = sections[0].key;
 let jsonMode = false;
 
@@ -1706,6 +1787,8 @@ function prune(x){
 }
 
 function validateState(){
+
+  try{ ensureGrowthDefaultsInitialized(); }catch(e){}
   const errors = [];
 
   const basics = state.alpha.single || {};
