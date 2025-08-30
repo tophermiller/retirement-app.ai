@@ -184,7 +184,6 @@ const overlay   = document.getElementById('overlay');
 const hamburger = document.getElementById('hamburger');
 
 const jsonBox   = document.getElementById('jsonBox');
-const previewBtn= document.getElementById('previewJsonBtn');
 const submitBtn = document.getElementById('submitBtn');
  
 const panelNextFooter = document.getElementById('panelNextFooter');
@@ -2257,27 +2256,6 @@ function buildPlanJSON(){
   return submittal;
 }
 
-/* JSON preview toggle */
-previewBtn.addEventListener('click', ()=>{
-  const errors = validateState();
-  if(errors.length > 0){
-    console.warn('Validation errors:', errors);
-    showErrorPanel(errors);
-    return;
-  }
-  hideErrorPanel();
-  const data = buildPlanJSON();
-  const enteringPreview = !jsonMode;
-  if(enteringPreview){
-    jsonBox.textContent = JSON.stringify(data, null, 2);
-    jsonMode = true;
-    previewBtn.textContent = 'Hide JSON';
-  }else{
-    jsonMode = false;
-    previewBtn.textContent = 'Preview JSON';
-  }
-  render();
-});
 
 /* Submit */
 submitBtn.addEventListener('click', async ()=>{
@@ -2695,6 +2673,7 @@ init();
   }
 
   function setup(){
+    const previewBtn= document.getElementById('previewJsonLink');
     const saveBtn = document.getElementById('savePlanBtn');
     const restoreBtn = document.getElementById('restorePlanBtn');
     const modalSaveBtn = document.getElementById('modalSaveBtn');
@@ -2703,6 +2682,27 @@ init();
     restoreBtn?.addEventListener('click', ()=>{ buildRestoreList(); openModal('restoreModal'); });
     modalSaveBtn?.addEventListener('click', ()=>{ const name=(input?.value||'').trim(); doSavePlan(name); });
     input?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); modalSaveBtn?.click(); } });
+    /* JSON preview toggle */
+    if (previewBtn) previewBtn.addEventListener('click', ()=>{
+      const errors = validateState();
+      if(errors.length > 0){
+        console.warn('Validation errors:', errors);
+        showErrorPanel(errors);
+        return;
+      }
+      hideErrorPanel();
+      const data = buildPlanJSON();
+      const enteringPreview = !jsonMode;
+      if(enteringPreview){
+        jsonBox.textContent = JSON.stringify(data, null, 2);
+        jsonMode = true;
+        previewBtn.textContent = 'Hide JSON';
+      }else{
+        jsonMode = false;
+        previewBtn.textContent = 'Preview JSON';
+      }
+      render();
+    });
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', setup); } else { setup(); }
 })();
