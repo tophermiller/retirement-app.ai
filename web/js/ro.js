@@ -1046,6 +1046,25 @@ function createTriAllocationControl(it){
   r1.className = 'tri-alloc-range a'; r2.className = 'tri-alloc-range b';
 
   let lastActive = 'r2';
+  // Blended ROI display support
+  let blendRow;
+  function updateBlended(){
+    try{
+      const g = (state && state.beta && state.beta.single && state.beta.single.liquid) ? state.beta.single.liquid : null;
+      const roiUS  = parseFloat(numOnly(String(g?.usStocks?.roi ?? '0'))) || 0;
+      const roiBnd = parseFloat(numOnly(String(g?.usBonds?.roi ?? '0'))) || 0;
+      const roiInt = parseFloat(numOnly(String(g?.internationalStocks?.roi ?? '0'))) || 0;
+      const us = Math.max(0, +it.allocUS || 0);
+      const b  = Math.max(0, +it.allocBonds || 0);
+      const i  = Math.max(0, +it.allocIntl || 0);
+      const blended = (us*roiUS + b*roiBnd + i*roiInt) / 100;
+      if(blendRow){
+        const val = Number.isFinite(blended) ? blended.toFixed(2) : '0.00';
+        blendRow.textContent = `Blended ROI: ${val}%`;
+      }
+    }catch(e){ /* noop */ }
+  }
+
   function setZ(){
     const a = parseInt(r1.value,10), b = parseInt(r2.value,10);
     if(a === b){
@@ -1115,6 +1134,7 @@ function createTriAllocationControl(it){
     fromCuts(parseInt(r1.value,10), parseInt(r2.value,10));
     updateBars();
     syncInputs();
+    updateBlended();
     setZ();
   }
 
@@ -1144,7 +1164,7 @@ function createTriAllocationControl(it){
 
   const inputs = document.createElement('div'); inputs.className = 'tri-alloc-inputs';
   function makePctField(label, getVal, setVal){
-    const f = document.createElement('div'); f.className = 'tri-field';
+    const f = document.createElement('div'); f.className = 'tri-field label';
     const l = document.createElement('label'); l.textContent = label;
     const inp = document.createElement('input'); inp.type = 'number'; inp.min='0'; inp.max='100'; inp.step='1';
     inp.value = String(total(getVal()));
@@ -1155,6 +1175,7 @@ function createTriAllocationControl(it){
       r1.value = String(a); r2.value = String(b);
       updateBars();
       syncInputs(true);
+      updateBlended();
       setZ();
     });
     f.append(l, inp);
@@ -1175,7 +1196,15 @@ function createTriAllocationControl(it){
   inputs.append(usBox.field, bBox.field, iBox.field);
   wrap.append(inputs);
 
+  // Blended ROI line
+  blendRow = document.createElement('div');
+  blendRow.className = 'blended-roi label';
+  blendRow.setAttribute('role','status');
+  blendRow.setAttribute('aria-live','polite');
+  wrap.append(blendRow);
+
   updateBars();
+  updateBlended();
   return wrap;
 }
 /* Expanded item card (multi) */
