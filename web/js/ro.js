@@ -1988,7 +1988,7 @@ function buildPlanJSON(){
   submittal.state = state.alpha.single.stateCode; 
   //submittal.city = ;
   const growthRates = {};
-  growthRates.assetBasedGrowthRates = "true"; 
+  growthRates.assetClassBased = "true"; 
   growthRates.inflationGainRate = {};
   growthRates.inflationGainRate.average = toFloat(state.beta.single.inflation.roi);
   growthRates.inflationGainRate.standardDeviation = toFloat(state.beta.single.inflation.stdev); //TODO: retrofit back end to handle
@@ -2047,6 +2047,12 @@ function buildPlanJSON(){
   (state.gamma.items || []).forEach(a => {
     const future = a.inheritanceYear && a.inheritanceYear !== '' && a.inheritanceYear !== '__ALREADY_OWNED__' ? true : false;
     const firstYear = future ? toInt(a.inheritanceYear) : calendar.planStartYear;
+    const assetAllocations = {};
+    if (a.atype !== 'Cash') {
+      assetAllocations.allocUS = a.allocUS;
+      assetAllocations.allocBonds = a.allocBonds;
+      assetAllocations.allocIntl = a.allocIntl;
+    }
     if (a.atype === 'Taxable Investment') {
       let savingsSubType = 'stock';
       let taxTreatment = a.taxTreatment === 'ordinary' ? 'ordinary' : (a.taxTreatment === 'capital_gains' ? 'ltcg' : 'split');
@@ -2064,6 +2070,7 @@ function buildPlanJSON(){
         startingValueCost: toInt(a.costBasis) || 0,
         taxTreatment: taxTreatment,
         preRetireContribution: toInt(a.preRetireAnnualContribution) || 0,
+        assetAllocations: assetAllocations,
         annualGainRateOverride: annualGainRateOverride,
         annualGainRate: annualGainRateOverride ? {
           average: toFloat(a.roi) || 0,
@@ -2102,6 +2109,7 @@ function buildPlanJSON(){
         firstYear: firstYear,
         startingValue: toInt(a.amount) || 0,
         preRetireContribution: toInt(a.preRetireAnnualContribution) || 0,
+        assetAllocations: assetAllocations,
         annualGainRateOverride: annualGainRateOverride,
         annualGainRate: annualGainRate,
         rmdEnabled: rmdEnabled,
