@@ -1288,9 +1288,35 @@ input.addEventListener('change', () => {
     const grid = document.createElement('div'); grid.className = (it.atype==='Taxable Investment') ? 'grid-2' : 'grid';
 
     if(it.atype==='Taxable Investment'){
-      const {field:fCB} = makeTextField('Cost Basis ($)', 'e.g. 200000', it.costBasis, (v)=>{ it.costBasis=v; });
-      const {field:fUG} = makeTextField('Unrealized Gains ($)', 'e.g. 50000', it.unrealized, (v)=>{ it.unrealized=v; });
+      // Top note explaining split
+      const noteTop = document.createElement('div'); noteTop.className='subtle';
+      noteTop.textContent = 'For tax purposes, please separate the account value into cost basis and unrealized gains.';
+      body.append(noteTop);
+
+      // Fields
+      const {field:fCB, input:iCB} = makeTextField('Cost Basis ($)', 'e.g. 200000', it.costBasis, (v)=>{ it.costBasis=v; });
+      const {field:fUG, input:iUG} = makeTextField('Unrealized Gains ($)', 'e.g. 50000', it.unrealized, (v)=>{ it.unrealized=v; });
       grid.append(fCB, fUG);
+      body.append(grid);
+
+      // Bottom note for total value
+      const noteBottom = document.createElement('div'); noteBottom.className='subtle';
+      const updateTotalNote = ()=>{
+        const toNum = (el)=>{
+          const raw = el && el.dataset && el.dataset.raw ? el.dataset.raw : (el ? el.value : '');
+          const n = parseFloat(String(raw).replace(/[^0-9.\-]/g,'')) || 0;
+          return n;
+        };
+        const total = toNum(iCB) + toNum(iUG);
+        noteBottom.textContent = `Total account value: $${fmtDollars(total)}`;
+      };
+      iCB && iCB.addEventListener('input', updateTotalNote);
+      iUG && iUG.addEventListener('input', updateTotalNote);
+      iCB && iCB.addEventListener('blur', updateTotalNote);
+      iUG && iUG.addEventListener('blur', updateTotalNote);
+      updateTotalNote();
+      body.append(noteBottom);
+
     } else {
       const {field:fAmt} = makeTextField('Amount ($)', 'e.g. 250000', it.amount, (v)=>{ it.amount=v; });
       grid.append(fAmt);
@@ -1298,8 +1324,8 @@ input.addEventListener('change', () => {
         const {field:fInt} = makeTextField('Interest Rate (%)', 'e.g. 4.5', it.interest, (v)=>{ it.interest=v; });
         grid.append(fInt);
       }
+      body.append(grid);
     }
-    body.append(grid);
 
     // === Asset Allocation Slider (only for Taxable Investment, Tax Deferred, Roth) ===
     (function(){
