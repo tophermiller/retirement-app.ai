@@ -1,0 +1,225 @@
+{
+    "alpha": {
+      "single": {
+        "age": "55",
+        "retire": "60",
+        "life": "85",
+        "spouseAge": "53",
+        "spouseLife": "90",
+        "stateCode": "CA",
+        "heirsTarget": "500000"
+      }
+    },
+    "beta": {
+      "single": {
+        "inflation": {
+          "roi": "3.02",
+          "stdev": "3.70"
+        },
+        "liquid": {
+          "usStocks": {
+            "roi": "9.25",
+            "stdev": "18.08"
+          },
+          "usBonds": {
+            "roi": "4.00",
+            "stdev": "4.92"
+          },
+          "internationalStocks": {
+            "roi": "5.98",
+            "stdev": "19.51"
+          },
+          "customYears": [
+            {
+              "year": "2026",
+              "roi": "-10",
+              "prob": "50"
+            }
+          ]
+        },
+        "realEstate": {
+          "roi": "7.12",
+          "stdev": "9.89"
+        }
+      }
+    },
+    "gamma": {
+      "items": [
+        {
+          "id": 1,
+          "title": "DEFAULT Cash Account",
+          "collapsed": false,
+          "locked": true,
+          "atype": "Cash",
+          "amount": "20000",
+          "interest": "3",
+          "costBasis": "",
+          "unrealized": "",
+          "rmd": false,
+          "rmdProceedsAccount": "DEFAULT Taxable Investment Account",
+          "showROI": false,
+          "roi": "",
+          "stdev": "",
+          "taxTreatment": "ordinary",
+          "inheritance": false,
+          "inheritanceYear": "__ALREADY_OWNED__"
+        },
+        {
+          "id": 2,
+          "title": "DEFAULT Taxable Investment Account",
+          "collapsed": false,
+          "locked": true,
+          "atype": "Taxable Investment",
+          "amount": "",
+          "interest": "",
+          "costBasis": "1000000",
+          "unrealized": "200000",
+          "rmd": false,
+          "rmdProceedsAccount": "DEFAULT Taxable Investment Account",
+          "showROI": false,
+          "roi": "",
+          "stdev": "",
+          "taxTreatment": "ordinary",
+          "inheritance": false,
+          "inheritanceYear": "__ALREADY_OWNED__",
+          "allocUS": 60,
+          "allocBonds": 30,
+          "allocIntl": 10
+        },
+        {
+          "id": 3,
+          "title": "401K",
+          "collapsed": false,
+          "locked": false,
+          "atype": "Tax Deferred",
+          "amount": "1100000",
+          "interest": "",
+          "costBasis": "",
+          "unrealized": "",
+          "rmd": true,
+          "rmdProceedsAccount": "DEFAULT Taxable Investment Account",
+          "showROI": false,
+          "roi": "",
+          "stdev": "",
+          "taxTreatment": "ordinary",
+          "inheritance": false,
+          "inheritanceYear": "__ALREADY_OWNED__",
+          "allocUS": 60,
+          "allocBonds": 30,
+          "allocIntl": 10
+        },
+        {
+          "id": 4,
+          "title": "Roth Savings",
+          "collapsed": false,
+          "locked": false,
+          "atype": "Roth",
+          "amount": "800000",
+          "interest": "",
+          "costBasis": "",
+          "unrealized": "",
+          "rmd": false,
+          "rmdProceedsAccount": "DEFAULT Taxable Investment Account",
+          "showROI": false,
+          "roi": "",
+          "stdev": "",
+          "taxTreatment": "ordinary",
+          "inheritance": false,
+          "inheritanceYear": "__ALREADY_OWNED__",
+          "allocUS": 80,
+          "allocBonds": 10,
+          "allocIntl": 10
+        }
+      ],
+      "nextId": 5
+    },
+    "delta": {
+      "items": [
+        {
+          "id": 1,
+          "title": "Property #1",
+          "collapsed": false,
+          "locked": false,
+          "currentValue": "1200000",
+          "purchaseYear": "__ALREADY_OWNED__",
+          "showROI": false,
+          "roi": "",
+          "stdev": "",
+          "showMortgage": true,
+          "loanOrigYear": "2020",
+          "loanTerm": "30",
+          "loanRate": "2.5",
+          "monthlyPayment": "3800",
+          "downPaymentPct": "",
+          "showRental": false,
+          "annualExpenses": "",
+          "annualIncome": "",
+          "rentGrowth": "",
+          "showSale": false,
+          "saleYear": "__NEVER_SELL__",
+          "purchasePrice": "",
+          "improvements": "",
+          "sellCost": "",
+          "saleProceedsAccount": "DEFAULT Taxable Investment Account"
+        }
+      ],
+      "nextId": 2
+    },
+    "epsilon": {
+      "items": [
+        {
+          "id": 1,
+          "title": "Social Security - me or survivor",
+          "collapsed": false,
+          "locked": false,
+          "startYear": "2040",
+          "endYear": "__END_OF_PLAN__",
+          "amount": "45000",
+          "showInflation": false,
+          "roi": "",
+          "taxTreatment": "Ordinary Income"
+        },
+        {
+          "id": 2,
+          "title": "Social Security - spoouse",
+          "collapsed": false,
+          "locked": false,
+          "startYear": "2034",
+          "endYear": "__FIRST_DEATH__",
+          "amount": "30000",
+          "showInflation": false,
+          "roi": "",
+          "taxTreatment": "Ordinary Income"
+        }
+      ],
+      "nextId": 3
+    },
+    "zeta": {
+      "items": [
+        {
+          "id": 1,
+          "title": "Living Expenses including health care",
+          "collapsed": false,
+          "locked": false,
+          "startYear": "__RETIREMENT__",
+          "endYear": "__FIRST_DEATH__",
+          "amount": "120000",
+          "showInflation": false,
+          "roi": ""
+        },
+        {
+          "id": 2,
+          "title": "Living expenses as widower",
+          "collapsed": false,
+          "locked": false,
+          "startYear": "__FIRST_DEATH_P1__",
+          "endYear": "__END_OF_PLAN__",
+          "amount": "90000",
+          "showInflation": false,
+          "roi": ""
+        }
+      ],
+      "nextId": 3
+    }
+  
+}
