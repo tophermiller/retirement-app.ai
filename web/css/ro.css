@@ -1099,3 +1099,19 @@ button:disabled, .btn:disabled {
 .site-footer ul li:last-child::after {
     content: "";
 }
+
+#odometer-container {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+
+#odometer {
+  display: inline-block;
+  background: black;
+  color: white;
+  font-family: 'Courier New', monospace;
+  border-radius: 4px;
+  letter-spacing: 2px;
+  font-weight: bold;
+}

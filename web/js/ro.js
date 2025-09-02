@@ -3142,3 +3142,18 @@ function getTotalExpenses(){
 }
 
 
+
+
+async function updateOdometer() {
+  try {
+    const response = await fetch("/js/data/odometer/odometer.json");
+    const odometer = await response.json();
+    const base = odometer.base;
+    const counter = odometer.counter;
+    const value = base + counter;
+    document.getElementById("odometer").innerHTML = value;
+  } catch (e) {
+    console.error("Failed to update odometer", e);
+  }
+}
+window.addEventListener("DOMContentLoaded", updateOdometer);
