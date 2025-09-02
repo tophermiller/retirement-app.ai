@@ -1114,3 +1114,7 @@ button:disabled, .btn:disabled {
   letter-spacing: 2px;
   font-weight: bold;
 }
+
+
+/* Button icon sizing */
+.btn .btn-icon{width:16px;height:16px;margin-right:6px;display:inline-block;vertical-align:middle}

@@ -528,7 +528,7 @@ function render(){
       const sp = document.createElement('span');
       sp.textContent = 'Calculate My RetirementOdds';
       nextSectionBtn.className = 'btn ok';
-      nextSectionBtn.appendChild(sp);
+      const calcIcon = document.createElement('span'); calcIcon.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="7" y="6.5" width="10" height="3" rx="1" ry="1" fill="currentColor"/><circle cx="9" cy="12" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15" cy="12" r="1.1" fill="currentColor"/><circle cx="9" cy="16" r="1.1" fill="currentColor"/><circle cx="12" cy="16" r="1.1" fill="currentColor"/><circle cx="15" cy="16" r="1.1" fill="currentColor"/></svg>`; nextSectionBtn.appendChild(calcIcon); nextSectionBtn.appendChild(sp);
       nextSectionBtn.onclick = () => submitBtn.click();
       panelNextFooter.classList.remove('hidden');
     }
@@ -3157,3 +3157,38 @@ async function updateOdometer() {
   }
 }
 window.addEventListener("DOMContentLoaded", updateOdometer);
+
+
+
+// Load Sample Data button handler
+document.addEventListener('DOMContentLoaded', ()=>{
+  const btn = document.getElementById('loadSampleBtn');
+  if(!btn) return;
+  btn.addEventListener('click', async ()=>{
+    try{
+      const resp = await fetch('js/data/sampleplan.json');
+      if(!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      // deep merge into existing const state
+      (function deepMerge(target, source){
+        if(source && typeof source==='object'){
+          Object.keys(source).forEach(k=>{
+            if(source[k] && typeof source[k]==='object' && !Array.isArray(source[k])){
+              if(!target[k] || typeof target[k] !== 'object') target[k] = {};
+              deepMerge(target[k], source[k]);
+            }else{
+              target[k] = source[k];
+            }
+          });
+        }
+      })(state, data);
+      if(typeof ensureGrowthDefaultsInitialized === 'function'){ ensureGrowthDefaultsInitialized(); }
+      if(typeof render === 'function') render();
+      const m = document.getElementById('sampleLoadedModal');
+      if(m){ m.setAttribute('aria-hidden','false'); document.body.classList.add('ro-modal-open'); }
+    }catch(e){
+      alert('Failed to load sample data: ' + (e && e.message ? e.message : e));
+    }
+  });
+});
+

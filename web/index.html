@@ -16,7 +16,25 @@
 </div>
 <div class="brand-desc lipsum">
       Enter your financial information and find out the chances that you can live the rest of your like without running out of money. The key to an accurate result lies in the guesses you make in the "Growth Rates" section.
-    </div>
+    
+  <div class="brand-actions"><button class="btn ok" id="loadSampleBtn">
+  <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <defs>
+      <linearGradient id="sampleGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#a6e3a1"/>
+        <stop offset="1" stop-color="#7aa2f7"/>
+      </linearGradient>
+    </defs>
+    <!-- Document -->
+    <path fill="none" stroke="url(#sampleGrad)" stroke-width="1.5" d="M7 4h7l4 4v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+    <path fill="none" stroke="url(#sampleGrad)" stroke-width="1.5" d="M14 4v4h4"/>
+    <!-- Sparkles -->
+    <path fill="url(#sampleGrad)" d="M10.5 10.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/>
+    <path fill="url(#sampleGrad)" d="M16.5 9l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4z"/>
+  </svg>
+  Start With Sample Data
+</button></div>
+</div>
 <div id="odometer-container" class="lipsum"><span id="odometer"></span> calculations performed</div>
 </header>
 <div class="app">
@@ -33,7 +51,19 @@
 <button class="btn" id="savePlanBtn" title="Save current plan">Save</button>
 <button class="btn ghost" id="restorePlanBtn" title="Restore or delete a saved plan">Restore</button>
 
-<button class="btn ok" id="submitBtn">Calculate My RetirementOdds</button>
+<button class="btn ok" id="submitBtn">
+  <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="4" y="3" width="16" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="7" y="6.5" width="10" height="3" rx="1" ry="1" fill="currentColor"/>
+    <circle cx="9" cy="12" r="1.1" fill="currentColor"/>
+    <circle cx="12" cy="12" r="1.1" fill="currentColor"/>
+    <circle cx="15" cy="12" r="1.1" fill="currentColor"/>
+    <circle cx="9" cy="16" r="1.1" fill="currentColor"/>
+    <circle cx="12" cy="16" r="1.1" fill="currentColor"/>
+    <circle cx="15" cy="16" r="1.1" fill="currentColor"/>
+  </svg>
+  Calculate My RetirementOdds
+</button>
 </div>
 </div>
 <!-- Error Panel -->
@@ -228,8 +258,7 @@
 <button class="btn ghost hidden" id="collapseAllBtn">Collapse All</button>
 </div>
 </div>
-<div aria-live="polite" class="panel-next-footer" id="panelNextFooter">
-<button class="nav-like" id="backSectionBtn" type="button"></button>
+<div aria-live="polite" class="panel-next-footer" id="panelNextFooter"><button class="nav-like" id="backSectionBtn" type="button"></button>
 <button class="nav-like" id="nextSectionBtn" type="button"></button>
 </div>
 <pre aria-live="polite" class="json-box hidden" id="jsonBox"></pre>
@@ -412,5 +441,21 @@
         <p>© 2025 RetirementOdds.com.  All Rights Reserved.</p>
     
 </footer>
+
+<!-- Sample Loaded Modal -->
+<div aria-hidden="true" class="ro-modal" id="sampleLoadedModal">
+  <div class="ro-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="sampleLoadedTitle">
+    <div class="ro-modal__header">
+      <h3 id="sampleLoadedTitle">Sample Data Loaded</h3>
+      <button class="ro-modal__close" aria-label="Close" data-close-modal="sampleLoadedModal">×</button>
+    </div>
+    <div class="ro-modal__body">
+      <p>Sample data has been loaded. Feel free to change any inputs as you see fit or just press “Calculate My Retirement Odds” to see sample results.</p>
+    </div>
+    <div class="ro-modal__footer">
+      <button class="btn ok" data-close-modal="sampleLoadedModal">Ok</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
