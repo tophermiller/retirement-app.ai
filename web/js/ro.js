@@ -1423,7 +1423,7 @@ gRmd.append(paField); body.append(gRmd);
 
     if(it.atype !== 'Cash'){
       const roiRow = document.createElement('div'); roiRow.className='row';
-      const btn = document.createElement('button'); btn.className='btn small'; btn.textContent = it.showROI? 'Hide ROI' : 'Customize ROI';
+      const btn = document.createElement('button'); btn.className='btn'; btn.textContent = it.showROI? 'Hide ROI' : 'Customize ROI';
       btn.addEventListener('click', ()=>{ it.showROI = !it.showROI; render(); });
       roiRow.append(btn); body.append(roiRow);
 
@@ -1432,7 +1432,7 @@ gRmd.append(paField); body.append(gRmd);
         const {field:fRoi} = makeTextField('ROI (%)', 'e.g. 6.0', it.roi, (v)=>{ it.roi=v; });
         const {field:fSd}  = makeTextField('Standard Deviation (%)', 'e.g. 12', it.stdev, (v)=>{ it.stdev=v; });
         roiGrid.append(fRoi, fSd); body.append(roiGrid);
-        const tip = document.createElement('div'); tip.className='subtle'; tip.textContent = 'These override any global growth assumptions for this asset.'; body.append(tip);
+        const tip = document.createElement('div'); tip.className='subtle'; tip.textContent = 'These override any asset allocation based returns for this account.'; body.append(tip);
       }
     }
 
@@ -1481,7 +1481,7 @@ else if (sectionKey === 'delta'){
 
     /* Mortgage */
     const mortRow = document.createElement('div'); mortRow.className='row';
-    const mortBtn = document.createElement('button'); mortBtn.className='btn small'; mortBtn.type='button';
+    const mortBtn = document.createElement('button'); mortBtn.className='btn'; mortBtn.type='button';
     mortBtn.textContent = it.showMortgage? 'Hide Mortgage Information' : 'Enter Mortgage Information';
     mortBtn.addEventListener('click', ()=>{ it.showMortgage = !it.showMortgage; render(); });
     mortRow.append(mortBtn); body.append(mortRow);
@@ -1511,7 +1511,7 @@ else if (sectionKey === 'delta'){
 
     /* Rental */
     const rentRow = document.createElement('div'); rentRow.className='row';
-    const rentBtn = document.createElement('button'); rentBtn.className='btn small'; rentBtn.textContent = it.showRental? 'Hide Rental Income' : 'Enter Rental Income (Optional)';
+    const rentBtn = document.createElement('button'); rentBtn.className='btn'; rentBtn.textContent = it.showRental? 'Hide Rental Income' : 'Enter Rental Income (Optional)';
     rentBtn.addEventListener('click', ()=>{ it.showRental = !it.showRental; render(); });
     rentRow.append(rentBtn); body.append(rentRow);
 
@@ -1525,7 +1525,7 @@ else if (sectionKey === 'delta'){
 
     /* Sale */
     const saleRow = document.createElement('div'); saleRow.className='row';
-    const saleBtn = document.createElement('button'); saleBtn.className='btn small'; saleBtn.textContent = it.showSale? 'Hide Sale Information' : 'Enter Future Sale and Tax Information';
+    const saleBtn = document.createElement('button'); saleBtn.className='btn'; saleBtn.textContent = it.showSale? 'Hide Sale Information' : 'Enter Future Sale and Tax Information';
     saleBtn.addEventListener('click', ()=>{ it.showSale = !it.showSale; render(); });
     saleRow.append(saleBtn); body.append(saleRow);
 
@@ -1553,7 +1553,7 @@ else if (sectionKey === 'delta'){
 
     /* ROI toggle */
     const roiRow = document.createElement('div'); roiRow.className='row';
-    const roiBtn = document.createElement('button'); roiBtn.className='btn small'; roiBtn.textContent = it.showROI? 'Hide Appreciation' : 'Customize Appreciation';
+    const roiBtn = document.createElement('button'); roiBtn.className='btn'; roiBtn.textContent = it.showROI? 'Hide Appreciation' : 'Customize Appreciation';
     roiBtn.addEventListener('click', ()=>{ it.showROI = !it.showROI; render(); });
     roiRow.append(roiBtn); body.append(roiRow);
 
@@ -1594,15 +1594,15 @@ else if (sectionKey === 'delta'){
 
 
     const inflRow = document.createElement('div'); inflRow.className='row';
-    const inflBtn = document.createElement('button'); inflBtn.className='btn small'; inflBtn.textContent = it.showInflation? 'Hide Inflation' : 'Customize Inflation';
+    const inflBtn = document.createElement('button'); inflBtn.className='btn'; inflBtn.textContent = it.showInflation? 'Hide Inflation' : 'Customize Inflation';
     inflBtn.addEventListener('click', ()=>{ it.showInflation = !it.showInflation; render(); });
     inflRow.append(inflBtn); body.append(inflRow);
 
     if(it.showInflation){
       const gInfl = document.createElement('div'); gInfl.className='grid-2';
-      const {field:roiF} = makeTextField('ROI (%)', 'e.g. 2.5', it.roi, (v)=>{ it.roi=v; });
+      const {field:roiF} = makeTextField('Inflation (%)', 'e.g. 2.5', it.roi, (v)=>{ it.roi=v; });
       gInfl.append(roiF); body.append(gInfl);
-      const tip = document.createElement('div'); tip.className='subtle'; text = 'This overrides default inflation for this line item.'; tip.textContent = text; body.append(tip);
+      const tip = document.createElement('div'); tip.className='subtle'; text = 'This overrides default inflation for this cash flow.'; tip.textContent = text; body.append(tip);
     }
   }
 
