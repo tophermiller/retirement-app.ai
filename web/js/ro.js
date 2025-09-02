@@ -1451,6 +1451,10 @@ gRmd.append(paField); body.append(gRmd);
         const now = new Date().getFullYear();
         const years = Array.from({length:51},(_,i)=> now + i); // include current year + 50
         const {field:inhField, select:inhSel} = makeSelectField('Inheritance Year', years, it.inheritanceYear || '', (v)=>{ it.inheritanceYear = v; });
+        const hint = document.createElement('div');
+        hint.className = 'subtle';
+        hint.textContent = "Amount should be expressed in today's dollars.";
+        inhField.appendChild(hint);
         inhSel.dataset.yearsOnly = '0';
         inhSel.dataset.isPurchaseYearSelect = '1';
         inhSel.dataset.defaultToken='__ALREADY_OWNED__';
@@ -1581,7 +1585,7 @@ else if (sectionKey === 'delta'){
     gYears.append(syF, eyF); body.append(gYears);
 
     const gAmt = document.createElement('div'); gAmt.className='grid-2';
-    const {field:amtF} = makeTextField('Annual Amount ($)', 'e.g. 45000', it.amount, (v)=>{ it.amount=v; });
+    const {field:amtF} = makeTextField('Annual Amount - In Today\'s Dollars($)', 'e.g. 45000', it.amount, (v)=>{ it.amount=v; });
     gAmt.append(amtF); body.append(gAmt);
     // Tax Treatment (Income only)
     if (sectionKey === 'epsilon') {
@@ -3191,4 +3195,3 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   });
 });
-
