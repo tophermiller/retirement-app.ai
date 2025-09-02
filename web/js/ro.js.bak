@@ -242,34 +242,6 @@ function hideErrorPanel(){
 
 document.getElementById('submitBtnDup')?.addEventListener('click', () => submitBtn.click());
 
-
-window.ensureTaxesExpense = function(){
-  try{
-    const z = state && state.zeta;
-    if(!z || !Array.isArray(z.items)) return;
-    const hasTaxes = z.items.some(it => it && it.isTaxes === true);
-    if(!hasTaxes){
-      const newId = (typeof z.nextId === 'number' ? z.nextId : 1);
-      z.items.unshift({
-        id: newId,
-        title: 'TAXES',
-        collapsed: true,
-        locked: true,
-        isTaxes: true,
-        infoOnly: true,
-        collapsed: true
-      });
-      z.nextId = newId + 1;
-    } else {
-      // Make sure the taxes item stays locked and titled properly
-      z.items.forEach(it => {
-        if(it && it.isTaxes){ it.locked = true; it.title = 'TAXES';  it.infoOnly = true; }
-      });
-    }
-  }catch(e){}
-}
-
-
 /* Helpers for section-specific labels/titles */
 function addLabelFor(sectionKey){
   const map = { gamma:'Add Account', delta:'Add Property', epsilon:'Add Income', zeta:'Add Spending' };
@@ -281,11 +253,6 @@ function baseNounFor(sectionKey){
 }
 function defaultTitle(sectionKey, id){
   return `${baseNounFor(sectionKey)} #${id}`;
-
-
-
-
-
 }
 
 
@@ -983,7 +950,6 @@ wireHelpButtons();
   addBtn.textContent = `+ ${addLabelFor(active)}`;
   addBtn.setAttribute('aria-label', addLabelFor(active));
 
-  if(active==='zeta'){ if (typeof window.ensureTaxesExpense === 'function') { window.ensureTaxesExpense(); } }
   const items = state[active].items;
 
   const hasExpanded = items.some(it => !it.collapsed);
@@ -1011,9 +977,7 @@ function renderMiniCard(it, sectionKey){
   card.className = 'mini'; card.setAttribute('role','button'); card.setAttribute('tabindex','0');
   card.dataset.id = it.id; card.title = 'Drag to reorder • Click to expand';
 
-  const title = document.createElement('h4');
-  if(sectionKey==='zeta' && it && it.isTaxes){ title.textContent='TAXES '; const info=document.createElement('span'); info.textContent='ℹ️'; info.title='Informational only'; title.appendChild(info);} else { title.textContent=it.title; }
-  card.appendChild(title);
+  const title = document.createElement('h4'); title.textContent = it.title; card.appendChild(title);
 
   
   const kv = document.createElement('div'); kv.className='kv';
@@ -1250,12 +1214,11 @@ function renderItem(it, sectionKey){
   const header = document.createElement('div'); header.className = 'item-header';
   const title = document.createElement('div'); title.className = 'item-title';
 
-  const isTaxes = (sectionKey==='zeta' && it && it.isTaxes === true);
-  const titleInput = isTaxes ? document.createElement('div') : document.createElement('input');
-  if(isTaxes){ titleInput.className = 'title-static'; } else { titleInput.className = 'title-input'; titleInput.type = 'text'; }
-  if(isTaxes){ titleInput.textContent = 'TAXES '; const info=document.createElement('span'); info.textContent='ℹ️'; info.title='Informational only'; titleInput.appendChild(info); it.title='TAXES'; } else { titleInput.value = it.title || defaultTitle(sectionKey, it.id); }
-  if(!isTaxes){ titleInput.placeholder = defaultTitle(sectionKey, it.id); }
-  if(!isTaxes) titleInput.addEventListener('input', ()=>{
+  const titleInput = document.createElement('input');
+  titleInput.className = 'title-input'; titleInput.type = 'text';
+  titleInput.value = it.title || defaultTitle(sectionKey, it.id);
+  titleInput.placeholder = defaultTitle(sectionKey, it.id);
+  titleInput.addEventListener('input', ()=>{
     it.title = titleInput.value.trim() || defaultTitle(sectionKey, it.id);
     const mini = dockEl.querySelector(`.mini[data-id="${it.id}"] h4`); if(mini) mini.textContent = it.title;
     // If a Liquid Asset title changes, proceeds-dropdowns will refresh on next render
@@ -1278,17 +1241,10 @@ function renderItem(it, sectionKey){
   }
   actions.append(collapseBtn, deleteBtn);
   header.append(title, actions);
-  if(isTaxes){ if(!title.querySelector('.info-icon')){ const info=document.createElement('span'); info.className='info-icon'; info.textContent=''; title.appendChild(info); } }
-
 
   const body = document.createElement('div'); body.className = 'item-body';
 
-  if(sectionKey === 'zeta' && it && it.isTaxes === true){
-    const note = document.createElement('div');
-    note.className = 'subtle';
-    note.textContent = 'Your taxes including federal income tax, capital gains, and state income tax are automatically included by the calculator.   You should not include any tax allowances in your other expense entries';
-    body.append(note);
-  } else if(sectionKey === 'gamma'){
+  if(sectionKey === 'gamma'){
     const typeField = document.createElement('div'); typeField.className = 'field';
 
     const fieldset = document.createElement('fieldset');
@@ -2340,7 +2296,7 @@ function buildPlanJSON(){
   submittal.expenseAccountList = {};
   submittal.expenseAccountList.expenseAccounts = [];
   let expenseNum = 1;
-  (state.zeta.items || []).forEach(e => { if(e && (e.isTaxes || e.infoOnly)) return; if(e && (e.isTaxes || e.infoOnly)) return;
+  (state.zeta.items || []).forEach(e => {
     const exp = {
       idPrefix: 'expense' + expenseNum,
       name: e.title,
@@ -3207,7 +3163,9 @@ function getTotalExpenses(){
   try{
     const items = (state.zeta && Array.isArray(state.zeta.items)) ? state.zeta.items : [];
     let total = 0;
-    for (const it of items){ if(it && it.isTaxes) continue; const amt = parseFloat(numOnly(it.amount ?? '')) || 0; total += amt;
+    for (const it of items){
+      const amt = parseFloat(numOnly(it.amount ?? '')) || 0;
+      total += amt;
     }
     return total;
   }catch(e){ return 0; }

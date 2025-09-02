@@ -1123,3 +1123,6 @@ button:disabled, .btn:disabled {
 
 /* Button icon sizing */
 .btn .btn-icon{width:16px;height:16px;margin-right:6px;display:inline-block;vertical-align:middle}
+
+/* Info icon for read-only cards */
+.info-icon{ margin-left: .4rem; font-size: .95em; opacity:.8; }
