@@ -63,8 +63,8 @@ const sections = [
   { key:'beta',    label:'Growth Rates',  mode:'single', lipsum:'Enter your money growth assumptions here.  Use the selection lists to base your choices on historical data.', icon:'growth' },
   { key:'gamma',   label:'Liquid Assets', mode:'multi',  lipsum:'Enter your cash/liquid assets here by account type.   To set retirement withdrawal order, drag and drop in the collapsed area.', icon:'liquid' },
   { key:'delta',   label:'Real Estate',   mode:'multi',  lipsum:'Add properties you own, including your home and any rental/income properties.', icon:'realestate' },
-  { key:'epsilon', label:'Income',        mode:'multi',  lipsum:'Enter any retirement income, including pensions, Social Security, etc., with date ranges.', icon:'income' },
-  { key:'zeta',    label:'Expenses',      mode:'multi',  lipsum:'Enter your retirement spending budget here with date ranges.  Do not include income taxes, as they are computed for you.   Also do not include mortgage payments that you entered in the Real Estate section.', icon:'expenses' },
+  { key:'epsilon', label:'Income',        mode:'multi',  lipsum:'Enter any retirement income, including pensions, Social Security, etc., with date ranges.  DO NOT include any rental income that you specified in the Real Estate section.', icon:'income' },
+  { key:'zeta',    label:'Expenses',      mode:'multi',  lipsum:'Your taxes and any mortgage payments you entered are automatically included.  Enter all your other retirement spending here with date ranges. ', icon:'expenses' },
 ];
 
 const state = Object.fromEntries(sections.map(s => [s.key, s.mode==='single'
