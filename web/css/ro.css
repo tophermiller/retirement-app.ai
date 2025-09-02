@@ -436,7 +436,6 @@ select {
   input.pct{
     inline-size: 150px;
     padding-inline: 8px;
-    text-align: right;
   }
 
   /* =========================
