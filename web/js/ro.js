@@ -60,7 +60,7 @@ function icon(name){
 /* Sections & State */
 const sections = [
   { key:'alpha',   label:'Basics',        mode:'single', lipsum:'Enter some basics about your retirement plan here.', icon:'basics' },
-  { key:'beta',    label:'Growth Rates',  mode:'single', lipsum:'Enter your inflation and return on investment assumptions here.   These are the most important inputs for best results.   Click the "Help me choose" buttons for help.', icon:'growth' },
+  { key:'beta',    label:'Growth Rates',  mode:'single', lipsum:'Enter your money growth assumptions here.  Use the selection lists to base your choices on historical data.', icon:'growth' },
   { key:'gamma',   label:'Liquid Assets', mode:'multi',  lipsum:'Enter your cash/liquid assets here by account type.   To set retirement withdrawal order, drag and drop in the collapsed area.', icon:'liquid' },
   { key:'delta',   label:'Real Estate',   mode:'multi',  lipsum:'Add properties you own, including your home and any rental/income properties.', icon:'realestate' },
   { key:'epsilon', label:'Income',        mode:'multi',  lipsum:'Enter any retirement income, including pensions, Social Security, etc., with date ranges.', icon:'income' },
@@ -73,11 +73,92 @@ const state = Object.fromEntries(sections.map(s => [s.key, s.mode==='single'
       // Growth Rates defaults
       : { single:{
             inflation:{ roi:'', stdev:'' },
-            liquid:{ roi:'', stdev:'', customYears:[] },
+            liquid:{ usStocks:{roi:'', stdev:''}, usBonds:{roi:'', stdev:''}, internationalStocks:{roi:'', stdev:''}, customYears:[] },
             realEstate:{ roi:'', stdev:'' }
         } } )
   : { items:[], nextId:1 }
 ]));
+
+
+// --- Ensure Growth Rates defaults are initialized on first load (idempotent) ---
+function ensureGrowthDefaultsInitialized(){
+  try{
+    const g = (state && state.beta && state.beta.single) ? state.beta.single : null;
+    if(!g) return;
+
+    // Helper: safe set percent strings
+    function pctStr(v){ 
+      if(v===null || v===undefined || v==='' || !Number.isFinite(v)) return null;
+      return String((v*100).toFixed(2));
+    }
+
+    // ---- Inflation defaults (last 100 years) ----
+    try{
+      g.inflation = g.inflation || {};
+      if(!g.inflation.roi || !g.inflation.stdev){
+        const maxY = (typeof inflationdata!=='undefined' && inflationdata.getMaxYear && inflationdata.getMaxYear()) || (new Date().getFullYear()-1);
+        const first = maxY - 100 + 1;
+        const mean  = (typeof inflationdata!=='undefined' && inflationdata.computeMeanRange) ? Number(inflationdata.computeMeanRange(first, maxY)) : null;
+        const sd    = (typeof inflationdata!=='undefined' && inflationdata.computeStdDevRange) ? Number(inflationdata.computeStdDevRange(first, maxY)) : null;
+        if(!g.inflation.roi && mean!==null)   g.inflation.roi   = String(mean?.toFixed(2));
+        if(!g.inflation.stdev && sd!==null)   g.inflation.stdev = String(sd?.toFixed(2));
+      }
+    }catch(e){ /* noop */ }
+
+    // ---- Liquid asset defaults based on selector default (1976-present) ----
+    try{
+      g.liquid = g.liquid || { usStocks:{}, usBonds:{}, internationalStocks:{}, customYears:[] };
+      const minY = (typeof markethistory!=='undefined' && Array.isArray(markethistory.data) && markethistory.data.length)
+        ? Math.min.apply(null, markethistory.data.map(r=>r.Year))
+        : 1976;
+      const maxY = (typeof markethistory!=='undefined' && Array.isArray(markethistory.data) && markethistory.data.length)
+        ? Math.max.apply(null, markethistory.data.map(r=>r.Year))
+        : (new Date().getFullYear()-1);
+      const first = Math.max(minY, 1976);
+      const last  = maxY;
+
+      function setIfEmpty(obj, key, val){ if(!obj[key] || obj[key]==='') obj[key] = val; }
+
+      const meanUS   = (markethistory.getAverage && markethistory.getAverage(first, last, 'US_Stocks_SP500_TR')) ?? null;
+      const stdevUS  = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, 'US_Stocks_SP500_TR')) ?? null;
+      const meanBnd  = (markethistory.getAverage && markethistory.getAverage(first, last, 'US_Bonds_Agg_TR')) ?? null;
+      const stdevBnd = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, 'US_Bonds_Agg_TR')) ?? null;
+      const meanINT  = (markethistory.getAverage && markethistory.getAverage(first, last, 'Intl_Stocks_MSCI_EAFE_NR_USD')) ?? null;
+      const stdevINT = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, 'Intl_Stocks_MSCI_EAFE_NR_USD')) ?? null;
+
+      g.liquid.usStocks = g.liquid.usStocks || {};
+      g.liquid.usBonds  = g.liquid.usBonds  || {};
+      g.liquid.internationalStocks = g.liquid.internationalStocks || {};
+
+      setIfEmpty(g.liquid.usStocks, 'roi',   pctStr(meanUS));
+      setIfEmpty(g.liquid.usStocks, 'stdev', pctStr(stdevUS));
+      setIfEmpty(g.liquid.usBonds,  'roi',   pctStr(meanBnd));
+      setIfEmpty(g.liquid.usBonds,  'stdev', pctStr(stdevBnd));
+      setIfEmpty(g.liquid.internationalStocks, 'roi',   pctStr(meanINT));
+      setIfEmpty(g.liquid.internationalStocks, 'stdev', pctStr(stdevINT));
+
+      if(!Array.isArray(g.liquid.customYears)) g.liquid.customYears = [];
+    }catch(e){ /* noop */ }
+
+    // ---- Real Estate defaults based on user's state (geoplugin), fallback CA ----
+    try{
+      g.realEstate = g.realEstate || {};
+      const code = (typeof geoplugin_regionCode==='function' && (function(){ try{return geoplugin_regionCode();}catch(_){return null;} })()) || 'CA';
+      if(typeof realEstateROI!=='undefined' && realEstateROI[code]){
+        const avg = Number(realEstateROI[code].average);
+        const sd  = Number(realEstateROI[code].stdev);
+        if(!g.realEstate.roi)   g.realEstate.roi   = pctStr(avg);
+        if(!g.realEstate.stdev) g.realEstate.stdev = pctStr(sd);
+      }
+    }catch(e){ /* noop */ }
+
+  }catch(e){ /* noop */ }
+}
+
+
+// Initialize growth defaults immediately
+try{ ensureGrowthDefaultsInitialized(); }catch(e){}
+
 
 let active = sections[0].key;
 let jsonMode = false;
@@ -103,7 +184,6 @@ const overlay   = document.getElementById('overlay');
 const hamburger = document.getElementById('hamburger');
 
 const jsonBox   = document.getElementById('jsonBox');
-const previewBtn= document.getElementById('previewJsonBtn');
 const submitBtn = document.getElementById('submitBtn');
  
 const panelNextFooter = document.getElementById('panelNextFooter');
@@ -164,11 +244,11 @@ document.getElementById('submitBtnDup')?.addEventListener('click', () => submitB
 
 /* Helpers for section-specific labels/titles */
 function addLabelFor(sectionKey){
-  const map = { gamma:'Add Asset', delta:'Add Property', epsilon:'Add Income', zeta:'Add Expense' };
+  const map = { gamma:'Add Account', delta:'Add Property', epsilon:'Add Income', zeta:'Add Spending' };
   return map[sectionKey] || 'Add Item';
 }
 function baseNounFor(sectionKey){
-  const map = { gamma:'Asset', delta:'Property', epsilon:'Income', zeta:'Expense' };
+  const map = { gamma:'Account', delta:'Property', epsilon:'Income', zeta:'Spending' };
   return map[sectionKey] || 'Item';
 }
 function defaultTitle(sectionKey, id){
@@ -530,9 +610,60 @@ if(data.heirsTarget){
     /* ===== Render Growth Rates ===== */
     const g = state.beta.single;
 
-    const fieldPairs = [
+    
+  
+  // === Inflation Time Period selector handler ===
+  (function(){
+    try{
+      const sel = document.getElementById('inflationTimePeriod');
+      const roiEl = document.getElementById('inflationRoi');
+      const sdEl  = document.getElementById('inflationSd');
+      if (!sel || !roiEl || !sdEl || typeof inflationdata === 'undefined') return;
+
+      const applyFromSelection = ()=>{
+        const n = parseInt(sel.value, 10);
+        if (!Number.isFinite(n)) return;
+        // Use the latest complete year available in the dataset
+        const maxY = (inflationdata.getMaxYear && inflationdata.getMaxYear()) || (new Date().getFullYear()-1);
+        const first = maxY - n + 1;
+        const last  = maxY;
+        const mean = (inflationdata.computeMeanRange && inflationdata.computeMeanRange(first, last)) || '';
+        const stdev = (inflationdata.computeStdDevRange && inflationdata.computeStdDevRange(first, last)) || '';
+
+        if (mean !== null && mean !== '') {
+          roiEl.dataset.raw = String(mean);
+          roiEl.value = `${mean}%`;
+          if (g && g.inflation) g.inflation.roi = String(mean);
+        }
+        if (stdev !== null && stdev !== '') {
+          sdEl.dataset.raw = String(stdev);
+          sdEl.value = `${stdev}%`;
+          if (g && g.inflation) g.inflation.stdev = String(stdev);
+        }
+
+      };
+
+      // Wire change and apply immediately (default is 100 years)
+      sel.addEventListener('change', applyFromSelection);
+      // Ensure default shows up on first render
+      if (!sel.value) sel.value = '100';
+      applyFromSelection();
+    }catch(e){ /* no-op */ }
+  })();
+// Auto-fill default Inflation values if empty (moved from Help Me Choose)
+  try {
+    g.inflation = g.inflation || {};
+    if (!g.inflation.roi || g.inflation.roi === '') {
+      const avg = (typeof inflationdata !== 'undefined' && inflationdata.computeAverage) ? inflationdata.computeAverage() : '3.00';
+      g.inflation.roi = String(avg);
+    }
+    if (!g.inflation.stdev || g.inflation.stdev === '') {
+      const sd = (typeof inflationdata !== 'undefined' && inflationdata.computeStdDev) ? inflationdata.computeStdDev() : '1.00';
+      g.inflation.stdev = String(sd);
+    }
+  } catch(e) { /* no-op */ }
+const fieldPairs = [
       {roiId:'inflationRoi', sdId:'inflationSd', obj:g.inflation},
-      {roiId:'liquidRoi',    sdId:'liquidSd',    obj:g.liquid},
       {roiId:'reRoi',        sdId:'reSd',        obj:g.realEstate},
     ];
 
@@ -556,16 +687,156 @@ if(data.heirsTarget){
       sdEl.onfocus = ()=> onFocusNumeric(sdEl);
       sdEl.onblur  = ()=> { onBlurPercent(sdEl); obj.stdev = sdEl.dataset.raw || ''; };
     });
+    // --- Liquid: 2x3 grid wiring ---
+    (function(){
+      const ids = {
+        usStocks: { roi:'liquidUsStocksRoi', sd:'liquidUsStocksSd' },
+        usBonds:  { roi:'liquidUsBondsRoi',  sd:'liquidUsBondsSd'  },
+        internationalStocks:{ roi:'liquidIntlStocksRoi', sd:'liquidIntlStocksSd' }
+      };
+      const obj = g.liquid;
+      if (!obj.usStocks) obj.usStocks = {roi:'', stdev:''};
+      if (!obj.usBonds) obj.usBonds = {roi:'', stdev:''};
+      if (!obj.internationalStocks) obj.internationalStocks = {roi:'', stdev:''};
+
+      Object.entries(ids).forEach(([k, pair])=>{
+        const roiEl = document.getElementById(pair.roi);
+        const sdEl  = document.getElementById(pair.sd);
+        if (!roiEl || !sdEl) return;
+
+        // populate
+        if (nonEmpty(obj[k].roi)) { roiEl.dataset.raw = String(obj[k].roi); roiEl.value = `${obj[k].roi}%`; }
+        else { roiEl.value=''; roiEl.dataset.raw=''; }
+        if (nonEmpty(obj[k].stdev)) { sdEl.dataset.raw = String(obj[k].stdev); sdEl.value = `${obj[k].stdev}%`; }
+        else { sdEl.value=''; sdEl.dataset.raw=''; }
+
+        // handlers
+        roiEl.onfocus = ()=> onFocusNumeric(roiEl);
+        roiEl.onblur  = ()=> { onBlurPercent(roiEl); obj[k].roi   = roiEl.dataset.raw || ''; };
+
+        sdEl.onfocus  = ()=> onFocusNumeric(sdEl);
+        sdEl.onblur   = ()=> { onBlurPercent(sdEl);  obj[k].stdev = sdEl.dataset.raw || ''; };
+      });
+    // === Real Estate inline state selector (replaces Help Me Choose modal) ===
+    (function(){
+      try{
+        const sel = document.getElementById('reStateSelect');
+        const roiEl = document.getElementById('reRoi');
+        const sdEl  = document.getElementById('reSd');
+        if (!sel || !roiEl || !sdEl || typeof realEstateROI === 'undefined') return;
+        // Populate options once
+        if (!sel.dataset.populated) {
+          const byName = Object.entries(realEstateROI)
+            .map(([abbr, v])=>({abbr, name: v.stateName}))
+            .sort((a,b)=> a.name.localeCompare(b.name));
+          const defaultAbbr = (typeof geoplugin_regionCode === 'function' && geoplugin_regionCode()) || (state.alpha?.single?.stateCode) || 'CA';
+          const placeholder = document.createElement('option');
+          placeholder.textContent = '• Outside the USA';
+          placeholder.value = '';
+          sel.appendChild(placeholder);
+          byName.forEach(({abbr, name})=>{
+            const o = document.createElement('option');
+            o.value = abbr;
+            o.textContent = name;
+            if (abbr === defaultAbbr) o.selected = true;
+            sel.appendChild(o);
+          });
+          sel.dataset.populated = '1';
+        }
+        const apply = ()=>{
+          const abbr = sel.value;
+          const data = realEstateROI[abbr];
+          if (!data) return;
+          const roi = (100*Number(data.average)).toFixed(2);
+          const sd  = (100*Number(data.stdev)).toFixed(2);
+          roiEl.dataset.raw = String(roi); roiEl.value = `${roi}%`;
+          sdEl.dataset.raw  = String(sd);  sdEl.value  = `${sd}%`;
+          // Persist
+          const g = state.beta.single;
+          if (g && g.realEstate) {
+            g.realEstate.roi = String(roi);
+            g.realEstate.stdev = String(sd);
+          }
+        };
+        sel.addEventListener('change', apply);
+        // Apply immediately if a default was selected
+        if (sel.value) apply();
+      }catch(e){ /* no-op */ }
+    })();
+
+    })();
+
 
     
-    /* --- Liquid: Customize ROI for Specific Years --- */
+    
+    /* --- Liquid: Time Period preset handler (markethistory.js) --- */
     (function(){
-  const btn  = document.getElementById('liquidCustomizeBtn');
+      try {
+        const sel = document.getElementById('liquidTimePeriod');
+        if (!sel || typeof markethistory === 'undefined' || !Array.isArray(markethistory.data)) return;
+
+        // Map UI -> dataset keys & input ids
+        const classes = [
+          { key: "US_Stocks_SP500_TR", roiId: "liquidUsStocksRoi", sdId: "liquidUsStocksSd", stateKey: "usStocks" },
+          { key: "US_Bonds_Agg_TR", roiId: "liquidUsBondsRoi", sdId: "liquidUsBondsSd", stateKey: "usBonds" },
+          { key: "Intl_Stocks_MSCI_EAFE_NR_USD", roiId: "liquidIntlStocksRoi", sdId: "liquidIntlStocksSd", stateKey: "internationalStocks" },
+        ];
+
+        // Helpers
+        const years = markethistory.data.map(r => Number(r.Year)).filter(Number.isFinite);
+        const minY = Math.min.apply(null, years), maxY = Math.max.apply(null, years);
+
+        function parseRange(v){
+          // v examples: "1976-present", "2000-2010"
+          const m = String(v || '').trim().toLowerCase().match(/^(\d{4})\s*-\s*(present|\d{4})$/);
+          if (!m) return {first:minY, last:maxY};
+          const first = Number(m[1]);
+          const last  = (m[2] === 'present') ? maxY : Number(m[2]);
+          return { first: Math.max(minY, Math.min(first, maxY)), last: Math.max(minY, Math.min(last, maxY)) };
+        }
+
+        function pct(x){ return (Number.isFinite(x) ? (x*100).toFixed(2) : ""); }
+
+        function applyFromSelection(){
+          const {first, last} = parseRange(sel.value);
+          // For each asset, compute mean & stdev from markethistory
+          classes.forEach(({key, roiId, sdId, stateKey})=>{
+            const mean  = (markethistory.getAverage && markethistory.getAverage(first, last, key)) ?? null;
+            const stdev = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, key)) ?? null;
+
+            const roiEl = document.getElementById(roiId);
+            const sdEl  = document.getElementById(sdId);
+            if (!roiEl || !sdEl) return;
+
+            const meanPct  = mean  === null ? "" : pct(mean);
+            const stdevPct = stdev === null ? "" : pct(stdev);
+
+            // Write inputs (show with % but store raw number in dataset.raw)
+            if (meanPct !== "") { roiEl.dataset.raw = meanPct;  roiEl.value = meanPct + "%";  }
+            if (stdevPct !== ""){ sdEl.dataset.raw = stdevPct;  sdEl.value = stdevPct + "%"; }
+
+            // Persist to state
+            if (g && g.liquid && g.liquid[stateKey]){
+              if (meanPct !== "")  g.liquid[stateKey].roi   = meanPct;
+              if (stdevPct !== "") g.liquid[stateKey].stdev = stdevPct;
+            }
+          });
+        }
+
+        sel.addEventListener('change', applyFromSelection);
+        // Initialize on first render using currently selected option
+        applyFromSelection();
+      } catch(e) { /* no-op */ }
+    })();
+    
+/* --- Liquid: Customize ROI for Specific Years --- */
+    (function(){
+  const btn  = document.getElementById('liquidCustomizeBtn') /* may be null now */;
   const wrap = document.getElementById('liquidCustomizeWrap');
   const rowsHost = document.getElementById('liquidRows');
   const addBtn = document.getElementById('addLiquidRowBtn');
 
-  if (!btn || !wrap || !rowsHost || !addBtn) return;
+  if (!wrap || !rowsHost || !addBtn) return;
 
   // Ensure the array exists, seed with one empty row if none
   g.liquid.customYears = (g.liquid.customYears && g.liquid.customYears.length)
@@ -653,7 +924,7 @@ if(data.heirsTarget){
   // Initial render if visible
   if (!wrap.classList.contains('hidden')) renderRows();
 
-  btn.onclick = ()=>{
+  if (btn) btn.onclick = ()=>{
     const isHidden = wrap.classList.contains('hidden'); // currently hidden?
     wrap.classList.toggle('hidden');
     btn.textContent = isHidden ? 'Hide Customized ROI Years' : 'Customize ROI For Specific Years';
@@ -741,6 +1012,201 @@ function renderMiniCard(it, sectionKey){
 }
 function makeBadge(text){ const b=document.createElement('span'); b.className='badge'; b.textContent=text; return b; }
 
+
+
+/* ===== Tri-Allocation Slider Control ===== */
+function createTriAllocationControl(it){
+  if(!Number.isFinite(+it.allocUS) && !Number.isFinite(+it.allocBonds) && !Number.isFinite(+it.allocIntl)){
+    it.allocUS = 60; it.allocBonds = 30; it.allocIntl = 10;
+  }
+  const total = (n)=> Math.max(0, Math.min(100, Math.round(+n || 0)));
+  const toCuts = ()=> {
+    const us = total(it.allocUS), bonds = total(it.allocBonds);
+    let intl = total(100 - us - bonds);
+    if(us + bonds + intl !== 100){ intl = Math.max(0, 100 - us - bonds); }
+    return [us, us + bonds];
+  };
+  const fromCuts = (a,b)=>{
+    a = total(a); b = total(b);
+    if(b < a) b = a;
+    it.allocUS = a;
+    it.allocBonds = Math.max(0, b - a);
+    it.allocIntl = Math.max(0, 100 - b);
+  };
+
+  const wrap = document.createElement('div'); wrap.className = 'tri-alloc';
+  const lab = document.createElement('div'); lab.className = 'label'; lab.textContent = 'Asset Allocation (must add to 100%)';
+  wrap.append(lab);
+
+  const sliderWrap = document.createElement('div'); sliderWrap.className = 'tri-alloc-slider';
+  const [initA, initB] = toCuts();
+
+  const r1 = document.createElement('input'); r1.type = 'range'; r1.min = '0'; r1.max = '100'; r1.value = String(initA);
+  const r2 = document.createElement('input'); r2.type = 'range'; r2.min = '0'; r2.max = '100'; r2.value = String(initB);
+  r1.className = 'tri-alloc-range a'; r2.className = 'tri-alloc-range b';
+
+  let lastActive = 'r2';
+  // Blended ROI display support
+  let blendRow;
+  function updateBlended(){
+    try{
+      const g = (state && state.beta && state.beta.single && state.beta.single.liquid) ? state.beta.single.liquid : null;
+      const roiUS  = parseFloat(numOnly(String(g?.usStocks?.roi ?? '0'))) || 0;
+      const roiBnd = parseFloat(numOnly(String(g?.usBonds?.roi ?? '0'))) || 0;
+      const roiInt = parseFloat(numOnly(String(g?.internationalStocks?.roi ?? '0'))) || 0;
+      const us = Math.max(0, +it.allocUS || 0);
+      const b  = Math.max(0, +it.allocBonds || 0);
+      const i  = Math.max(0, +it.allocIntl || 0);
+      const blended = (us*roiUS + b*roiBnd + i*roiInt) / 100;
+      if(blendRow){
+        const val = Number.isFinite(blended) ? blended.toFixed(2) : '0.00';
+        blendRow.textContent = `Blended ROI: ${val}%`;
+      }
+    }catch(e){ /* noop */ }
+  }
+
+  function setZ(){
+    const a = parseInt(r1.value,10), b = parseInt(r2.value,10);
+    if(a === b){
+      if(lastActive === 'r1'){ r1.style.zIndex='4'; r2.style.zIndex='3'; }
+      else { r2.style.zIndex='4'; r1.style.zIndex='3'; }
+    }else{
+      r2.style.zIndex='4'; r1.style.zIndex='3';
+    }
+  }
+  setZ();
+
+  // Handle pointer interactions on the whole slider so either thumb can be chosen by proximity
+  let dragging = null;
+  function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+  function pctFromEvent(e){
+    const rect = sliderWrap.getBoundingClientRect();
+    const clientX = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+    const ratio = clamp01((clientX - rect.left) / Math.max(1, rect.width));
+    return Math.round(ratio * 100);
+  }
+  function chooseHandleByProximity(pct){
+    const a = Math.abs(pct - parseInt(r1.value,10));
+    const b = Math.abs(pct - parseInt(r2.value,10));
+    if(a === b){ return lastActive; }
+    return (a < b) ? 'r1' : 'r2';
+  }
+  function onDown(e){
+    e.preventDefault();
+    const pct = pctFromEvent(e);
+    dragging = chooseHandleByProximity(pct);
+    lastActive = dragging;
+    if(dragging === 'r1'){
+      r1.value = String(Math.min(pct, parseInt(r2.value,10)));
+      syncFromRanges('r1');
+    }else{
+      r2.value = String(Math.max(pct, parseInt(r1.value,10)));
+      syncFromRanges('r2');
+    }
+    setZ();
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('touchmove', onMove, {passive:false});
+    window.addEventListener('pointerup', onUp, {once:true});
+    window.addEventListener('touchend', onUp, {once:true});
+  }
+  function onMove(e){
+    if(!dragging) return;
+    e.preventDefault();
+    const pct = pctFromEvent(e);
+    if(dragging === 'r1'){
+      r1.value = String(Math.min(pct, parseInt(r2.value,10)));
+      syncFromRanges('r1');
+    }else{
+      r2.value = String(Math.max(pct, parseInt(r1.value,10)));
+      syncFromRanges('r2');
+    }
+  }
+  function onUp(){ dragging = null; }
+  sliderWrap.addEventListener('pointerdown', onDown);
+  sliderWrap.addEventListener('touchstart', onDown, {passive:false});
+
+
+  function syncFromRanges(active){
+    let a = parseInt(r1.value,10);
+    let b = parseInt(r2.value,10);
+    if(active === 'r1' && a > b){ a = b; r1.value = String(a); }
+    if(active === 'r2' && b < a){ b = a; r2.value = String(b); }
+    fromCuts(parseInt(r1.value,10), parseInt(r2.value,10));
+    updateBars();
+    syncInputs();
+    updateBlended();
+    setZ();
+  }
+
+  ['pointerdown','mousedown','touchstart'].forEach(evt=>{
+    r1.addEventListener(evt, ()=>{ lastActive='r1'; setZ(); }, {passive:true});
+    r2.addEventListener(evt, ()=>{ lastActive='r2'; setZ(); }, {passive:true});
+  });
+
+  r1.addEventListener('input', ()=>{ lastActive='r1'; syncFromRanges('r1'); });
+  r2.addEventListener('input', ()=>{ lastActive='r2'; syncFromRanges('r2'); });
+
+  const bar = document.createElement('div'); bar.className = 'tri-alloc-bar';
+  const segUS = document.createElement('div'); segUS.className = 'seg us';
+  const segB = document.createElement('div'); segB.className = 'seg bonds';
+  const segI = document.createElement('div'); segI.className = 'seg intl';
+  bar.append(segUS, segB, segI);
+
+  function updateBars(){
+    const a = parseInt(r1.value,10), b = parseInt(r2.value,10);
+    segUS.style.width = a + '%';
+    segB.style.width = (b - a) + '%';
+    segI.style.width = (100 - b) + '%';
+  }
+
+  sliderWrap.append(bar, r1, r2);
+  wrap.append(sliderWrap);
+
+  const inputs = document.createElement('div'); inputs.className = 'tri-alloc-inputs';
+  function makePctField(label, getVal, setVal){
+    const f = document.createElement('div'); f.className = 'tri-field label';
+    const l = document.createElement('label'); l.textContent = label;
+    const inp = document.createElement('input'); inp.type = 'number'; inp.min='0'; inp.max='100'; inp.step='1';
+    inp.value = String(total(getVal()));
+    inp.addEventListener('input', ()=>{
+      const v = total(inp.value);
+      setVal(v);
+      const [a,b] = toCuts();
+      r1.value = String(a); r2.value = String(b);
+      updateBars();
+      syncInputs(true);
+      updateBlended();
+      setZ();
+    });
+    f.append(l, inp);
+    return {field:f, input:inp};
+  }
+  function syncInputs(skipRound){
+    usBox.input.value = String(total(it.allocUS));
+    bBox.input.value = String(total(it.allocBonds));
+    iBox.input.value = String(total(it.allocIntl));
+    if(!skipRound){
+      const [a,b] = toCuts();
+      fromCuts(a,b);
+    }
+  }
+  const usBox = makePctField('US Stocks (%)', ()=>it.allocUS, (v)=>{ it.allocUS = v; });
+  const bBox  = makePctField('US Bonds (%)', ()=>it.allocBonds, (v)=>{ it.allocBonds = v; });
+  const iBox  = makePctField('International (%)', ()=>it.allocIntl, (v)=>{ it.allocIntl = v; });
+  inputs.append(usBox.field, bBox.field, iBox.field);
+  wrap.append(inputs);
+
+  // Blended ROI line
+  blendRow = document.createElement('div');
+  blendRow.className = 'blended-roi label';
+  blendRow.setAttribute('role','status');
+  blendRow.setAttribute('aria-live','polite');
+  wrap.append(blendRow);
+
+  updateBars();
+  updateBlended();
+  return wrap;
+}
 /* Expanded item card (multi) */
 function renderItem(it, sectionKey){
   const wrap = document.createElement('div'); wrap.className = 'item'; wrap.dataset.id = it.id;
@@ -834,6 +1300,18 @@ input.addEventListener('change', () => {
       }
     }
     body.append(grid);
+
+    // === Asset Allocation Slider (only for Taxable Investment, Tax Deferred, Roth) ===
+    (function(){
+      const t = it.atype || 'Cash';
+      if(t==='Taxable Investment' || t==='Tax Deferred' || t==='Roth'){
+        const allocWrap = createTriAllocationControl(it);
+        const row = document.createElement('div'); row.className='row'; row.append(allocWrap);
+        body.append(row);
+      }
+    })();
+
+
     // === Pre-Retirement Contribution (visible only if your age < retirement age) ===
     (function(){
       try{
@@ -1337,6 +1815,8 @@ function prune(x){
 }
 
 function validateState(){
+
+  try{ ensureGrowthDefaultsInitialized(); }catch(e){}
   const errors = [];
 
   const basics = state.alpha.single || {};
@@ -1352,30 +1832,10 @@ function validateState(){
 
   const g = state.beta.single || {};
   if(!nonEmpty(g.inflation?.roi)) errors.push('Growth Rates: Inflation value is required');
-  if(!nonEmpty(g.liquid?.roi)) errors.push('Growth Rates: Liquid Investments ROI is required');
+  if(!nonEmpty(g.liquid?.usStocks?.roi) || !nonEmpty(g.liquid?.usBonds?.roi) || !nonEmpty(g.liquid?.internationalStocks?.roi)) errors.push('Growth Rates: Each Liquid Investment ROI (US Stocks, US Bonds, International Stocks) is required');
 
   //validate liquid assets
-  let totalAssets = 0;
-  (state.gamma.items || []).forEach(a => {
-    //sum up the values of all liquid assets
-    let amount = nonEmpty(a.amount) ? toInt(a.amount) : null;
-    totalAssets += (amount || 0);
-    //check cash interest rate
-    //if (a.atype === 'Cash') {
-    //  const cashRate = nonEmpty(a.cashRate) ? toFloat(a.cashRate) : null;
-    //  if (cashRate === null) {
-    //    errors.push(`Liquid Assets: Cash interest rate is required for asset "${a.title || 'Unnamed Asset'}"`);
-    //  } else if (cashRate < 0 || cashRate > 100) {
-    //    errors.push(`Liquid Assets: Cash interest rate must be between 0% and 100% for asset "${a.title || 'Unnamed Asset'}"`);
-    //  }
-    //}
-    //check custom ROI values
-    if (nonEmpty(a.roi) && !nonEmpty(a.stdev)) {
-      errors.push(`Liquid Assets: Standard Deviation is required if ROI is provided for asset "${a.title || 'Unnamed Asset'}"`);
-    } else if (!nonEmpty(a.roi) && nonEmpty(a.stdev)) {
-      errors.push(`Liquid Assets: ROI is required if Standard Deviation is provided for asset "${a.title || 'Unnamed Asset'}"`);
-    }
-  });
+  let totalAssets = getTotalAssets();
   if (totalAssets <= 0) {
       errors.push('Liquid Assets: At least one liquid asset is required');
   }
@@ -1442,11 +1902,7 @@ function validateState(){
   });
 
   //validate expenses
-  let totalExpenses = 0;
-  (state.zeta.items || []).forEach(e => {
-    const annualAmount = nonEmpty(e.amount) ? toInt(e.amount) : null;
-    totalExpenses += (annualAmount || 0);
-  });
+  let totalExpenses = getTotalExpenses();
   if (totalExpenses <= 0) {
     errors.push('Expenses: At least one expense is required');
   }
@@ -1532,33 +1988,53 @@ function buildPlanJSON(){
   submittal.state = state.alpha.single.stateCode; 
   //submittal.city = ;
   const growthRates = {};
-  growthRates.inflation = toFloat(state.beta.single.inflation.roi);
-  growthRates.inflation_stdev = toFloat(state.beta.single.inflation.stdev); //TODO: retrofit back end to handle
-  growthRates.defaultAnnualGainRate = {};
-  growthRates.defaultAnnualGainRate.average = toFloat(state.beta.single.liquid.roi) || 0;
-  growthRates.defaultAnnualGainRate.standardDeviation = toFloat(state.beta.single.liquid.stdev) || 0; 
+  growthRates.assetClassBased = "true"; 
+  growthRates.inflationGainRate = {};
+  growthRates.inflationGainRate.average = toFloat(state.beta.single.inflation.roi);
+  growthRates.inflationGainRate.standardDeviation = toFloat(state.beta.single.inflation.stdev); //TODO: retrofit back end to handle
+  growthRates.inflation = toFloat(state.beta.single.inflation.roi); //legacy
+
+  //NEW: Asset class gain rates
+  growthRates.usStocksGainRate = {};
+  growthRates.usStocksGainRate.average = toFloat(state.beta.single.liquid.usStocks.roi) || 0;
+  growthRates.usStocksGainRate.standardDeviation = toFloat(state.beta.single.liquid.usStocks.stdev) || 0; 
+  growthRates.usBondsGainRate = {};
+  growthRates.usBondsGainRate.average = toFloat(state.beta.single.liquid.usBonds.roi) || 0;
+  growthRates.usBondsGainRate.standardDeviation = toFloat(state.beta.single.liquid.usBonds.stdev) || 0; 
+  growthRates.internationalStocksGainRate = {};
+  growthRates.internationalStocksGainRate.average = toFloat(state.beta.single.liquid.internationalStocks.roi) || 0;
+  growthRates.internationalStocksGainRate.standardDeviation = toFloat(state.beta.single.liquid.internationalStocks.stdev) || 0;
+  
+  //growthRates.defaultAnnualGainRate = {};
+  //growthRates.defaultAnnualGainRate.average = toFloat(state.beta.single.liquid.roi) || 0;
+  //growthRates.defaultAnnualGainRate.standardDeviation = toFloat(state.beta.single.liquid.stdev) || 0; 
   //growthRates.ownRealEstate = 'true'; //TODO needed?
+  
   growthRates.defaultREAnnualGainRate = {}
   growthRates.defaultREAnnualGainRate.average = toFloat(state.beta.single.realEstate.roi) || 0;
   growthRates.defaultREAnnualGainRate.standardDeviation = toFloat(state.beta.single.realEstate.stdev) || 0; 
-  growthRates.growthRatesCustomize = "true"; //TODO
+  
   growthRates.customGrowthRates = {};
   //map custom growth rates to array indexed by year offset from current year
   let triples = state.beta.single.liquid.customYears || [];
   const currentYear = new Date().getFullYear();
   const maxYear = Math.max(...triples.map(t => t.year));
-  const length = maxYear - currentYear + 1;
-  const newTriples = Array(length).fill(null);
-  triples.forEach(({ year, roi, prob }) => {
-    const index = year - currentYear;
-    if (index >= 0 && index < length && nonEmpty(year) && nonEmpty(roi) && nonEmpty(prob)) {
-      newTriples[index] = { year : toInt(year), roi: toFloat(roi) || 0, trialPercentage: toFloat(prob) || 0 };
+  if (maxYear >= 0) {
+    const length = maxYear - currentYear + 1;
+    const newTriples = Array(length).fill(null);
+    triples.forEach(({ year, roi, prob }) => {
+       const index = year - currentYear;
+       if (index >= 0 && index < length && nonEmpty(year) && nonEmpty(roi) && nonEmpty(prob)) {
+         newTriples[index] = { year : toInt(year), roi: toFloat(roi) || 0, trialPercentage: toFloat(prob) || 0 };
+         growthRates.growthRatesCustomize = "true"; //TODO
+       }
+    });
+    if (newTriples.length > 0) {
+      growthRates.customGrowthRates.customGrowthRates = newTriples;
+    } else {
+      delete growthRates.customGrowthRates;
+      growthRates.growthRatesCustomize = "false";
     }
-  });
-  if (newTriples.length > 0) {
-    growthRates.customGrowthRates.customGrowthRates = newTriples;
-  } else {
-    delete growthRates.customGrowthRates;
   }
   submittal.growthRates = growthRates;
 
@@ -1571,6 +2047,12 @@ function buildPlanJSON(){
   (state.gamma.items || []).forEach(a => {
     const future = a.inheritanceYear && a.inheritanceYear !== '' && a.inheritanceYear !== '__ALREADY_OWNED__' ? true : false;
     const firstYear = future ? toInt(a.inheritanceYear) : calendar.planStartYear;
+    const assetAllocations = {};
+    if (a.atype !== 'Cash') {
+      assetAllocations.allocUS = a.allocUS;
+      assetAllocations.allocBonds = a.allocBonds;
+      assetAllocations.allocIntl = a.allocIntl;
+    }
     if (a.atype === 'Taxable Investment') {
       let savingsSubType = 'stock';
       let taxTreatment = a.taxTreatment === 'ordinary' ? 'ordinary' : (a.taxTreatment === 'capital_gains' ? 'ltcg' : 'split');
@@ -1588,6 +2070,7 @@ function buildPlanJSON(){
         startingValueCost: toInt(a.costBasis) || 0,
         taxTreatment: taxTreatment,
         preRetireContribution: toInt(a.preRetireAnnualContribution) || 0,
+        assetAllocations: assetAllocations,
         annualGainRateOverride: annualGainRateOverride,
         annualGainRate: annualGainRateOverride ? {
           average: toFloat(a.roi) || 0,
@@ -1626,6 +2109,7 @@ function buildPlanJSON(){
         firstYear: firstYear,
         startingValue: toInt(a.amount) || 0,
         preRetireContribution: toInt(a.preRetireAnnualContribution) || 0,
+        assetAllocations: assetAllocations,
         annualGainRateOverride: annualGainRateOverride,
         annualGainRate: annualGainRate,
         rmdEnabled: rmdEnabled,
@@ -1809,27 +2293,6 @@ function buildPlanJSON(){
   return submittal;
 }
 
-/* JSON preview toggle */
-previewBtn.addEventListener('click', ()=>{
-  const errors = validateState();
-  if(errors.length > 0){
-    console.warn('Validation errors:', errors);
-    showErrorPanel(errors);
-    return;
-  }
-  hideErrorPanel();
-  const data = buildPlanJSON();
-  const enteringPreview = !jsonMode;
-  if(enteringPreview){
-    jsonBox.textContent = JSON.stringify(data, null, 2);
-    jsonMode = true;
-    previewBtn.textContent = 'Hide JSON';
-  }else{
-    jsonMode = false;
-    previewBtn.textContent = 'Preview JSON';
-  }
-  render();
-});
 
 /* Submit */
 submitBtn.addEventListener('click', async ()=>{
@@ -1936,7 +2399,7 @@ function randomInRange(min, max, step=0.1){
 }
 
 const US_STATES = [
-  "Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa",
+  "Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa",
   "Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada",
   "New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island",
   "South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"
@@ -2247,6 +2710,7 @@ init();
   }
 
   function setup(){
+    const previewBtn= document.getElementById('previewJsonLink');
     const saveBtn = document.getElementById('savePlanBtn');
     const restoreBtn = document.getElementById('restorePlanBtn');
     const modalSaveBtn = document.getElementById('modalSaveBtn');
@@ -2255,6 +2719,27 @@ init();
     restoreBtn?.addEventListener('click', ()=>{ buildRestoreList(); openModal('restoreModal'); });
     modalSaveBtn?.addEventListener('click', ()=>{ const name=(input?.value||'').trim(); doSavePlan(name); });
     input?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); modalSaveBtn?.click(); } });
+    /* JSON preview toggle */
+    if (previewBtn) previewBtn.addEventListener('click', ()=>{
+      const errors = validateState();
+      if(errors.length > 0){
+        console.warn('Validation errors:', errors);
+        showErrorPanel(errors);
+        return;
+      }
+      hideErrorPanel();
+      const data = buildPlanJSON();
+      const enteringPreview = !jsonMode;
+      if(enteringPreview){
+        jsonBox.textContent = JSON.stringify(data, null, 2);
+        jsonMode = true;
+        previewBtn.textContent = 'Hide JSON';
+      }else{
+        jsonMode = false;
+        previewBtn.textContent = 'Preview JSON';
+      }
+      render();
+    });
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', setup); } else { setup(); }
 })();
@@ -2269,7 +2754,7 @@ init();
     FIRST_SPOUSE_DEATH: '__FIRST_DEATH__',
     FIRST_SPOUSE_DEATH_PLUS_1: '__FIRST_DEATH_P1__',
     END_OF_PLAN: '__END_OF_PLAN__'
-  };
+};
   function numOnly(x){ return (String(x||'').match(/\d+/g)||[]).join(''); }
   function getInt(val){ const n=parseInt(numOnly(val),10); return Number.isFinite(n)?n:null; }
   function computeModel(){
@@ -2544,3 +3029,116 @@ function renderRows(){
   });
 }
 ;
+
+// Dynamically populate states for stateSelect
+
+const states = [
+  { code: "", name: "• Outside the USA" },
+  { code: "AL", name: "Alabama" },
+  { code: "AK", name: "Alaska" },
+  { code: "AZ", name: "Arizona" },
+  { code: "AR", name: "Arkansas" },
+  { code: "CA", name: "California" },
+  { code: "CO", name: "Colorado" },
+  { code: "CT", name: "Connecticut" },
+  { code: "DC", name: "District of Columbia" },
+  { code: "DE", name: "Delaware" },
+  { code: "FL", name: "Florida" },
+  { code: "GA", name: "Georgia" },
+  { code: "HI", name: "Hawaii" },
+  { code: "ID", name: "Idaho" },
+  { code: "IL", name: "Illinois" },
+  { code: "IN", name: "Indiana" },
+  { code: "IA", name: "Iowa" },
+  { code: "KS", name: "Kansas" },
+  { code: "KY", name: "Kentucky" },
+  { code: "LA", name: "Louisiana" },
+  { code: "ME", name: "Maine" },
+  { code: "MD", name: "Maryland" },
+  { code: "MA", name: "Massachusetts" },
+  { code: "MI", name: "Michigan" },
+  { code: "MN", name: "Minnesota" },
+  { code: "MS", name: "Mississippi" },
+  { code: "MO", name: "Missouri" },
+  { code: "MT", name: "Montana" },
+  { code: "NE", name: "Nebraska" },
+  { code: "NV", name: "Nevada" },
+  { code: "NH", name: "New Hampshire" },
+  { code: "NJ", name: "New Jersey" },
+  { code: "NM", name: "New Mexico" },
+  { code: "NY", name: "New York" },
+  { code: "NC", name: "North Carolina" },
+  { code: "ND", name: "North Dakota" },
+  { code: "OH", name: "Ohio" },
+  { code: "OK", name: "Oklahoma" },
+  { code: "OR", name: "Oregon" },
+  { code: "PA", name: "Pennsylvania" },
+  { code: "RI", name: "Rhode Island" },
+  { code: "SC", name: "South Carolina" },
+  { code: "SD", name: "South Dakota" },
+  { code: "TN", name: "Tennessee" },
+  { code: "TX", name: "Texas" },
+  { code: "UT", name: "Utah" },
+  { code: "VT", name: "Vermont" },
+  { code: "VA", name: "Virginia" },
+  { code: "WA", name: "Washington" },
+  { code: "WV", name: "West Virginia" },
+  { code: "WI", name: "Wisconsin" },
+  { code: "WY", name: "Wyoming" }
+];
+
+(function populateStates() {
+  try {
+    const stateSelect = document.getElementById('stateSelect');
+    if (stateSelect) {
+      states.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.code;
+        opt.textContent = s.name;
+        stateSelect.appendChild(opt);
+      });
+      try {
+        const defaultCode = geoplugin_regionCode();
+        if (defaultCode) stateSelect.value = defaultCode;
+      } catch (e) {
+        console.log("Could not obtain state code");
+      }
+    }
+  } catch (e) {
+    console.error("Error populating states", e);
+  }
+})();
+
+
+function getTotalAssets(){
+  try{
+    const items = (state.gamma && Array.isArray(state.gamma.items)) ? state.gamma.items : [];
+    let total = 0;
+    for (const it of items){
+      const atype = it.atype || '';
+      if (atype === 'Taxable Investment'){
+        const cb = parseFloat(numOnly(it.costBasis ?? '')) || 0;
+        const ug = parseFloat(numOnly(it.unrealized ?? '')) || 0;
+        total += cb + ug;
+      } else {
+        const amt = parseFloat(numOnly(it.amount ?? '')) || 0;
+        total += amt;
+      }
+    }
+    return total;
+  }catch(e){ return 0; }
+}
+
+function getTotalExpenses(){
+  try{
+    const items = (state.zeta && Array.isArray(state.zeta.items)) ? state.zeta.items : [];
+    let total = 0;
+    for (const it of items){
+      const amt = parseFloat(numOnly(it.amount ?? '')) || 0;
+      total += amt;
+    }
+    return total;
+  }catch(e){ return 0; }
+}
+
+

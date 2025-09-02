@@ -192,7 +192,7 @@
     border:1px solid var(--outline); border-radius:12px; background:var(--surface-2);
     padding:14px 12px 16px; margin-bottom:12px
   }
-  .single h3{margin:0 0 6px; font-size:15px; color:#cbd3e1; letter-spacing:.2px}
+  .single h3{ font-size:15px; color:#cbd3e1; letter-spacing:.2px}
 
   /* ---- BASICS INPUT SIZING ---- */
   #basicsForm .ctrl input{ flex:0 0 6ch; width:3ch; }
@@ -555,7 +555,7 @@ select {
   align-items: end;
 }
 .triple-row .field { min-width: 0; }
-.triple-row .field .label { display: block; margin-bottom: 2px; font-weight: 600; }
+.triple-row .field .label { display: block; margin-bottom: 2px;  }
 
 /* First row acts like headers */
 .triple-row.header-row .field .label {
@@ -983,3 +983,119 @@ body.ro-modal-open{overflow:hidden;}
   text-align: center;
 }
 
+
+
+
+/* === Compact 2x3 asset grid === */
+.asset-grid{
+  display:grid;
+  grid-template-columns: minmax(110px, 1fr) minmax(90px, 1fr) minmax(120px, 1fr);
+  gap: 8px 10px;
+  align-items:center;
+  margin-top: 8px;
+}
+.asset-grid .corner{}
+
+.asset-grid .col-head{
+  
+}
+
+.asset-grid .row-head{
+  white-space:nowrap;
+
+}
+.asset-grid .cell input.pct{
+  width:100%;
+}
+@media (max-width: 480px){
+  .asset-grid{
+    grid-template-columns: minmax(90px, 1fr) minmax(70px, 1fr) minmax(110px, 1fr);
+    gap:6px 8px;
+  }
+  .asset-grid .col-head{ font-size:0.9rem; }
+  .asset-grid .row-head{ font-size:0.9rem; }
+}
+
+
+/* === Tri Allocation Slider === */
+.tri-alloc{ width:100%; max-width:430px; margin: 6px 0; }
+.tri-alloc-slider{ position:relative; height:28px; }
+.tri-alloc-slider input[type="range"]{ pointer-events:none; position:absolute; left:0; right:0; top:0; bottom:0; width:100%; -webkit-appearance:none; background:transparent; pointer-events:all; }
+.tri-alloc-slider input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--accent, #8ecae6); border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.25); }
+.tri-alloc-slider input[type="range"]::-moz-range-thumb{ width:18px; height:18px; border-radius:50%; background:var(--accent, #8ecae6); border:2px solid #fff; }
+.tri-alloc-bar{ position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:8px; background:var(--border-muted,#333); border-radius:999px; overflow:hidden; pointer-events:none; }
+.tri-alloc-bar .seg{ height:100%; display:inline-block; }
+.tri-alloc-bar .seg.us{ background:var(--green,#2a9d8f); }
+.tri-alloc-bar .seg.bonds{ background:var(--yellow,#e9c46a); }
+.tri-alloc-bar .seg.intl{ background:var(--pink,#e76f51); }
+.tri-alloc-inputs{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-top:8px; max-width:430px; }
+.tri-alloc-inputs .tri-field{ display:flex; flex-direction:column; }
+.tri-alloc-inputs label{ font-size:12px; opacity:.85; margin-bottom:2px; }
+.tri-alloc-inputs input{ width:100%; padding:6px 8px; }
+@media (max-width:480px){
+  .tri-alloc, .tri-alloc-inputs{ max-width: 420px; }
+}
+
+
+/* Tri-alloc inputs dark theme */
+.tri-alloc-inputs input[type="number"]{
+  appearance:textfield;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--outline);
+  background:#0f131b;
+  color:#e6e9ef;
+  outline:none;
+  min-width:0;
+}
+.tri-alloc-inputs input[type="number"]::-webkit-outer-spin-button,
+.tri-alloc-inputs input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
+
+
+/* Disabled button styling */
+button:disabled, .btn:disabled {
+  background-color: #666 !important;
+  color: #ccc !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+
+/* Site Footer */
+.site-footer {
+    background: #222;
+    color: #eee;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: 40px;
+}
+.site-footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    
+}
+.site-footer a {
+    color: #eee;
+    text-decoration: underline;
+}
+.site-footer a:hover {
+    text-decoration: underline;
+}
+
+.site-footer ul li {
+    position: relative;
+}
+
+.site-footer ul li::after {
+    content: "|";
+    margin: 0 10px;
+    color: #888;  /* muted so it doesn’t overpower the links */
+}
+
+.site-footer ul li:last-child::after {
+    content: "";
+}

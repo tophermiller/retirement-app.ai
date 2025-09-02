@@ -427,8 +427,8 @@ if (typeof(results) === "undefined") {
       document.getElementById("plot-spending-choice-source").click();
       document.getElementById("plot-taxview-choice-taxes").click();
 
-      document.getElementById("plot-randomroi-average").value = util.formatPercentageVal(submittal.growthRates.defaultAnnualGainRate.average);
-      document.getElementById("plot-randomroi-stdev").value = util.formatPercentageVal(submittal.growthRates.defaultAnnualGainRate.standardDeviation);
+      document.getElementById("plot-randomroi-average").value = util.formatPercentageVal(submittal.growthRates.usStocksGainRate.average);
+      document.getElementById("plot-randomroi-stdev").value = util.formatPercentageVal(submittal.growthRates.usStocksGainRate.standardDeviation);
       document.getElementById("plot-randomroi-regenerate").addEventListener("click", () => {
         const average = getNumber(document.getElementById("plot-randomroi-average"));
         const stdev = getNumber(document.getElementById("plot-randomroi-stdev"));
