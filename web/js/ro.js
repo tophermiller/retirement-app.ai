@@ -3093,6 +3093,8 @@ function buildRestoreList(){
     const input = document.getElementById('planNameInput');
     const restoreFileBtn = document.getElementById('restoreFromFileBtn');
     const restoreFileInput = document.getElementById('restoreFileInput');
+restoreFileInput.addEventListener('click', () => { restoreFileInput.value = ''; });
+
     const restoreFileName = document.getElementById('restoreFileName');
 
     saveBtn?.addEventListener('click', ()=>{ if(input) input.value=''; openModal('saveModal'); });
