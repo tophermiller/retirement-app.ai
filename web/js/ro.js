@@ -1537,15 +1537,15 @@ function renderItem(it, sectionKey){
         const n = Number(cleaned);
         return Number.isFinite(n) ? n : null;
       };
-      const income = prop ? toNum(prop.annualIncome) : null;
+      const income = prop ? toNum(prop.annualIncome) - toNum(prop.annualExpenses): null;
       const fmtUSD = (v) => new Intl.NumberFormat('en-US', { style:'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
       if(income !== null){
-        note.innerHTML = `Annual Rental Income of ${fmtUSD(income)} from property ${propTitle} is already included as income.`;
+        note.innerHTML = `Net Annual Rental Income of ${fmtUSD(income)} from property ${propTitle} is already included as income.`;
       } else {
-        note.innerHTML = `Annual Rental Income from property ${propTitle} is already included as income.`;
+        note.innerHTML = `Net Annual Rental Income from property ${propTitle} is already included as income.`;
       }
     }catch(e){
-      note.textContent = `Annual Rental Income from property ${propTitle} is already included as income.`;
+      note.textContent = `Net Annual Rental Income from property ${propTitle} is already included as income.`;
     }
     body.append(note);
 ;
