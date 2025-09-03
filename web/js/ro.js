@@ -2305,6 +2305,8 @@ function buildPlanJSON(){
   submittal.version = "5.0";
   //submittal.clickstream = "";
   submittal.mode = "advanced";
+  try {submittal.city = geoplugin_city();} catch (e) {console.log('could not obtain city')}
+
   //submittal.name = "";
   const calendar = {};
   calendar.planStartYear = new Date().getFullYear();
