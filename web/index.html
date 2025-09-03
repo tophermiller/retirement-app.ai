@@ -388,11 +388,12 @@
 <div class="ro-modal__body">
 <label class="label" for="planNameInput">Plan name</label>
 <input class="input" id="planNameInput" placeholder="e.g., My Baseline Plan" type="text"/>
-<p class="hint">Saved locally in this browser only.</p>
+<p class="hint">Choose <em>Save to Browser</em> (localStorage) or <em>Save to File</em> (.ro.json download).</p>
 </div>
 <div class="ro-modal__footer">
 <button class="btn ghost" data-close-modal="saveModal">Cancel</button>
-<button class="btn ok" id="modalSaveBtn">Save</button>
+<button class="btn ok" id="modalSaveBtn">Save to Browser</button>
+<button class="btn" id="modalSaveFileBtn">Save to File</button>
 </div>
 </div>
 </div>
@@ -407,6 +408,13 @@
 <div class="saved-plans-list" id="savedPlansList"></div>
 <p class="hint" hidden="" id="noPlansHint">There are no saved plans yet.</p>
 <p class="hint">These items are stored in your browser's local storage.</p>
+<div class="hr" style="border-top:1px solid var(--border,#444); margin:1rem 0;"></div>
+<h4>Restore from File</h4>
+<p class="hint">Load a previously downloaded <code>.ro.json</code> file.</p>
+<input type="file" id="restoreFileInput" accept=".json,.ro.json,application/json" style="display:none"/>
+<button class="btn" id="restoreFromFileBtn">Choose File…</button>
+<span id="restoreFileName" class="hint" style="margin-left:.5rem;"></span>
+
 </div>
 </div>
 </div>

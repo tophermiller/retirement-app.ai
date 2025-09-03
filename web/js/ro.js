@@ -3016,7 +3016,47 @@ init();
     }catch(e){ alert('Failed to delete plan: ' + (e?.message||e)); }
   }
 
-  function buildRestoreList(){
+  
+  // --- File Save / Restore helpers ---
+  function safeFileName(name){
+    const base = (name && name.trim()) ? name.trim() : 'retirement-plan';
+    return base.replace(/[^a-z0-9\-\._\s]/gi,'_') + '.ro.json';
+  }
+  function serializePayload(name){
+    return JSON.stringify({ name: name||null, updatedAt: Date.now(), data: state }, null, 2);
+  }
+  function savePlanToFile(name){
+    try{
+      const blob = new Blob([serializePayload(name)], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = safeFileName(name);
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 0);
+      showToast?.('Downloaded plan file.');
+      closeModal('saveModal');
+    }catch(e){ alert('Failed to save file: ' + (e?.message||e)); }
+  }
+  function isPayloadLike(obj){
+    return obj && (obj.data || obj.updatedAt || obj.name);
+  }
+  async function restoreFromFile(file){
+    try{
+      const text = await file.text();
+      const obj = JSON.parse(text);
+      const newState = isPayloadLike(obj) ? obj.data : obj;
+      if(!newState || typeof newState!=='object'){ throw new Error('Invalid file format'); }
+      // Replace state deeply to preserve references other code may hold
+      Object.keys(state).forEach(k=>{ delete state[k]; });
+      deepAssign(state, newState);
+      render();
+      closeModal('restoreModal');
+      showToast?.('Plan restored from file.');
+    }catch(e){ alert('Failed to restore from file: ' + (e?.message||e)); }
+  }
+function buildRestoreList(){
     const wrap = document.getElementById('savedPlansList'); const empty = document.getElementById('noPlansHint'); if(!wrap) return;
     const names = readIndex();
     names.sort((a,b)=>{
@@ -3049,11 +3089,27 @@ init();
     const saveBtn = document.getElementById('savePlanBtn');
     const restoreBtn = document.getElementById('restorePlanBtn');
     const modalSaveBtn = document.getElementById('modalSaveBtn');
+    const modalSaveFileBtn = document.getElementById('modalSaveFileBtn');
     const input = document.getElementById('planNameInput');
+    const restoreFileBtn = document.getElementById('restoreFromFileBtn');
+    const restoreFileInput = document.getElementById('restoreFileInput');
+    const restoreFileName = document.getElementById('restoreFileName');
+
     saveBtn?.addEventListener('click', ()=>{ if(input) input.value=''; openModal('saveModal'); });
     restoreBtn?.addEventListener('click', ()=>{ buildRestoreList(); openModal('restoreModal'); });
+
     modalSaveBtn?.addEventListener('click', ()=>{ const name=(input?.value||'').trim(); doSavePlan(name); });
+    modalSaveFileBtn?.addEventListener('click', ()=>{ const name=(input?.value||'').trim(); savePlanToFile(name); });
+
     input?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); modalSaveBtn?.click(); } });
+
+    restoreFileBtn?.addEventListener('click', ()=>{ restoreFileInput?.click(); });
+    restoreFileInput?.addEventListener('change', ()=>{
+      const file = restoreFileInput.files && restoreFileInput.files[0];
+      if(!file) return;
+      if(restoreFileName) restoreFileName.textContent = file.name;
+      restoreFromFile(file);
+    });
     /* JSON preview toggle */
     if (previewBtn) previewBtn.addEventListener('click', ()=>{
       const errors = validateState();
