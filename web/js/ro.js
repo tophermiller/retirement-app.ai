@@ -353,6 +353,74 @@ function addLabelFor(sectionKey){
   const map = { gamma:'Add Account', delta:'Add Property', epsilon:'Add Income', zeta:'Add Spending' };
   return map[sectionKey] || 'Add Item';
 }
+
+
+
+// Auto-create/remove infoOnly Rental Income cards for properties with rental income
+window.ensureRentalIncomeCards = function(){
+  try{
+    const inc = state && state.epsilon;
+    const reSec = state && state.delta;
+    if(!inc || !Array.isArray(inc.items) || !reSec || !Array.isArray(reSec.items)) return;
+
+    const nonEmpty = (v) => v !== undefined && v !== null && String(v).trim() !== '';
+    const toNum = (v) => {
+      if(v === null || v === undefined) return null;
+      const s = String(v);
+      if(!nonEmpty(s)) return null;
+      const cleaned = s.replace(/[^0-9\.\-]/g, '');
+      if(!cleaned) return null;
+      const n = Number(cleaned);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    // Map of properties that have rental income -> { title, income }
+    const propsWithIncome = new Map();
+    reSec.items.forEach(p => {
+      if(!p || p.removed) return;
+      const title = (p.title && String(p.title).trim()) || `Property ${p.id}`;
+      const showRental = !!p.showRental;
+      const annualIncome = showRental ? toNum(p.annualIncome) : null;
+      if(showRental && annualIncome !== null && annualIncome > 0){
+        propsWithIncome.set(p.id, { title, income: annualIncome });
+      }
+    });
+
+    // Ensure infoOnly rental income card exists/updated
+    propsWithIncome.forEach((val, pid) => {
+      const existing = inc.items.find(it => it && it.isRentalInfo === true && it.propertyId === pid);
+      const desiredTitle = `Rental Income for ${val.title}`;
+      if(!existing){
+        const newId = (typeof inc.nextId === 'number' ? inc.nextId : 1);
+        inc.items.unshift({
+          id: newId,
+          title: desiredTitle,
+          collapsed: true,
+          locked: true,
+          infoOnly: true,
+          isRentalInfo: true,
+          propertyId: pid,
+          propertyTitle: val.title
+        });
+        inc.nextId = newId + 1;
+      } else {
+        existing.title = desiredTitle;
+        existing.propertyTitle = val.title;
+      }
+    });
+
+    // Remove stale rental income cards
+    for(let i = inc.items.length - 1; i >= 0; i--){
+      const it = inc.items[i];
+      if(it && it.isRentalInfo === true){
+        const stillHas = propsWithIncome.has(it.propertyId);
+        if(!stillHas){
+          inc.items.splice(i,1);
+        }
+      }
+    }
+  }catch(e){ /* no-op */ }
+};
 function baseNounFor(sectionKey){
   const map = { gamma:'Account', delta:'Property', epsilon:'Income', zeta:'Spending' };
   return map[sectionKey] || 'Item';
@@ -1061,9 +1129,10 @@ wireHelpButtons();
   addBtn.textContent = `+ ${addLabelFor(active)}`;
   addBtn.setAttribute('aria-label', addLabelFor(active));
 
-  if(active==='zeta' || active==='delta'){
+  if(active==='zeta' || active==='delta' || active==='epsilon'){
     if (active==='zeta' && typeof window.ensureTaxesExpense === 'function') { window.ensureTaxesExpense(); }
     if (typeof window.ensureMortgageExpenseCards === 'function') { window.ensureMortgageExpenseCards(); }
+    if (typeof window.ensureRentalIncomeCards === 'function') { window.ensureRentalIncomeCards(); }
   }
   const items = state[active].items;
 
@@ -1103,7 +1172,7 @@ function renderMiniCard(it, sectionKey){
   card.appendChild(title);
   // Append ℹ️ icon for Mortgage Expense infoOnly mini-card titles
   try {
-    if(sectionKey==='zeta' && it && (it.isMortgageInfo === true || it.isTaxes === true)){
+    if((sectionKey==='zeta' && it && (it.isMortgageInfo === true || it.isTaxes === true)) || (sectionKey==='epsilon' && it && it.isRentalInfo === true)){
       const info = document.createElement('span');
       info.setAttribute('title','Informational only');
       info.textContent = 'ℹ️';
@@ -1350,8 +1419,9 @@ function renderItem(it, sectionKey){
 
   const isTaxes = (sectionKey==='zeta' && it && it.isTaxes === true);
   const isMortgageInfo = (sectionKey==='zeta' && it && it.isMortgageInfo === true);
-  const titleInput = (isTaxes || isMortgageInfo) ? document.createElement('div') : document.createElement('input');
-  if(isTaxes||isMortgageInfo){ titleInput.className = 'title-static'; } else { titleInput.className = 'title-input'; titleInput.type = 'text'; }
+  const isRentalInfo = (sectionKey==='epsilon' && it && it.isRentalInfo === true);
+  const titleInput = (isTaxes || isMortgageInfo || isRentalInfo) ? document.createElement('div') : document.createElement('input');
+  if(isTaxes||isMortgageInfo||isRentalInfo){ titleInput.className = 'title-static'; } else { titleInput.className = 'title-input'; titleInput.type = 'text'; }
   if(isTaxes){ 
     titleInput.textContent = 'TAXES'; 
     //const info=document.createElement('span'); 
@@ -1360,15 +1430,15 @@ function renderItem(it, sectionKey){
     // titleInput.appendChild(info); 
     it.title='TAXES'; 
   } else { titleInput.value = it.title || defaultTitle(sectionKey, it.id); }
-  if(!(isTaxes||isMortgageInfo)){ titleInput.placeholder = defaultTitle(sectionKey, it.id); }
-  if(!(isTaxes||isMortgageInfo)) titleInput.addEventListener('input', ()=>{
+  if(!(isTaxes||isMortgageInfo||isRentalInfo)){ titleInput.placeholder = defaultTitle(sectionKey, it.id); }
+  if(!(isTaxes||isMortgageInfo||isRentalInfo)) titleInput.addEventListener('input', ()=>{
     it.title = titleInput.value.trim() || defaultTitle(sectionKey, it.id);
     const mini = dockEl.querySelector(`.mini[data-id="${it.id}"] h4`); if(mini) mini.textContent = it.title;
     // If a Liquid Asset title changes, proceeds-dropdowns will refresh on next render
   });
   titleInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') titleInput.blur(); });
   title.append(titleInput);
-  if(isMortgageInfo){ try{ titleInput.textContent = it.title || ''; }catch(e){} }
+  if(isMortgageInfo || isRentalInfo){ try{ titleInput.textContent = it.title || ''; }catch(e){} }
 
   const actions = document.createElement('div'); actions.className = 'item-actions';
   const collapseBtn = document.createElement('button'); collapseBtn.className = 'btn small ghost'; collapseBtn.textContent = 'Collapse';
@@ -1449,6 +1519,36 @@ function renderItem(it, sectionKey){
       note.innerHTML = `The annual mortgage expenses for "${propTitle}" are already included as an expense.`;
     }
     body.append(note);
+  } else if(sectionKey === 'epsilon' && it && it.isRentalInfo === true){
+    const note = document.createElement('div');
+    note.className = 'subtle';
+    const propTitle = (it.propertyTitle || (it.title||'').replace(/^Rental Income for\s+/, ''));
+    try{
+      const reSec = state && state.delta;
+      const prop = (reSec && Array.isArray(reSec.items)) ? reSec.items.find(p => p && p.id === it.propertyId) : null;
+
+      const nonEmpty = (v) => v !== undefined && v !== null && String(v).trim() !== '';
+      const toNum = (v) => {
+        if(v === null || v === undefined) return null;
+        const s = String(v);
+        if(!nonEmpty(s)) return null;
+        const cleaned = s.replace(/[^0-9\.\-]/g, '');
+        if(!cleaned) return null;
+        const n = Number(cleaned);
+        return Number.isFinite(n) ? n : null;
+      };
+      const income = prop ? toNum(prop.annualIncome) : null;
+      const fmtUSD = (v) => new Intl.NumberFormat('en-US', { style:'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
+      if(income !== null){
+        note.innerHTML = `Annual Rental Income of ${fmtUSD(income)} from property ${propTitle} is already included as income.`;
+      } else {
+        note.innerHTML = `Annual Rental Income from property ${propTitle} is already included as income.`;
+      }
+    }catch(e){
+      note.textContent = `Annual Rental Income from property ${propTitle} is already included as income.`;
+    }
+    body.append(note);
+;
   } else if(sectionKey === 'gamma'){
     const typeField = document.createElement('div'); typeField.className = 'field';
 
