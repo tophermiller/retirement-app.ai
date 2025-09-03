@@ -270,6 +270,84 @@ window.ensureTaxesExpense = function(){
 }
 
 
+
+// Auto-create/remove infoOnly Mortgage Expense cards for properties with mortgage info
+
+window.ensureMortgageExpenseCards = function(){
+  try{
+    const z = state && state.zeta;
+    const reSec = state && state.delta;
+    if(!z || !Array.isArray(z.items) || !reSec || !Array.isArray(reSec.items)) return;
+
+    const nonEmpty = (v) => v !== undefined && v !== null && String(v).trim() !== '';
+    const toNum = (v) => {
+      if(v === null || v === undefined) return null;
+      const s = String(v);
+      if(!nonEmpty(s)) return null;
+      // strip $ , % and any non numeric except . and -
+      const cleaned = s.replace(/[^0-9\.\-]/g, '');
+      if(!cleaned) return null;
+      const n = Number(cleaned);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    // Build a map of properties that currently have mortgage info
+    const propsWithMortgage = new Map(); // key: property id -> {title}
+    reSec.items.forEach(p=>{
+      if(!p) return;
+      const title = (p.title || (typeof defaultTitle==='function' ? defaultTitle('delta', p.id) : `Property #${p.id}`)).trim();
+
+      const loanOrigYear   = nonEmpty(p.loanOrigYear)   ? toNum(p.loanOrigYear)   : null;
+      const loanTerm       = nonEmpty(p.loanTerm)       ? toNum(p.loanTerm)       : null;
+      const loanRate       = nonEmpty(p.loanRate)       ? toNum(p.loanRate)       : null;
+      const monthlyPayment = nonEmpty(p.monthlyPayment) ? toNum(p.monthlyPayment) : null;
+      const downPaymentPct = nonEmpty(p.downPaymentPct) ? toNum(p.downPaymentPct) : null;
+
+      const ownedPath  = (loanOrigYear !== null && loanTerm !== null && loanRate !== null && monthlyPayment !== null);
+      const futurePath = (downPaymentPct !== null && loanTerm !== null && loanRate !== null);
+
+      const hasMortgage = Boolean(ownedPath || futurePath);
+      if(hasMortgage){
+        propsWithMortgage.set(p.id, { title });
+      }
+    });
+
+    // Ensure a mortgage infoOnly card exists for each property with mortgage
+    propsWithMortgage.forEach((val, pid)=>{
+      const existing = z.items.find(it => it && it.isMortgageInfo === true && it.propertyId === pid);
+      const desiredTitle = `Mortgage Expense for ${val.title}`;
+      if(!existing){
+        const newId = (typeof z.nextId === 'number' ? z.nextId : 1);
+        z.items.unshift({
+          id: newId,
+          title: desiredTitle,
+          collapsed: true,
+          locked: true,
+          infoOnly: true,
+          isMortgageInfo: true,
+          propertyId: pid,
+          propertyTitle: val.title
+        });
+        z.nextId = newId + 1;
+      } else {
+        // keep title in sync if property title changed
+        existing.title = desiredTitle;
+        existing.propertyTitle = val.title;
+      }
+    });
+
+    // Remove stale mortgage infoOnly cards
+    for(let i = z.items.length - 1; i >= 0; i--){
+      const it = z.items[i];
+      if(it && it.isMortgageInfo === true){
+        if(!propsWithMortgage.has(it.propertyId)){
+          z.items.splice(i,1);
+        }
+      }
+    }
+  }catch(e){ console.error('ensureMortgageExpenseCards failed', e); }
+};
+
 /* Helpers for section-specific labels/titles */
 function addLabelFor(sectionKey){
   const map = { gamma:'Add Account', delta:'Add Property', epsilon:'Add Income', zeta:'Add Spending' };
@@ -983,7 +1061,10 @@ wireHelpButtons();
   addBtn.textContent = `+ ${addLabelFor(active)}`;
   addBtn.setAttribute('aria-label', addLabelFor(active));
 
-  if(active==='zeta'){ if (typeof window.ensureTaxesExpense === 'function') { window.ensureTaxesExpense(); } }
+  if(active==='zeta' || active==='delta'){
+    if (active==='zeta' && typeof window.ensureTaxesExpense === 'function') { window.ensureTaxesExpense(); }
+    if (typeof window.ensureMortgageExpenseCards === 'function') { window.ensureMortgageExpenseCards(); }
+  }
   const items = state[active].items;
 
   const hasExpanded = items.some(it => !it.collapsed);
@@ -1251,17 +1332,19 @@ function renderItem(it, sectionKey){
   const title = document.createElement('div'); title.className = 'item-title';
 
   const isTaxes = (sectionKey==='zeta' && it && it.isTaxes === true);
-  const titleInput = isTaxes ? document.createElement('div') : document.createElement('input');
-  if(isTaxes){ titleInput.className = 'title-static'; } else { titleInput.className = 'title-input'; titleInput.type = 'text'; }
+  const isMortgageInfo = (sectionKey==='zeta' && it && it.isMortgageInfo === true);
+  const titleInput = (isTaxes || isMortgageInfo) ? document.createElement('div') : document.createElement('input');
+  if(isTaxes||isMortgageInfo){ titleInput.className = 'title-static'; } else { titleInput.className = 'title-input'; titleInput.type = 'text'; }
   if(isTaxes){ titleInput.textContent = 'TAXES '; const info=document.createElement('span'); info.textContent='ℹ️'; info.title='Informational only'; titleInput.appendChild(info); it.title='TAXES'; } else { titleInput.value = it.title || defaultTitle(sectionKey, it.id); }
-  if(!isTaxes){ titleInput.placeholder = defaultTitle(sectionKey, it.id); }
-  if(!isTaxes) titleInput.addEventListener('input', ()=>{
+  if(!(isTaxes||isMortgageInfo)){ titleInput.placeholder = defaultTitle(sectionKey, it.id); }
+  if(!(isTaxes||isMortgageInfo)) titleInput.addEventListener('input', ()=>{
     it.title = titleInput.value.trim() || defaultTitle(sectionKey, it.id);
     const mini = dockEl.querySelector(`.mini[data-id="${it.id}"] h4`); if(mini) mini.textContent = it.title;
     // If a Liquid Asset title changes, proceeds-dropdowns will refresh on next render
   });
   titleInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') titleInput.blur(); });
   title.append(titleInput);
+  if(isMortgageInfo){ try{ titleInput.textContent = it.title || ''; }catch(e){} }
 
   const actions = document.createElement('div'); actions.className = 'item-actions';
   const collapseBtn = document.createElement('button'); collapseBtn.className = 'btn small ghost'; collapseBtn.textContent = 'Collapse';
@@ -1287,6 +1370,12 @@ function renderItem(it, sectionKey){
     const note = document.createElement('div');
     note.className = 'subtle';
     note.textContent = 'Your taxes including federal income tax, capital gains, and state income tax are automatically included by the calculator.   You should not include any tax allowances in your other expense entries';
+    body.append(note);
+  } else if(sectionKey === 'zeta' && it && it.isMortgageInfo === true){
+    const note = document.createElement('div');
+    note.className = 'subtle';
+    const propTitle = (it.propertyTitle || (it.title||'').replace(/^Mortgage Expense for\s+/, ''));
+    note.textContent = `The annual mortgage expenses for "${propTitle}" are already included as an expense.`;
     body.append(note);
   } else if(sectionKey === 'gamma'){
     const typeField = document.createElement('div'); typeField.className = 'field';
