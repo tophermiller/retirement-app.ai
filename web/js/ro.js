@@ -1395,11 +1395,59 @@ function renderItem(it, sectionKey){
     note.className = 'subtle';
     note.textContent = 'Your taxes including federal income tax, capital gains, and state income tax are automatically included by the calculator.   You should not include any tax allowances in your other expense entries';
     body.append(note);
-  } else if(sectionKey === 'zeta' && it && it.isMortgageInfo === true){
+    } else if(sectionKey === 'zeta' && it && it.isMortgageInfo === true){
     const note = document.createElement('div');
     note.className = 'subtle';
     const propTitle = (it.propertyTitle || (it.title||'').replace(/^Mortgage Expense for\s+/, ''));
-    note.innerHTML = `The annual mortgage expenses for "${propTitle}" are already included as an expense. `;
+    try{
+      // Look up the property to read mortgage fields and purchase year
+      const reSec = state && state.delta;
+      const prop = (reSec && Array.isArray(reSec.items)) ? reSec.items.find(p => p && p.id === it.propertyId) : null;
+
+      const nonEmpty = (v) => v !== undefined && v !== null && String(v).trim() !== '';
+      const toNum = (v) => {
+        if(v === null || v === undefined) return null;
+        const s = String(v);
+        if(!nonEmpty(s)) return null;
+        const cleaned = s.replace(/[^0-9\.\-]/g, '');
+        if(!cleaned) return null;
+        const n = Number(cleaned);
+        return Number.isFinite(n) ? n : null;
+      };
+
+      const TOKENS = { ALREADY_OWNED: '__ALREADY_OWNED__' };
+      const nowYear = new Date().getFullYear();
+
+      // Determine purchase year status
+      const purchaseRaw = prop ? (prop.purchaseYear ?? '') : '';
+      const isAlreadyOwned = (purchaseRaw === TOKENS.ALREADY_OWNED);
+      const purchaseYearNum = /^\d{4}$/.test(String(purchaseRaw)) ? Number(purchaseRaw) : null;
+      const isPastOrPresentPurchase = isAlreadyOwned || (purchaseYearNum !== null && purchaseYearNum <= nowYear);
+      const isFuturePurchase = (purchaseYearNum !== null && purchaseYearNum > nowYear);
+
+      const monthly = prop ? toNum(prop.monthlyPayment) : null;
+      const annual = monthly !== null ? monthly * 12 : null;
+
+      const startYear = prop ? toNum(prop.loanOrigYear) : null;
+      const termYears = prop ? toNum(prop.loanTerm) : null;
+      const endYear = (startYear !== null && termYears !== null) ? (startYear + termYears - 1) : null;
+
+      const fmtUSD = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
+
+      if(isPastOrPresentPurchase && annual !== null && startYear !== null && endYear !== null){
+        note.innerHTML = `The annual mortgage expenses of ${fmtUSD(annual)} for "${propTitle}" are already included as an expense from ${startYear} to ${endYear}.`;
+      } else if (isFuturePurchase || annual === null) {
+        // Future purchases, or missing monthly payment -> generic note without amount
+        note.innerHTML = `The annual mortgage expenses for "${propTitle}" are already included as an expense.`;
+      } else if(annual !== null){
+        // Fallback: amount known but years unknown
+        note.innerHTML = `The annual mortgage expenses of ${fmtUSD(annual)} for "${propTitle}" are already included as an expense.`;
+      } else {
+        note.innerHTML = `The annual mortgage expenses for "${propTitle}" are already included as an expense.`;
+      }
+    }catch(e){
+      note.innerHTML = `The annual mortgage expenses for "${propTitle}" are already included as an expense.`;
+    }
     body.append(note);
   } else if(sectionKey === 'gamma'){
     const typeField = document.createElement('div'); typeField.className = 'field';
