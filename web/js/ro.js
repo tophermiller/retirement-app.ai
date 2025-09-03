@@ -1735,7 +1735,7 @@ else if (sectionKey === 'delta'){
         const {field:tF} = makeTextField('Loan Term (years)', 'e.g. 30', it.loanTerm, (v)=>{ it.loanTerm=v; }, 'text', 'numeric');
         const {field:rF} = makeTextField('Interest Rate (%)', 'e.g. 5.25', it.loanRate, (v)=>{ it.loanRate=v; });
         // Note styled like form labels
-        const noteWrap = document.createElement('div'); noteWrap.className='field'; noteWrap.style.gridColumn='1 / -1';
+        const noteWrap = document.createElement('div'); noteWrap.className='field span-all'; noteWrap.style.gridColumn='1 / -1';
         const note = document.createElement('div'); note.className='label';
         note.textContent = 'Note: Future purchase price is projected based on today\'s value and appreciation rate.   Future down payment is treated as a drawdown expense only if purchase occurs during retirement years';
         noteWrap.appendChild(note);

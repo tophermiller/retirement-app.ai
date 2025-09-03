@@ -1126,3 +1126,17 @@ button:disabled, .btn:disabled {
 
 /* Info icon for read-only cards */
 .info-icon{ margin-left: .4rem; font-size: .95em; opacity:.8; }
+
+
+/* Ensure certain grid notes span full width across all columns */
+.grid > .field.span-all {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+.grid > .field.span-all > *,
+.field.span-all > * {
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box;
+}
