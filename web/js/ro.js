@@ -1093,8 +1093,25 @@ function renderMiniCard(it, sectionKey){
   card.dataset.id = it.id; card.title = 'Drag to reorder • Click to expand';
 
   const title = document.createElement('h4');
-  if(sectionKey==='zeta' && it && it.isTaxes){ title.textContent='TAXES '; const info=document.createElement('span'); info.textContent='ℹ️'; info.title='Informational only'; title.appendChild(info);} else { title.textContent=it.title; }
+  if(sectionKey==='zeta' && it && it.isTaxes){ 
+    title.textContent='TAXES'; 
+    //const info=document.createElement('span'); 
+    // info.textContent='ℹ️'; 
+    // info.title='Informational only'; 
+    // title.appendChild(info);
+  } else { title.textContent=it.title; }
   card.appendChild(title);
+  // Append ℹ️ icon for Mortgage Expense infoOnly mini-card titles
+  try {
+    if(sectionKey==='zeta' && it && (it.isMortgageInfo === true || it.isTaxes === true)){
+      const info = document.createElement('span');
+      info.setAttribute('title','Informational only');
+      info.textContent = 'ℹ️';
+      info.style.marginLeft = '6px';
+      title.appendChild(info);
+    }
+  } catch(e){}
+
 
   
   const kv = document.createElement('div'); kv.className='kv';
@@ -1335,7 +1352,14 @@ function renderItem(it, sectionKey){
   const isMortgageInfo = (sectionKey==='zeta' && it && it.isMortgageInfo === true);
   const titleInput = (isTaxes || isMortgageInfo) ? document.createElement('div') : document.createElement('input');
   if(isTaxes||isMortgageInfo){ titleInput.className = 'title-static'; } else { titleInput.className = 'title-input'; titleInput.type = 'text'; }
-  if(isTaxes){ titleInput.textContent = 'TAXES '; const info=document.createElement('span'); info.textContent='ℹ️'; info.title='Informational only'; titleInput.appendChild(info); it.title='TAXES'; } else { titleInput.value = it.title || defaultTitle(sectionKey, it.id); }
+  if(isTaxes){ 
+    titleInput.textContent = 'TAXES'; 
+    //const info=document.createElement('span'); 
+    // info.textContent='ℹ️'; 
+    // info.title='Informational only'; 
+    // titleInput.appendChild(info); 
+    it.title='TAXES'; 
+  } else { titleInput.value = it.title || defaultTitle(sectionKey, it.id); }
   if(!(isTaxes||isMortgageInfo)){ titleInput.placeholder = defaultTitle(sectionKey, it.id); }
   if(!(isTaxes||isMortgageInfo)) titleInput.addEventListener('input', ()=>{
     it.title = titleInput.value.trim() || defaultTitle(sectionKey, it.id);
@@ -1361,7 +1385,7 @@ function renderItem(it, sectionKey){
   }
   actions.append(collapseBtn, deleteBtn);
   header.append(title, actions);
-  if(isTaxes){ if(!title.querySelector('.info-icon')){ const info=document.createElement('span'); info.className='info-icon'; info.textContent=''; title.appendChild(info); } }
+  //if(isTaxes){ if(!title.querySelector('.info-icon')){ const info=document.createElement('span'); info.className='info-icon'; info.textContent=''; title.appendChild(info); } }
 
 
   const body = document.createElement('div'); body.className = 'item-body';
@@ -1375,7 +1399,7 @@ function renderItem(it, sectionKey){
     const note = document.createElement('div');
     note.className = 'subtle';
     const propTitle = (it.propertyTitle || (it.title||'').replace(/^Mortgage Expense for\s+/, ''));
-    note.textContent = `The annual mortgage expenses for "${propTitle}" are already included as an expense.`;
+    note.innerHTML = `The annual mortgage expenses for "${propTitle}" are already included as an expense. `;
     body.append(note);
   } else if(sectionKey === 'gamma'){
     const typeField = document.createElement('div'); typeField.className = 'field';
