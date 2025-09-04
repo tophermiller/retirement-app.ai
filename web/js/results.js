@@ -74,7 +74,7 @@ if (typeof(results) === "undefined") {
       function buildNetWorthColumns(liquid, incomeProp, homeEq, total, labelPrefix) {
         const rows = [
           [util.formatCurrencyVal(liquid), "Liquid Net Worth"],
-          [util.formatCurrencyVal(incomeProp), "Rental Property Equity"],
+          [util.formatCurrencyVal(incomeProp), "Income Property Equity"],
           [util.formatCurrencyVal(homeEq), "Home Equity"],
         ];
         const totalRow = [util.formatCurrencyVal(total), "Total Net Worth"];
