@@ -443,7 +443,7 @@ function gotoSection(key){
   if(jsonMode){
     jsonMode = false;
     jsonBox.classList.add('hidden');
-    previewBtn.textContent = 'Preview JSON';
+    previewJsonLink.textContent = 'Preview JSON';
   }
   render();
     try{ updateActiveNav(); }catch(e){}
@@ -475,8 +475,8 @@ function buildNav(){
       if(jsonMode){
         jsonMode = false;
         jsonBox.classList.add('hidden');
-        const previewBtn= document.getElementById('previewJsonLink');
-        previewBtn.textContent = 'Preview JSON';
+        const previewJsonLink= document.getElementById('previewJsonLink');
+        previewJsonLink.textContent = 'Preview JSON';
       }
       render();
           try{ updateActiveNav(); }catch(e){}
@@ -3088,7 +3088,11 @@ function buildRestoreList(){
   }
 
   function setup(){
-    const previewBtn= document.getElementById('previewJsonLink');
+    const previewJsonLink = document.getElementById('previewJsonLink');
+    const aboutSiteLink = document.getElementById('aboutSiteLink');
+    const disclosureLink = document.getElementById('disclosureLink');
+    const donateLink = document.getElementById('donateLink');
+    const contactLink = document.getElementById('contactLink');
     const saveBtn = document.getElementById('savePlanBtn');
     const restoreBtn = document.getElementById('restorePlanBtn');
     const modalSaveBtn = document.getElementById('modalSaveBtn');
@@ -3116,7 +3120,7 @@ restoreFileInput.addEventListener('click', () => { restoreFileInput.value = ''; 
       restoreFromFile(file);
     });
     /* JSON preview toggle */
-    if (previewBtn) previewBtn.addEventListener('click', ()=>{
+    if (previewJsonLink) previewJsonLink.addEventListener('click', ()=>{
       const errors = validateState();
       if(errors.length > 0){
         console.warn('Validation errors:', errors);
@@ -3129,10 +3133,10 @@ restoreFileInput.addEventListener('click', () => { restoreFileInput.value = ''; 
       if(enteringPreview){
         jsonBox.textContent = JSON.stringify(data, null, 2);
         jsonMode = true;
-        previewBtn.textContent = 'Hide JSON';
+        previewJsonLink.textContent = 'Hide JSON';
       }else{
         jsonMode = false;
-        previewBtn.textContent = 'Preview JSON';
+        previewJsonLink.textContent = 'Preview JSON';
       }
       render();
     });
