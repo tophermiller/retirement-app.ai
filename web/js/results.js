@@ -71,26 +71,43 @@ if (typeof(results) === "undefined") {
     buildPgh2: (resultData) => {
       let ret = "";
       let tnwStatement = "";
-      let isRetiredAtStart = state.alpha.single.age >= state.alpha.single.retire;
-      let retireYear = new Date().getFullYear() + state.alpha.single.retire;
+      function buildNetWorthColumns(liquid, incomeProp, homeEq, total, labelPrefix) {
+        const rows = [
+          [util.formatCurrencyVal(liquid), "Liquid Net Worth"],
+          [util.formatCurrencyVal(incomeProp), "Rental Property Equity"],
+          [util.formatCurrencyVal(homeEq), "Home Equity"],
+        ];
+        const totalRow = [util.formatCurrencyVal(total), "Total Net Worth"];
+        let html = '<div class="tnw-cols">';
+        for (const [num, txt] of rows) {
+          html += `<div class="tnw-row"><div class="tnw-num">${num}</div><div class="tnw-txt">${txt}</div></div>`;
+        }
+        html += `<div class="tnw-sep"></div>`;
+        html += `<div class="tnw-row tnw-total"><div class="tnw-num">${totalRow[0]}</div><div class="tnw-txt">${totalRow[1]}</div></div>`;
+        html += `</div>`;
+        return html;
+      }
+
+      let isRetiredAtStart = Number(state.alpha.single.age) >= Number(state.alpha.single.retire);
+      let retireYear = new Date().getFullYear() + Number(state.alpha.single.retire) - Number(state.alpha.single.age);
+      const incomeProperty = resultData.tnwWithIncomeProperty - resultData.tnw;
+      const homeEquity = resultData.tnwWithAllProperty - incomeProperty - resultData.tnw;
     
       if (isRetiredAtStart) {
         tnwStatement += "You indicated you are already retired as of the plan starting year.  ";
-        tnwStatement += "Your total net worth at the start of this plan is " ;
-        tnwStatement += util.formatCurrencyVal(resultData.tnw);
-        tnwStatement += " (if you include income property equity it is " + util.formatCurrencyVal(resultData.tnwWithIncomeProperty);
-        tnwStatement += " and if you also include your home equity it is " + util.formatCurrencyVal(resultData.tnwWithAllProperty) + ")";
-        tnwStatement += ". Your total withdrawal needs at the start are " + util.formatCurrencyVal(resultData.retireYearWithdrawals) + ", ";
+                tnwStatement += "Your total net worth at the start of this plan is as follows:";
+        tnwStatement += buildNetWorthColumns(resultData.tnw, incomeProperty, homeEquity, resultData.tnwWithAllProperty);
+
+        tnwStatement += "Your total withdrawal needs at the start are " + util.formatCurrencyVal(resultData.retireYearWithdrawals) + ", ";
         tnwStatement += "so your starting retirement withdrawal rate is " + util.formatPercentageVal(resultData.retireYearWithdrawalRate * 100) + ". ";
         tnwStatement += " It is important to note that the withdrawal rate may vary over your retirement lifetime as cash flows and assets come and go.";
       }
       else {
         tnwStatement += "Upon your retirement year of " + retireYear + ", ";
-        tnwStatement += "your total net worth is projected to be approximately " ;
-        tnwStatement += util.formatCurrencyVal(resultData.tnw);
-        tnwStatement += " (if you include income property equity it is " + util.formatCurrencyVal(resultData.tnwWithIncomeProperty);
-        tnwStatement += " and if you also include your home equity it is " + util.formatCurrencyVal(resultData.tnwWithAllProperty) + ")";
-        tnwStatement += ".  Your total withdrawal needs at the start are projected to be " + util.formatCurrencyVal(resultData.retireYearWithdrawals) + ", ";
+                tnwStatement += "your total net worth is projected to be as follows:";
+        tnwStatement += buildNetWorthColumns(resultData.tnw, incomeProperty, homeEquity, resultData.tnwWithAllProperty);
+
+        tnwStatement += "Your total withdrawal needs at the start are projected to be " + util.formatCurrencyVal(resultData.retireYearWithdrawals) + ", ";
         tnwStatement += "so your starting retirement withdrawal rate will be approximately " + util.formatPercentageVal(resultData.retireYearWithdrawalRate * 100) + ". ";
         tnwStatement += " It is important to note that the withdrawal rate may vary over your retirement lifetime as cash flows and assets come and go.";
       }
