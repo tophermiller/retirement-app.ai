@@ -475,6 +475,7 @@ function buildNav(){
       if(jsonMode){
         jsonMode = false;
         jsonBox.classList.add('hidden');
+        const previewBtn= document.getElementById('previewJsonLink');
         previewBtn.textContent = 'Preview JSON';
       }
       render();
