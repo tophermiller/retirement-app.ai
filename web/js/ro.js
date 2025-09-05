@@ -162,6 +162,7 @@ try{ ensureGrowthDefaultsInitialized(); }catch(e){}
 
 let active = sections[0].key;
 let jsonMode = false;
+let footerLinkMode = false;
 
 /* DOM refs */
 const navEl      = document.getElementById('nav');
@@ -445,6 +446,9 @@ function gotoSection(key){
     jsonBox.classList.add('hidden');
     previewJsonLink.textContent = 'Preview JSON';
   }
+  if (footerLinkMode) {
+    footerLinkMode = false;
+  }
   render();
     try{ updateActiveNav(); }catch(e){}
 // On narrow screens, close sidebar/overlay if open
@@ -477,6 +481,9 @@ function buildNav(){
         jsonBox.classList.add('hidden');
         const previewJsonLink= document.getElementById('previewJsonLink');
         previewJsonLink.textContent = 'Preview JSON';
+      }
+      if (footerLinkMode) {
+        footerLinkMode = false;
       }
       render();
           try{ updateActiveNav(); }catch(e){}
@@ -669,51 +676,53 @@ function render(){
 
   const section = sections.find(s=>s.key===active);
 
-  titleEl.textContent = section.label;
-  lipsumEl.textContent = section.lipsum;
+  if (!footerLinkMode) {
+    titleEl.textContent = section.label;
+    lipsumEl.textContent = section.lipsum;
 
-  // Configure Back button
-  if (panelNextFooter && backSectionBtn) {
-    backSectionBtn.innerHTML = '';
-    backSectionBtn.className = 'navbtn';
-    const idx = sections.findIndex(s => s.key === active);
-    if (idx > 0) {
-      const prev = sections[idx - 1];
-      backSectionBtn.appendChild(icon(prev.icon));
-      const spb = document.createElement('span');
-      spb.textContent = '< Go Back';
-      backSectionBtn.appendChild(spb);
-      backSectionBtn.onclick = () => gotoSection(prev.key);
-      backSectionBtn.classList.remove('hidden');
-    } else {
-      backSectionBtn.classList.add('hidden');
-      backSectionBtn.onclick = null;
+    // Configure Back button
+    if (panelNextFooter && backSectionBtn) {
+      backSectionBtn.innerHTML = '';
+      backSectionBtn.className = 'navbtn';
+      const idx = sections.findIndex(s => s.key === active);
+      if (idx > 0) {
+        const prev = sections[idx - 1];
+        backSectionBtn.appendChild(icon(prev.icon));
+        const spb = document.createElement('span');
+        spb.textContent = '< Go Back';
+        backSectionBtn.appendChild(spb);
+        backSectionBtn.onclick = () => gotoSection(prev.key);
+        backSectionBtn.classList.remove('hidden');
+      } else {
+        backSectionBtn.classList.add('hidden');
+        backSectionBtn.onclick = null;
+      }
+    }
+
+    // Configure Next button
+    if (panelNextFooter && nextSectionBtn) {
+      nextSectionBtn.innerHTML = '';
+      nextSectionBtn.className = 'navbtn';
+      const idx = sections.findIndex(s => s.key === active);
+      if (idx >= 0 && idx < sections.length - 1) {
+        const next = sections[idx + 1];
+        nextSectionBtn.appendChild(icon(next.icon));
+        const sp = document.createElement('span');
+        sp.textContent = `Next: ${next.label}`;
+        nextSectionBtn.appendChild(sp);
+        nextSectionBtn.onclick = () => gotoSection(next.key);
+        panelNextFooter.classList.remove('hidden');
+      } else {
+        const sp = document.createElement('span');
+        sp.textContent = 'Calculate My RetirementOdds';
+        nextSectionBtn.className = 'btn ok';
+        const calcIcon = document.createElement('span'); calcIcon.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="7" y="6.5" width="10" height="3" rx="1" ry="1" fill="currentColor"/><circle cx="9" cy="12" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15" cy="12" r="1.1" fill="currentColor"/><circle cx="9" cy="16" r="1.1" fill="currentColor"/><circle cx="12" cy="16" r="1.1" fill="currentColor"/><circle cx="15" cy="16" r="1.1" fill="currentColor"/></svg>`; nextSectionBtn.appendChild(calcIcon); nextSectionBtn.appendChild(sp);
+        nextSectionBtn.onclick = () => submitBtn.click();
+        panelNextFooter.classList.remove('hidden');
+      }
     }
   }
-
-  // Configure Next button
-  if (panelNextFooter && nextSectionBtn) {
-    nextSectionBtn.innerHTML = '';
-    nextSectionBtn.className = 'navbtn';
-    const idx = sections.findIndex(s => s.key === active);
-    if (idx >= 0 && idx < sections.length - 1) {
-      const next = sections[idx + 1];
-      nextSectionBtn.appendChild(icon(next.icon));
-      const sp = document.createElement('span');
-      sp.textContent = `Next: ${next.label}`;
-      nextSectionBtn.appendChild(sp);
-      nextSectionBtn.onclick = () => gotoSection(next.key);
-      panelNextFooter.classList.remove('hidden');
-    } else {
-      const sp = document.createElement('span');
-      sp.textContent = 'Calculate My RetirementOdds';
-      nextSectionBtn.className = 'btn ok';
-      const calcIcon = document.createElement('span'); calcIcon.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="7" y="6.5" width="10" height="3" rx="1" ry="1" fill="currentColor"/><circle cx="9" cy="12" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15" cy="12" r="1.1" fill="currentColor"/><circle cx="9" cy="16" r="1.1" fill="currentColor"/><circle cx="12" cy="16" r="1.1" fill="currentColor"/><circle cx="15" cy="16" r="1.1" fill="currentColor"/></svg>`; nextSectionBtn.appendChild(calcIcon); nextSectionBtn.appendChild(sp);
-      nextSectionBtn.onclick = () => submitBtn.click();
-      panelNextFooter.classList.remove('hidden');
-    }
-  }
-
+  
   if(jsonMode){
     singleBasics.classList.add('hidden');
     singleGrowth.classList.add('hidden');
@@ -721,12 +730,30 @@ function render(){
     itemsEl.classList.add('hidden');
     panelFooter.classList.add('hidden'); panelNextFooter?.classList.add('hidden');
     document.getElementById('collapseAllBtn')?.classList.add('hidden');
+    document.getElementById("resultsPanel")?.classList.add("hidden");
     jsonBox.classList.remove('hidden');
     titleEl.textContent = 'JSON Preview';
     lipsumEl.textContent = 'This is the serialized payload of your current inputs.';
     return;
   }
 
+  if (footerLinkMode) {
+    singleBasics.classList.add('hidden');
+    singleGrowth.classList.add('hidden');
+    dockWrap.classList.add('hidden');
+    itemsEl.classList.add('hidden');
+    panelFooter.classList.add('hidden'); panelNextFooter?.classList.add('hidden');
+    document.getElementById('collapseAllBtn')?.classList.add('hidden');
+    jsonBox.classList.add('hidden');
+    document.getElementById("resultsPanel")?.classList.add("hidden");
+    document.getElementById("footerLinkContent").classList.remove("hidden");
+    titleEl.textContent = '';
+    lipsumEl.textContent = '';
+    return;
+  }
+  
+
+  document.getElementById("footerLinkContent").classList.add("hidden");
   jsonBox.classList.add('hidden');
   panelFooter.classList.remove('hidden'); panelNextFooter?.classList.remove('hidden');
 
@@ -3119,6 +3146,51 @@ restoreFileInput.addEventListener('click', () => { restoreFileInput.value = ''; 
       if(restoreFileName) restoreFileName.textContent = file.name;
       restoreFromFile(file);
     });
+
+    // List of element IDs
+    const footerLinkIds = ["aboutSiteLink", "disclosureLink", "donateLink", "contactLink"];
+
+    // Generic click handler
+    function handleFooterLinkClick(event) {
+      const clickedId = event.currentTarget.id;
+      let htmlLink;
+      switch (clickedId) {
+        case "aboutSiteLink":
+          htmlLink = "html/about.html";
+          break;
+        case "disclosureLink":
+          htmlLink = "html/disclosures.html";
+          break;
+        case "donateLink": 
+          htmlLink = "html/donate.html";
+          break;
+        case "contactLink":
+          htmlLink = "html/contact.html";
+          break;
+      }
+      hideErrorPanel();
+      fetch(htmlLink)
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("footerLinkContent").innerHTML = data;
+        })
+        .catch(error => {
+          console.error("Error loading footer link content:", error);
+        });
+        footerLinkMode = true;
+        active = 'footer';
+        document.getElementById("footerLinkContent").classList.remove("hidden");
+        render();
+    }
+
+    // Attach handler to each link
+    footerLinkIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("click", handleFooterLinkClick);
+      }
+    });
+
     /* JSON preview toggle */
     if (previewJsonLink) previewJsonLink.addEventListener('click', ()=>{
       const errors = validateState();
