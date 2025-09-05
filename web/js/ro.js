@@ -2603,6 +2603,7 @@ function buildPlanJSON(){
   submittal.incomeAccountList.incomeAccounts = [];
   let incomeNum = 1;
   (state.epsilon.items || []).forEach(i => {
+    if (i.infoOnly) return;
     const inc = {
       idPrefix: 'income' + incomeNum,
       name: i.title,
@@ -2634,7 +2635,8 @@ function buildPlanJSON(){
   submittal.expenseAccountList = {};
   submittal.expenseAccountList.expenseAccounts = [];
   let expenseNum = 1;
-  (state.zeta.items || []).forEach(e => { if(e && (e.isTaxes || e.infoOnly)) return; if(e && (e.isTaxes || e.infoOnly)) return;
+  (state.zeta.items || []).forEach(e => { 
+    if(e && (e.isTaxes || e.infoOnly)) return; 
     const exp = {
       idPrefix: 'expense' + expenseNum,
       name: e.title,
