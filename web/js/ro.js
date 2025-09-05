@@ -2624,8 +2624,8 @@ function buildPlanJSON(){
     const inc = {
       idPrefix: 'income' + incomeNum,
       name: i.title,
-      taxable: i.taxTreatment === 'Ordinary Income',
-      socialSecurity: i.taxTreatment === 'Social Security (85% taxable)', //TODO NEW SERVER SIDE
+      taxable: i.taxTreatment === 'Ordinary Income' || i.taxTreatment === 'Social Security (85% taxable)',
+      isSocialSecurity: i.taxTreatment === 'Social Security (85% taxable)', 
       firstYear: codeForYearSelection(i.startYear),
       lastYear: codeForYearSelection(i.endYear),
       startingValue: toInt(i.amount) || 0,
