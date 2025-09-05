@@ -722,7 +722,7 @@ function render(){
       }
     }
   }
-  
+
   if(jsonMode){
     singleBasics.classList.add('hidden');
     singleGrowth.classList.add('hidden');
@@ -3118,6 +3118,7 @@ function buildRestoreList(){
     const previewJsonLink = document.getElementById('previewJsonLink');
     const aboutSiteLink = document.getElementById('aboutSiteLink');
     const disclosureLink = document.getElementById('disclosureLink');
+    const aboutMeLink = document.getElementById('aboutMeLink');
     const donateLink = document.getElementById('donateLink');
     const contactLink = document.getElementById('contactLink');
     const saveBtn = document.getElementById('savePlanBtn');
@@ -3127,8 +3128,8 @@ function buildRestoreList(){
     const input = document.getElementById('planNameInput');
     const restoreFileBtn = document.getElementById('restoreFromFileBtn');
     const restoreFileInput = document.getElementById('restoreFileInput');
-restoreFileInput.addEventListener('click', () => { restoreFileInput.value = ''; });
 
+    restoreFileInput.addEventListener('click', () => { restoreFileInput.value = ''; });
     const restoreFileName = document.getElementById('restoreFileName');
 
     saveBtn?.addEventListener('click', ()=>{ if(input) input.value=''; openModal('saveModal'); });
@@ -3148,7 +3149,7 @@ restoreFileInput.addEventListener('click', () => { restoreFileInput.value = ''; 
     });
 
     // List of element IDs
-    const footerLinkIds = ["aboutSiteLink", "disclosureLink", "donateLink", "contactLink"];
+    const footerLinkIds = ["aboutSiteLink", "disclosureLink", "aboutMeLink", "donateLink", "contactLink"];
 
     // Generic click handler
     function handleFooterLinkClick(event) {
@@ -3160,6 +3161,9 @@ restoreFileInput.addEventListener('click', () => { restoreFileInput.value = ''; 
           break;
         case "disclosureLink":
           htmlLink = "html/disclosures.html";
+          break;
+        case "aboutMeLink": 
+          htmlLink = "html/aboutMe.html";
           break;
         case "donateLink": 
           htmlLink = "html/donate.html";
@@ -3212,6 +3216,14 @@ restoreFileInput.addEventListener('click', () => { restoreFileInput.value = ''; 
       }
       render();
     });
+
+    document.getElementById("donating").addEventListener('click', ()=>{
+      document.getElementById("donateLink").click();
+    })
+    document.getElementById("reachOut").addEventListener('click', ()=>{
+      document.getElementById("contactLink").click();
+    })
+
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', setup); } else { setup(); }
 })();

@@ -901,7 +901,7 @@ body.ro-modal-open{overflow:hidden;}
   font-weight: bold;
 }
 .results-support-msg {
-  color: blue;
+  color: yellowgreen;
   font-weight: bold;
   font-style: italic;
 }
@@ -1140,3 +1140,22 @@ button:disabled, .btn:disabled {
   max-width: none !important;
   box-sizing: border-box;
 }
+
+.email-contact a {
+  display: flex;
+  align-items: center;   /* vertically center icon and text */
+  gap: 8px;              /* spacing between icon and text */
+  font-size: 16px;
+  text-decoration: none;
+  color: inherit;        /* match surrounding text color */
+}
+
+.email-contact a:hover {
+  text-decoration: underline;
+}
+
+.email-contact img {
+  width: 200px;           /* adjust as needed */
+  height: 200px;
+}
+
