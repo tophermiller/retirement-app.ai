@@ -676,7 +676,7 @@ function render(){
 
   const section = sections.find(s=>s.key===active);
 
-  if (!footerLinkMode) {
+  if (!footerLinkMode && !jsonMode) {
     titleEl.textContent = section.label;
     lipsumEl.textContent = section.lipsum;
 
@@ -3219,6 +3219,7 @@ function buildRestoreList(){
         jsonBox.textContent = JSON.stringify(data, null, 2);
         jsonMode = true;
         previewJsonLink.textContent = 'Hide JSON';
+        active = '';
       }else{
         jsonMode = false;
         previewJsonLink.textContent = 'Preview JSON';
