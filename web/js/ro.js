@@ -2199,12 +2199,13 @@ function validateState(){
   const g = state.beta.single || {};
   if(!nonEmpty(g.inflation?.roi)) errors.push('Growth Rates: Inflation value is required');
   if(!nonEmpty(g.liquid?.usStocks?.roi) || !nonEmpty(g.liquid?.usBonds?.roi) || !nonEmpty(g.liquid?.internationalStocks?.roi)) errors.push('Growth Rates: Each Liquid Investment ROI (US Stocks, US Bonds, International Stocks) is required');
-
+  
   //validate liquid assets
   let totalAssets = getTotalAssets();
   if (totalAssets <= 0) {
       errors.push('Liquid Assets: At least one liquid asset is required');
   }
+
 
   //validate real estate
   let totalRealEstate = 0;
@@ -2359,7 +2360,7 @@ function buildPlanJSON(){
   growthRates.assetClassBased = "true"; 
   growthRates.inflationGainRate = {};
   growthRates.inflationGainRate.average = toFloat(state.beta.single.inflation.roi);
-  growthRates.inflationGainRate.standardDeviation = toFloat(state.beta.single.inflation.stdev); //TODO: retrofit back end to handle
+  growthRates.inflationGainRate.standardDeviation = toFloat(state.beta.single.inflation.stdev); 
   growthRates.inflation = toFloat(state.beta.single.inflation.roi); //legacy
 
   //NEW: Asset class gain rates
