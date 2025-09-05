@@ -2207,6 +2207,22 @@ function validateState(){
   }
 
 
+  // Validate each non-Cash liquid asset's allocation sums to 100
+  (state.gamma.items || []).forEach((a, idx) => {
+    if (!a || a.atype === 'Cash') return;
+    const us    = nonEmpty(a.allocUS)    ? toFloat(a.allocUS)    : 0;
+    const bonds = nonEmpty(a.allocBonds) ? toFloat(a.allocBonds) : 0;
+    const intl  = nonEmpty(a.allocIntl)  ? toFloat(a.allocIntl)  : 0;
+    const sum = us + bonds + intl;
+    // small tolerance for floating point
+    if (!Number.isFinite(sum) || Math.abs(sum - 100) > 0.0001) {
+      const title = a.title || `Asset ${idx + 1}`;
+      const pretty = Number.isFinite(sum) ? sum.toFixed(2) : 'NaN';
+      errors.push(`Liquid Assets: Allocation for "${title}" must total 100 (US Stocks + US Bonds + International). Currently ${pretty}.`);
+    }
+  });
+
+
   //validate real estate
   let totalRealEstate = 0;
   (state.delta.items || []).forEach(p => {
