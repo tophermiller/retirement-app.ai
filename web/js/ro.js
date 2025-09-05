@@ -731,6 +731,8 @@ function render(){
     panelFooter.classList.add('hidden'); panelNextFooter?.classList.add('hidden');
     document.getElementById('collapseAllBtn')?.classList.add('hidden');
     document.getElementById("resultsPanel")?.classList.add("hidden");
+    document.getElementById("footerLinkContent").classList.add("hidden");
+
     jsonBox.classList.remove('hidden');
     titleEl.textContent = 'JSON Preview';
     lipsumEl.textContent = 'This is the serialized payload of your current inputs.';
@@ -746,6 +748,7 @@ function render(){
     document.getElementById('collapseAllBtn')?.classList.add('hidden');
     jsonBox.classList.add('hidden');
     document.getElementById("resultsPanel")?.classList.add("hidden");
+
     document.getElementById("footerLinkContent").classList.remove("hidden");
     titleEl.textContent = '';
     lipsumEl.textContent = '';
@@ -3182,8 +3185,14 @@ function buildRestoreList(){
           console.error("Error loading footer link content:", error);
         });
         footerLinkMode = true;
-        active = 'footer';
+        if(jsonMode){
+          jsonMode = false;
+          jsonBox.classList.add('hidden');
+          previewJsonLink.textContent = 'Preview JSON';
+        }
+        active = '';
         document.getElementById("footerLinkContent").classList.remove("hidden");
+        document.querySelector('.main').scrollIntoView({ behavior: 'smooth' });
         render();
     }
 
