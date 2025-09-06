@@ -1,8 +1,8 @@
 
 /* ---- Responsive plot sizing injected ---- */
 .main .js-plotly-plot, .js-plotly-plot {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 99% !important;
+  max-width: 99% !important;
   min-width: 430px !important;
 }
 /* ---- End injected ---- */

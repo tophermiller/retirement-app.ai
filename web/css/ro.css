@@ -918,9 +918,12 @@ body.ro-modal-open{overflow:hidden;}
   text-align: center;
 }
 
+/*
 .chart-selector{
   display:flex; flex-wrap: wrap; gap:8px; align-items:center;
 }
+*/
+
 .chart-selector input[type="radio"]{
   /* hide native circle but keep it accessible */
   position: absolute;
@@ -939,6 +942,7 @@ body.ro-modal-open{overflow:hidden;}
   user-select:none;
   box-shadow: var(--shadow, none);
   transition: border-color .2s ease, transform .02s ease, background .2s ease, color .2s ease;
+  margin: 10px;
 }
 .chart-selector input[type="radio"]:focus-visible + label{
   outline: 2px solid var(--primary);
