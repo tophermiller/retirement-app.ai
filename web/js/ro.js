@@ -983,6 +983,25 @@ const fieldPairs = [
     (function(){
       try {
         const sel = document.getElementById('liquidTimePeriod');
+        const inputsList = [
+          'liquidUsStocksRoi','liquidUsStocksSd',
+          'liquidUsBondsRoi','liquidUsBondsSd',
+          'liquidIntlStocksRoi','liquidIntlStocksSd'
+        ];
+        function setEditable(editable){
+          inputsList.forEach(id=>{
+            const el = document.getElementById(id);
+            if (el){
+              el.readOnly = !editable;
+              el.classList.toggle('read-only', !editable);
+            }
+          });
+        }
+        // Initialize selection from state (persisted)
+        try {
+          const gsel = (state && state.beta && state.beta.single && state.beta.single.liquid && state.beta.single.liquid.presetSelection) || null;
+          if (gsel && sel.querySelector(`option[value="${gsel}"]`)) sel.value = gsel;
+        } catch(e){}
         if (!sel || typeof markethistory === 'undefined' || !Array.isArray(markethistory.data)) return;
 
         // Map UI -> dataset keys & input ids
@@ -1008,6 +1027,19 @@ const fieldPairs = [
         function pct(x){ return (Number.isFinite(x) ? (x*100).toFixed(2) : ""); }
 
         function applyFromSelection(){
+          // Persist chosen selection
+          try{
+            if (state && state.beta && state.beta.single && state.beta.single.liquid){
+              state.beta.single.liquid.presetSelection = sel.value;
+            }
+          }catch(e){}
+          // Custom mode: make fields editable, do not overwrite values
+          if ((sel.value||'').toLowerCase() === 'custom'){
+            setEditable(true);
+            return;
+          } else {
+            setEditable(false);
+          }
           const {first, last} = parseRange(sel.value);
           // For each asset, compute mean & stdev from markethistory
           classes.forEach(({key, roiId, sdId, stateKey})=>{
@@ -3702,3 +3734,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   });
 });
+// Re-apply Liquid preset UI (readOnly vs editable) after restore or navigation
+(function(){
+  try{
+    window.syncLiquidPresetUI = function(){
+      const sel = document.getElementById('liquidTimePeriod');
+      if (!sel) return;
+      // Trigger handler by dispatching change (handlers read state and update inputs)
+      const ev = new Event('change');
+      sel.dispatchEvent(ev);
+    };
+  }catch(e){}
+})();
