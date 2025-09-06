@@ -961,32 +961,70 @@ const fieldPairs = [
         sdEl.onblur   = ()=> { onBlurPercent(sdEl);  obj[k].stdev = sdEl.dataset.raw || ''; };
       });
     // === Real Estate inline state selector (replaces Help Me Choose modal) ===
+    
     (function(){
       try{
         const sel = document.getElementById('reStateSelect');
         const roiEl = document.getElementById('reRoi');
         const sdEl  = document.getElementById('reSd');
         if (!sel || !roiEl || !sdEl || typeof realEstateROI === 'undefined') return;
+
+        function setEditable(editable){
+          [roiEl, sdEl].forEach(el=>{
+            if (!el) return;
+            el.readOnly = !editable;
+            el.classList.toggle('read-only', !editable);
+          });
+        }
+
         // Populate options once
         if (!sel.dataset.populated) {
           const byName = Object.entries(realEstateROI)
             .map(([abbr, v])=>({abbr, name: v.stateName}))
             .sort((a,b)=> a.name.localeCompare(b.name));
-          const defaultAbbr = (typeof geoplugin_regionCode === 'function' && geoplugin_regionCode()) || (state.alpha?.single?.stateCode) || 'CA';
-          const placeholder = document.createElement('option');
-          placeholder.textContent = '• Outside the USA';
-          placeholder.value = '';
-          sel.appendChild(placeholder);
+
+          // States
           byName.forEach(({abbr, name})=>{
             const o = document.createElement('option');
             o.value = abbr;
             o.textContent = name;
-            if (abbr === defaultAbbr) o.selected = true;
             sel.appendChild(o);
           });
+
           sel.dataset.populated = '1';
         }
+
+        // Initialize selection from state (persisted) or geolocation default
+        try{
+          const savedSel = (state && state.beta && state.beta.single && state.beta.single.realEstate && state.beta.single.realEstate.presetSelection) || null;
+          if (savedSel && sel.querySelector(`option[value="${savedSel}"]`)) {
+            sel.value = savedSel;
+          } else {
+            // geolocation default only if nothing saved and not already set
+            if (!sel.value) {
+              const defaultAbbr = (typeof geoplugin_regionCode === 'function' ? (function(){try{return geoplugin_regionCode();}catch(_){return null;}})() : null) || (state.alpha?.single?.stateCode) || 'CA';
+              if (sel.querySelector(`option[value="${defaultAbbr}"]`)) sel.value = defaultAbbr;
+            }
+          }
+        }catch(e){/* no-op */}
+
         const apply = ()=>{
+          // Persist chosen selection
+          try{
+            if (state && state.beta && state.beta.single && state.beta.single.realEstate){
+              state.beta.single.realEstate.presetSelection = sel.value;
+            }
+          }catch(e){/* no-op */}
+
+          // Custom mode: make editable and do not auto-fill
+          if ((sel.value||'').toLowerCase() === 'custom'){
+            setEditable(true);
+            return;
+          } else {
+            setEditable(false);
+          }
+
+          // Non-custom: when a US state is chosen, auto-fill ROI/StdDev
           const abbr = sel.value;
           const data = realEstateROI[abbr];
           if (!data) return;
@@ -994,20 +1032,25 @@ const fieldPairs = [
           const sd  = (100*Number(data.stdev)).toFixed(2);
           roiEl.dataset.raw = String(roi); roiEl.value = `${roi}%`;
           sdEl.dataset.raw  = String(sd);  sdEl.value  = `${sd}%`;
-          // Persist
+          // Persist to state
           const g = state.beta.single;
           if (g && g.realEstate) {
             g.realEstate.roi = String(roi);
             g.realEstate.stdev = String(sd);
           }
         };
+
         sel.addEventListener('change', apply);
-        // Apply immediately if a default was selected
-        if (sel.value) apply();
+
+        // Apply immediately (respect saved selection)
+        if ((sel.value||'').toLowerCase() === 'custom'){
+          setEditable(true);
+        } else if (sel.value) {
+          apply();
+        }
       }catch(e){ /* no-op */ }
     })();
-
-    })();
+})();
 
 
     
@@ -3611,7 +3654,6 @@ function renderRows(){
 // Dynamically populate states for stateSelect
 
 const states = [
-  { code: "", name: "• Outside the USA" },
   { code: "AL", name: "Alabama" },
   { code: "AK", name: "Alaska" },
   { code: "AZ", name: "Arizona" },
