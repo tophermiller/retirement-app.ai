@@ -10,7 +10,6 @@
     --primary:#7aa2f7;
     --outline:#293043;
     --danger:#f7768e;
-    --ok:#a6e3a1;
     --shadow:0 10px 30px rgba(0,0,0,.35);
     --radius:12px;
 
@@ -78,7 +77,7 @@ a {
   }
 
   .dot{width:10px; height:10px; border-radius:50%; background:var(--primary); box-shadow:0 0 10px var(--primary)}
-  .brand h1{font-size:20px; margin:0; letter-spacing:.3px; color:var(--muted); font-weight:600}
+  .brand h1{font-size:20px; margin:0; letter-spacing:.3px; color:var(--text); font-weight:600}
 
   .nav{margin-top:12px; display:flex; flex-direction:column; gap:6px}
   .nav button{
@@ -122,7 +121,7 @@ a {
     border-radius:var(--radius); box-shadow:var(--shadow); padding:18px
   }
   .panel h2{margin:0 0 6px; font-size:18px}
-  .lipsum{color:var(--muted); margin-bottom:14px}
+  .lipsum{color:var(--text); margin-bottom:14px}
 
   .dock-wrap{margin:6px 0 14px}
   .dock{
@@ -203,15 +202,17 @@ a {
   #basicsForm .ctrl input{ flex:0 0 6ch; width:3ch; }
 
   .cardish{
-    border:1px solid var(--outline); border-radius:12px; background:#0f131b;
+    border:1px solid var(--outline); border-radius:12px; background:var(--surface-2);
+    /*border:1px solid var(--outline); border-radius:12px; background:#0f131b;*/
     padding:12px; display:flex; flex-direction:column; gap:10px;
     width:fit-content;
     min-width:unset;
   }
-  .cardish .title{font-size:12.5px; color:#9aa5ba; letter-spacing:.2px}
+  .cardish .title{font-size:12.5px; color:var(--text); letter-spacing:.2px}
   .ctrl{
     display:flex; align-items:center; gap:8px;
-    border:1px solid #2a3246; border-radius:10px; padding:8px 10px; background:#0b0f16;
+    border:1px solid var(--outline); border-radius:10px; padding:8px 10px; background:var(--surface-3);
+    /*border:1px solid #2a3246; border-radius:10px; padding:8px 10px; background:#0b0f16;*/
     width:fit-content;
   }
   .ctrl input{
@@ -1179,9 +1180,10 @@ input.read-only {
 
 /* === THEME TOKENS (First Pass) ===================================== */
 :root[data-theme="dark"] {
-  --surface: #0f131b;
-  --surface-2: #151a23;
-  --surface-3: #1c2230;
+  --surface:   #090c12;
+  --surface-2: #172132;
+  --surface-3: #2a3b57;
+  --outline:   #3a4863;
   --text: #e8edf7;
   --text-muted: #b7c0d4;
   --border: #2b3445;
@@ -1195,11 +1197,14 @@ input.read-only {
   --input-bg: #151a23;
   --input-border: #2b3445;
   --shadow: 0 6px 16px rgba(0,0,0,0.4);
+      --ok:#a6e3a1;
+
 }
 :root[data-theme="light"] {
-  --surface: #ffffff;
-  --surface-2: #f6f8fb;
-  --surface-3: #eef2f7;
+  --surface:   #ffffff;
+  --surface-2: #edf2f9;
+  --surface-3: #dfe8f4;
+  --outline:   #adc0d8;
   --text: #0f131b;
   --text-muted: #5b667a;
   --border: #cbd3e1;
@@ -1213,7 +1218,11 @@ input.read-only {
   --input-bg: #ffffff;
   --input-border: #cbd3e1;
   --shadow: 0 6px 16px rgba(0,0,0,0.12);
+    --ok:#17e005;
 }
+
+
+
 
 /* === THEME OVERRIDES (non-destructive, appended to end) ============= */
 html, body {
@@ -1249,8 +1258,8 @@ input[readonly], select[disabled], textarea[readonly] {
 
 /* Buttons */
 button, .btn, .cta {
-  background: var(--accent);
-  color: var(--accent-contrast);
+  /*background: var(--accent);*/
+  color: var(--text);
   border: 1px solid var(--accent);
 }
 button.secondary, .btn.secondary {
@@ -1261,11 +1270,11 @@ button.secondary, .btn.secondary {
 
 /* Footer/header bars */
 header, footer, .topbar, .bottombar {
-  background: var(--surface-2);
+  /* background: var(--surface-2); */
   color: var(--text);
-  border-top: 1px solid var(--border);
+/*   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-}
+ */}
 
 /* Toggle styling (fixed, minimal) */
 .theme-toggle {
