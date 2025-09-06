@@ -1123,6 +1123,7 @@ button:disabled, .btn:disabled {
   border-radius: 4px;
   letter-spacing: 2px;
   font-weight: bold;
+  padding: 4px;
 }
 
 
@@ -1294,3 +1295,59 @@ header, footer, .topbar, .bottombar {
   user-select: none;
 }
 .theme-toggle input { accent-color: var(--accent); }
+
+
+
+/* === In-page iOS-style Theme Switch === */
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text);
+  user-select: none;
+  line-height: 1;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  position: absolute;
+  top: 6px;
+  right: 225px;
+}
+.theme-switch .switch {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--switch-track, #cbd3e1);
+  border: 1px solid var(--outline, #cbd3e1);
+  transition: background .2s ease, border-color .2s ease;
+}
+.theme-switch .thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--switch-thumb, #ffffff);
+  box-shadow: 0 1px 2px rgba(0,0,0,.35);
+  transition: transform .22s cubic-bezier(.2,.9,.35,1.4);
+}
+.theme-switch[aria-checked="true"] .thumb { transform: translateX(20px); }
+.theme-switch .label { min-width: 40px; }
+
+
+/* Hide old overlay toggle if present */
+.theme-toggle { display: none !important; }
+
+
+:root[data-theme="dark"] {
+  --switch-track: #2a3246;
+  --switch-thumb: #ffffff;
+}
+:root[data-theme="light"] {
+  --switch-track: #cbd3e1;
+  --switch-thumb: #ffffff;
+}
