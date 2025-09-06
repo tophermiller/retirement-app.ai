@@ -473,5 +473,22 @@
     </div>
   </div>
 </div>
+
+  <!-- Theme toggle (First Pass) -->
+  <label class="theme-toggle">
+    <input type="checkbox" id="themeSwitch" aria-label="Toggle light mode">
+    <span id="themeLabel">Light mode</span>
+  </label>
+  <script>
+    (function(){
+      const el = document.getElementById("themeSwitch");
+      const label = document.getElementById("themeLabel");
+      const current = document.documentElement.getAttribute("data-theme");
+      el.checked = (current === "light");
+      label.textContent = el.checked ? "Light mode" : "Light mode";
+      el.addEventListener("change", ()=> setTheme(el.checked ? "light" : "dark"));
+    })();
+  </script>
+
 </body>
 </html>

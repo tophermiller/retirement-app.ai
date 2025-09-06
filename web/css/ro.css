@@ -1174,3 +1174,114 @@ input.read-only {
   cursor: not-allowed;
   opacity: 0.8;
 }
+
+
+
+/* === THEME TOKENS (First Pass) ===================================== */
+:root[data-theme="dark"] {
+  --surface: #0f131b;
+  --surface-2: #151a23;
+  --surface-3: #1c2230;
+  --text: #e8edf7;
+  --text-muted: #b7c0d4;
+  --border: #2b3445;
+  --accent: #7aa2f7;
+  --accent-contrast: #0d1117;
+  --danger: #e5534b;
+  --warning: #ffc857;
+  --success: #2fbf71;
+  --link: #7aa2f7;
+  --overlay: rgba(0,0,0,0.6);
+  --input-bg: #151a23;
+  --input-border: #2b3445;
+  --shadow: 0 6px 16px rgba(0,0,0,0.4);
+}
+:root[data-theme="light"] {
+  --surface: #ffffff;
+  --surface-2: #f6f8fb;
+  --surface-3: #eef2f7;
+  --text: #0f131b;
+  --text-muted: #5b667a;
+  --border: #cbd3e1;
+  --accent: #1d65d8;
+  --accent-contrast: #ffffff;
+  --danger: #c62828;
+  --warning: #b98900;
+  --success: #2f7d32;
+  --link: #1d65d8;
+  --overlay: rgba(0,0,0,0.35);
+  --input-bg: #ffffff;
+  --input-border: #cbd3e1;
+  --shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* === THEME OVERRIDES (non-destructive, appended to end) ============= */
+html, body {
+  background: var(--surface);
+  color: var(--text);
+}
+a { color: var(--link); }
+hr { border-color: var(--border); }
+
+/* Panels / cards */
+.panel, .card, .mini-card, .resultsPanel, .gr-section, .modal, .dialog {
+  background: var(--surface-2);
+  color: var(--text);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+}
+
+/* Inputs */
+input, select, textarea {
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--input-border);
+}
+input::placeholder, textarea::placeholder { color: var(--text-muted); }
+
+input[readonly], select[disabled], textarea[readonly] {
+  background: var(--surface-3);
+  color: var(--text-muted);
+  border-color: var(--border);
+  cursor: not-allowed;
+  opacity: 0.95;
+}
+
+/* Buttons */
+button, .btn, .cta {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border: 1px solid var(--accent);
+}
+button.secondary, .btn.secondary {
+  background: var(--surface-3);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+/* Footer/header bars */
+header, footer, .topbar, .bottombar {
+  background: var(--surface-2);
+  color: var(--text);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Toggle styling (fixed, minimal) */
+.theme-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 9999;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 10px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+.theme-toggle input { accent-color: var(--accent); }

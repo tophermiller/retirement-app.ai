@@ -482,3 +482,34 @@ if (typeof(results) === "undefined") {
 
   }
 }
+
+
+
+// === Plotly theme adapter (First Pass) ===============================
+(function(){
+  if (!window.Plotly || !Plotly.newPlot) return;
+  const cssVar = (name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  function plotlyLayoutBase(){
+    const theme = document.documentElement.getAttribute("data-theme") || "dark";
+    const isLight = theme === "light";
+    return {
+      template: isLight ? "plotly_white" : "plotly_dark",
+      paper_bgcolor: isLight ? "white" : "rgba(0,0,0,0)",
+      plot_bgcolor: isLight ? "white" : "rgba(0,0,0,0)",
+      font: { color: cssVar("--text") },
+      xaxis: { gridcolor: cssVar("--border") },
+      yaxis: { gridcolor: cssVar("--border") }
+    };
+  }
+  const _newPlot = Plotly.newPlot;
+  Plotly.newPlot = function(gd, data, layout, config){
+    const base = plotlyLayoutBase();
+    const merged = Object.assign({}, base, layout||{});
+    return _newPlot.call(Plotly, gd, data, merged, config);
+  };
+  document.addEventListener("themechange", ()=>{
+    try {
+      if (window.render) window.render();
+    } catch(e){ console.warn("themechange rerender failed", e); }
+  });
+})();
