@@ -822,44 +822,77 @@ if(data.heirsTarget){
 
     
   
-  // === Inflation Time Period selector handler ===
+  
+// === Inflation Time Period selector handler (with Custom + persistence) ===
   (function(){
     try{
       const sel = document.getElementById('inflationTimePeriod');
+      const inputsList = ['inflationRoi','inflationSd'];
+      function setEditable(editable){
+        inputsList.forEach(id=>{
+          const el = document.getElementById(id);
+          if (el){
+            el.readOnly = !editable;
+            el.classList.toggle('read-only', !editable);
+          }
+        });
+      }
+
       const roiEl = document.getElementById('inflationRoi');
       const sdEl  = document.getElementById('inflationSd');
       if (!sel || !roiEl || !sdEl || typeof inflationdata === 'undefined') return;
 
+      // Initialize selection from state (persisted)
+      try{
+        const savedSel = (state && state.beta && state.beta.single && state.beta.single.inflation && state.beta.single.inflation.presetSelection) || null;
+        if (savedSel && sel.querySelector(`option[value="${savedSel}"]`)) sel.value = savedSel;
+      }catch(e){}
+
       const applyFromSelection = ()=>{
+        // Persist chosen selection
+        try{
+          if (state && state.beta && state.beta.single && state.beta.single.inflation){
+            state.beta.single.inflation.presetSelection = sel.value;
+          }
+        }catch(e){}
+
+        // Custom mode: make fields editable, do not overwrite values
+        if ((sel.value||'').toLowerCase() === 'custom'){
+          setEditable(true);
+          return;
+        } else {
+          setEditable(false);
+        }
+
+        // Non-custom: compute from last N years option
         const n = parseInt(sel.value, 10);
         if (!Number.isFinite(n)) return;
-        // Use the latest complete year available in the dataset
         const maxY = (inflationdata.getMaxYear && inflationdata.getMaxYear()) || (new Date().getFullYear()-1);
         const first = maxY - n + 1;
         const last  = maxY;
-        const mean = (inflationdata.computeMeanRange && inflationdata.computeMeanRange(first, last)) || '';
-        const stdev = (inflationdata.computeStdDevRange && inflationdata.computeStdDevRange(first, last)) || '';
+        const mean  = (inflationdata.computeMeanRange && inflationdata.computeMeanRange(first, last));
+        const stdev = (inflationdata.computeStdDevRange && inflationdata.computeStdDevRange(first, last));
 
-        if (mean !== null && mean !== '') {
-          roiEl.dataset.raw = String(mean);
-          roiEl.value = `${mean}%`;
-          if (g && g.inflation) g.inflation.roi = String(mean);
+        if (mean !== null && mean !== undefined && mean !== ''){
+          const m = String(Number(mean).toFixed(2));
+          roiEl.dataset.raw = m;
+          roiEl.value = m + '%';
+          if (g && g.inflation) g.inflation.roi = m;
         }
-        if (stdev !== null && stdev !== '') {
-          sdEl.dataset.raw = String(stdev);
-          sdEl.value = `${stdev}%`;
-          if (g && g.inflation) g.inflation.stdev = String(stdev);
+        if (stdev !== null && stdev !== undefined && stdev !== ''){
+          const s = String(Number(stdev).toFixed(2));
+          sdEl.dataset.raw = s;
+          sdEl.value = s + '%';
+          if (g && g.inflation) g.inflation.stdev = s;
         }
-
       };
 
-      // Wire change and apply immediately (default is 100 years)
       sel.addEventListener('change', applyFromSelection);
-      // Ensure default shows up on first render
       if (!sel.value) sel.value = '100';
       applyFromSelection();
     }catch(e){ /* no-op */ }
   })();
+;
 // Auto-fill default Inflation values if empty (moved from Help Me Choose)
   try {
     g.inflation = g.inflation || {};
