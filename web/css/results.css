@@ -12,3 +12,18 @@
   .tnw-cols{max-width:460px}
 }
 
+
+/* Ensure plot containers expand to panel width */
+.plot { width: 100%; max-width: 100%; height: auto; }
+
+
+/* Ensure Plotly containers size to their parent width and center nicely */
+.plot, .plotly-container, .js-plotly-plot {
+  width: 100% !important;
+  max-width: 100%;
+}
+.plot {
+  margin-left: auto;
+  margin-right: auto;
+}
+

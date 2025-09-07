@@ -456,6 +456,7 @@ if (typeof(results) === "undefined") {
     const isLightBackground = luminance > 0.6;
     // Build base layout
     return {
+      autosize: true,
       // Choose a template whose defaults suit the background brightness
       template: isLightBackground ? "plotly_white" : "plotly_dark",
       // Match panel background exactly
@@ -481,12 +482,45 @@ if (typeof(results) === "undefined") {
       }
     };
   }
-  const _newPlot = Plotly.newPlot;
-  Plotly.newPlot = function(gd, data, layout, config){
-    const base = plotlyLayoutBase();
-    const merged = Object.assign({}, base, layout||{});
-    return _newPlot.call(Plotly, gd, data, merged, config);
-  };
+  
+const _newPlot = Plotly.newPlot;
+function _asElement(gd){
+  if (!gd) return null;
+  if (typeof gd === "string") return document.getElementById(gd);
+  return gd;
+}
+function _installResizeObserver(gd){
+  try {
+    const el = _asElement(gd);
+    if (!el || el.__plotlyResizeObserver) return;
+    if (window.ResizeObserver){
+      const ro = new ResizeObserver(()=>{ try { Plotly.Plots.resize(el); } catch(e){} });
+      ro.observe(el);
+      el.__plotlyResizeObserver = ro;
+    } else {
+      // Fallback: window resize listener (debounced)
+      if (!window.__plotlyResizeFallback){
+        let tid=null;
+        window.addEventListener("resize", ()=>{
+          clearTimeout(tid);
+          tid=setTimeout(()=>{
+            document.querySelectorAll(".js-plotly-plot").forEach(g=>{ try{ Plotly.Plots.resize(g); }catch(e){} });
+          }, 100);
+        });
+        window.__plotlyResizeFallback = true;
+      }
+    }
+  } catch(e){ /* ignore */ }
+}
+Plotly.newPlot = function(gd, data, layout, config){
+  const base = plotlyLayoutBase();
+  const mergedLayout = Object.assign({ autosize: true }, base, layout||{});
+  const mergedConfig = Object.assign({ responsive: true }, config||{});
+  const ret = _newPlot.call(Plotly, gd, data, mergedLayout, mergedConfig);
+  try { _installResizeObserver(gd); } catch(e){}
+  return ret;
+};
+
   document.addEventListener("themechange", ()=>{
     try {
       if (window.render) window.render();
