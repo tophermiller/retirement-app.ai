@@ -492,4 +492,72 @@ if (typeof(results) === "undefined") {
       if (window.render) window.render();
     } catch(e){ console.warn("themechange rerender failed", e); }
   });
+
+// --- Plotly theme live-updater ---
+(function(){
+  if (!window.Plotly) return;
+  // Re-apply themed layout to all existing plots without rebuilding traces
+  function updateAllPlotsTheme(){
+    try {
+      const base = plotlyLayoutBase();
+      const plots = document.querySelectorAll(".js-plotly-plot");
+      plots.forEach((gd)=>{
+        // Only update layout keys we control, avoid wiping user-specified layout
+        const themed = {
+          template: base.template,
+          paper_bgcolor: base.paper_bgcolor,
+          plot_bgcolor: base.plot_bgcolor,
+          font: base.font,
+          "xaxis.gridcolor": base.xaxis.gridcolor,
+          "xaxis.zerolinecolor": base.xaxis.zerolinecolor,
+          "xaxis.linecolor": base.xaxis.linecolor,
+          "xaxis.tickcolor": base.xaxis.tickcolor,
+          "yaxis.gridcolor": base.yaxis.gridcolor,
+          "yaxis.zerolinecolor": base.yaxis.zerolinecolor,
+          "yaxis.linecolor": base.yaxis.linecolor,
+          "yaxis.tickcolor": base.yaxis.tickcolor,
+          "legend.bgcolor": base.legend.bgcolor,
+          "legend.bordercolor": base.legend.bordercolor
+        };
+        Plotly.relayout(gd, themed);
+        Plotly.Plots.resize(gd);
+      });
+    } catch(e){ console.warn("updateAllPlotsTheme failed", e); }
+  }
+  window.updateAllPlotsTheme = updateAllPlotsTheme;
+
+  // Observe changes to the theme attribute on <html>
+  const root = document.documentElement;
+  try {
+    const mo = new MutationObserver((mutations)=>{
+      for (const m of mutations){
+        if (m.type === "attributes" && m.attributeName === "data-theme"){
+          updateAllPlotsTheme();
+          // downstream code may also re-render if needed
+          const ev = new Event("themechange");
+          document.dispatchEvent(ev);
+        }
+      }
+    });
+    mo.observe(root, { attributes:true, attributeFilter:["data-theme"] });
+  } catch(e){ console.warn("Theme observer failed", e); }
+
+  // Also, if a custom theme switcher toggles a class instead of data-theme, watch for class changes too.
+  try {
+    const mo2 = new MutationObserver((mutations)=>{
+      for (const m of mutations){
+        if (m.type === "attributes" && m.attributeName === "class"){
+          // Heuristic: if CSS variables changed, panel background will change; just update.
+          updateAllPlotsTheme();
+          const ev = new Event("themechange");
+          document.dispatchEvent(ev);
+        }
+      }
+    });
+    mo2.observe(root, { attributes:true, attributeFilter:["class"] });
+  } catch(e){ /* ignore */ }
+})();
+// --- end Plotly theme live-updater ---
+
+
 })();
