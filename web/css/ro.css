@@ -209,7 +209,7 @@ a {
   }
   .item-title{display:flex; align-items:center; gap:8px; min-width:0}
   .title-input{
-    background: var(--bg); 
+    background:var(--bg); 
     border:1px solid transparent; 
     color:var(--text); 
     font-weight:600; 
@@ -223,7 +223,8 @@ a {
   .title-input:focus{
     outline:none; 
     border-color:var(--primary); 
-    background: var(--bg); align-items:center; gap:8px}
+    background:var(--bg)}
+  .item-actions{display:flex; align-items:center; gap:8px}
 
   .btn{border:1px solid var(--outline); background:var(--surface); color:var(--text); padding:8px 10px; border-radius:10px; cursor:pointer; font-size:13px}
   .btn:hover{border-color:var(--primary)}
@@ -560,7 +561,7 @@ select {
   }
   .modal.show, .modal-backdrop.show{ display:block; }
   .modal-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
-  .modal-title{ margin:0; font-size:16px; color: var(--text); }
+  .modal-title{ margin:0; font-size:16px; color:#cbd3e1; }
   .modal-body{ display:flex; flex-direction:column; gap:12px; }
   .modal-footer{ display:flex; justify-content:flex-end; gap:8px; margin-top:8px; }
 
@@ -960,20 +961,20 @@ select {
 
 
 /* ===== RO Namespaced Modals (Save/Restore) ===== */
-.ro-modal{position:fixed;inset:0;background: var(--overlay, rgba(0,0,0,.5));display:none;align-items:center;justify-content:center;z-index:2000;padding:16px;}
+.ro-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:2000;padding:16px;}
 .ro-modal[aria-hidden="false"]{display:flex;}
 .ro-modal__dialog{
-  background: var(--surface-2, var(--bg));
+  background:var(--card-bg,#1e1e1e);
   color:inherit;
   border-radius:12px;
-  box-shadow: var(--shadow);
+  box-shadow:0 10px 30px rgba(0,0,0,.3);
   width:min(640px,96vw);
   max-height:88vh;
   display:flex;
   flex-direction:column;}
-.ro-modal__header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom: 1px solid var(--outline);}
+.ro-modal__header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08);}
 .ro-modal__body{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:12px;}
-.ro-modal__footer{padding:12px 16px;border-top: 1px solid var(--outline);display:flex;justify-content:flex-end;gap:8px;}
+.ro-modal__footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:flex-end;gap:8px;}
 .ro-modal__close{background:none;border:none;font-size:20px;cursor:pointer;opacity:.8;color:inherit}
 .ro-modal__close:hover{opacity:1}
 .saved-plans-list{display:flex;flex-direction:column;gap:8px;}
@@ -1086,8 +1087,8 @@ body.ro-modal-open{overflow:hidden;}
 }
 
 #processingModal .modal-content {
-  background: var(--bg); /* Dark mode style */
-  color: var(--text);
+  background: #222; /* Dark mode style */
+  color: white;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -1410,4 +1411,26 @@ header, footer, .topbar, .bottombar {
 :root[data-theme="light"] {
   --switch-track: #cbd3e1;
   --switch-thumb: #ffffff;
+}
+
+/* Themed icons that change with light/dark mode */
+:root[data-theme="dark"] .themed-icon.email {
+  background-image: url("../images/email_light.png");
+  width: 200px;
+  height: 200px;
+}
+
+:root[data-theme="light"] .themed-icon.email {
+  background-image: url("../images/email.png");
+  width: 200px;
+  height: 200px;
+}
+
+.themed-icon.email {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
 }
