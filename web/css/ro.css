@@ -228,7 +228,7 @@ a {
   .grid{display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(200px, 200px)); justify-content:start}
   .grid-2{display:grid; gap:12px; grid-template-columns: repeat(2, minmax(140px, 1fr))}
   .field{display:flex; flex-direction:column; gap:6px; min-width:0}
-  .label{font-size:12.5px; color:var(--muted)}
+  .label{font-size:12.5px; color:var(--text)}
   input[type="text"]{appearance:textfield; padding:10px 12px; border-radius:10px; border:1px solid var(--outline); background:#0f131b; color:#e6e9ef; outline:none; min-width:0}
   select{padding:10px 12px; border-radius:10px; border:1px solid var(--outline); background:#0f131b; color:#e6e9ef; outline:none; min-width:0}
   input::placeholder{color:#5b6576}
@@ -1184,12 +1184,12 @@ button:disabled, .btn:disabled {
 #odometer-container {
   position: absolute;
   top: 10px;
-  right: 20px;
+  right: 120px;
 }
 
 #odometer {
   display: inline-block;
-  background: black;
+  background: #0f131b;
   color: white;
   font-family: 'Courier New', monospace;
   border-radius: 4px;
@@ -1324,7 +1324,9 @@ header, footer, .topbar, .bottombar {
   gap: 8px;
   user-select: none;
 }
-.theme-toggle input { accent-color: var(--accent); }
+.theme-toggle input { 
+  accent-color: var(--accent);
+}
 
 
 
@@ -1332,7 +1334,6 @@ header, footer, .topbar, .bottombar {
 .theme-switch {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   font-size: 14px;
   color: var(--text);
   user-select: none;
@@ -1343,7 +1344,7 @@ header, footer, .topbar, .bottombar {
   padding: 4px 0;
   position: absolute;
   top: 6px;
-  right: 225px;
+  right: 20px;
 }
 .theme-switch .switch {
   position: relative;
