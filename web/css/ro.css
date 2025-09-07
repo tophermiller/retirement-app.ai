@@ -77,7 +77,7 @@ a {
     appearance:none;
     width:18px; height:18px;
     border-radius:4px;
-    background:#0f131b;
+    background:var(--bg);
     border:1px solid var(--outline);
     cursor:pointer; display:inline-block; position:relative;
   }
@@ -1135,8 +1135,8 @@ body.ro-modal-open{overflow:hidden;}
   padding:10px 12px;
   border-radius:10px;
   border:1px solid var(--outline);
-  background:#0f131b;
-  color:#e6e9ef;
+  background: var(--bg);
+  color:var(--text);
   outline:none;
   min-width:0;
 }
