@@ -209,10 +209,21 @@ a {
   }
   .item-title{display:flex; align-items:center; gap:8px; min-width:0}
   .title-input{
-    background:transparent; border:1px solid transparent; color:var(--text); font-weight:600; letter-spacing:.2px; border-radius:8px; padding:4px 6px; min-width:140px; max-width:100%;
+    background:var(--bg); 
+    border:1px solid transparent; 
+    color:var(--text); 
+    font-weight:600; 
+    letter-spacing:.2px; 
+    border-radius:8px; 
+    padding:4px 6px; 
+    min-width:140px; 
+    max-width:100%;
   }
   .title-input:hover{border-color:#39445c}
-  .title-input:focus{outline:none; border-color:var(--primary); background:#0f131b}
+  .title-input:focus{
+    outline:none; 
+    border-color:var(--primary); 
+    background:var(--bg)}
   .item-actions{display:flex; align-items:center; gap:8px}
 
   .btn{border:1px solid var(--outline); background:var(--surface); color:var(--text); padding:8px 10px; border-radius:10px; cursor:pointer; font-size:13px}
