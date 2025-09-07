@@ -1029,7 +1029,7 @@ body.ro-modal-open{overflow:hidden;}
   font-weight: bold;
 }
 .results-support-msg {
-  color: #a6e3a1;
+  color: var(--ok);
   font-weight: bold;
   font-style: italic;
 }
