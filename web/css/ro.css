@@ -413,7 +413,7 @@ select {
     display:inline-block;
     margin-right:8px;
     font-size:12.5px;
-    color:var(--muted);
+    color:var(--text);
     padding:0 6px;
     line-height:1;
   }
@@ -427,7 +427,7 @@ select {
   .segmented label{
     position:relative; display:inline-flex; align-items:center; justify-content:center;
     padding:8px 12px; border-radius:999px; border:1px solid var(--outline);
-    background:#0f131b; color:#cbd3e1; font-size:12.5px; cursor:pointer; user-select:none; transition:.15s ease;
+    /*background:#0f131b; color:#cbd3e1;*/ font-size:12.5px; cursor:pointer; user-select:none; transition:.15s ease;
   }
   .segmented label:hover{ border-color:#39445c }
   .segmented input:focus + label{ outline:2px solid color-mix(in oklab, var(--primary), transparent 60%); outline-offset:2px }
