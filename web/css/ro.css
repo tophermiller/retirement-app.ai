@@ -1086,8 +1086,8 @@ body.ro-modal-open{overflow:hidden;}
 }
 
 #processingModal .modal-content {
-  background: #222; /* Dark mode style */
-  color: white;
+  background: var(--bg); /* Dark mode style */
+  color: var(--text);
   padding: 20px;
   border-radius: 10px;
   text-align: center;
