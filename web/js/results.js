@@ -1,57 +1,11 @@
 
+// Compatibility shim: themedLayout now handled by Plotly.newPlot override.
+// Keep as identity so existing calls still work.
+window.themedLayout = function(layout){ return layout || {}; };
 
-// ---- Dark mode helpers injected ----
-const __DARK_LAYOUT__ = {
-  template: "plotly_dark",
-  plot_bgcolor: "#1e1e1e",
-  paper_bgcolor: "#1e1e1e",
-  font: { color: "#FFFFFF" },
-};
-function mergeDark(layout) {
-  try {
-    if (!layout || typeof layout !== "object") layout = {};
-    const result = Object.assign({}, layout);
-    if (!("template" in result)) result.template = __DARK_LAYOUT__.template;
-    if (!("plot_bgcolor" in result)) result.plot_bgcolor = __DARK_LAYOUT__.plot_bgcolor;
-    if (!("paper_bgcolor" in result)) result.paper_bgcolor = __DARK_LAYOUT__.paper_bgcolor;
-    if (!("font" in result)) result.font = __DARK_LAYOUT__.font;
-    if (!("autosize" in result)) result.autosize = true;
-    result.xaxis = Object.assign({},
-      layout.xaxis || {},
-      { tickfont: Object.assign({ color: "#FFFFFF" }, (layout.xaxis && layout.xaxis.tickfont) || {}),
-        title: (layout.xaxis && layout.xaxis.title)
-          ? Object.assign({}, layout.xaxis.title, { font: Object.assign({ color: "#FFFFFF" }, (layout.xaxis.title.font||{})) })
-          : { text: (layout.xaxis && layout.xaxis.title && layout.xaxis.title.text) || (layout.xaxis && layout.xaxis.title) || undefined, font: { color: "#FFFFFF" } },
-        gridcolor: (layout.xaxis && layout.xaxis.gridcolor) || "#444"
-      }
-    );
-    result.yaxis = Object.assign({},
-      layout.yaxis || {},
-      { tickfont: Object.assign({ color: "#FFFFFF" }, (layout.yaxis && layout.yaxis.tickfont) || {}),
-        title: (layout.yaxis && layout.yaxis.title)
-          ? Object.assign({}, layout.yaxis.title, { font: Object.assign({ color: "#FFFFFF" }, (layout.yaxis.title.font||{})) })
-          : { text: (layout.yaxis && layout.yaxis.title && layout.yaxis.title.text) || (layout.yaxis && layout.yaxis.title) || undefined, font: { color: "#FFFFFF" } },
-        gridcolor: (layout.yaxis && layout.yaxis.gridcolor) || "#444"
-      }
-    );
-    result.legend = Object.assign({},
-      layout.legend || {},
-      { font: Object.assign({ color: "#FFFFFF" }, (layout.legend && layout.legend.font) || {}) }
-    );
-    if (result.title) {
-      if (typeof result.title === "string") {
-        result.title = { text: result.title, font: { color: "#FFFFFF" } };
-      } else {
-        result.title = Object.assign({}, result.title);
-        result.title.font = Object.assign({ color: "#FFFFFF" }, result.title.font || {});
-      }
-    }
-    return result;
-  } catch (e) {
-    return Object.assign({ template: "plotly_dark" }, layout || {});
-  }
-}
-// ---- End dark mode helpers ----
+
+
+
 
 
 if (typeof(results) === "undefined") {
@@ -437,7 +391,7 @@ if (typeof(results) === "undefined") {
 
       // Add click event listeners to each element
       chartsData.forEach(({buttonId, plotId, data, layout}) => {
-        document.getElementById(buttonId).addEventListener("click", () => Plotly.newPlot(plotId, data, mergeDark(mergeDark(layout, {autosize:true}, {responsive:true}), {responsive:true})));
+        document.getElementById(buttonId).addEventListener("click", () => Plotly.newPlot(plotId, data, themedLayout(themedLayout(layout, {autosize:true}, {responsive:true}), {responsive:true})));
       });
 
       document.getElementById("plot-assets-choice-liquid").click();
@@ -465,7 +419,7 @@ if (typeof(results) === "undefined") {
           yaxis: {title: "ROI", tickformat: ',.1%'},
           legend: {orientation: "h", xanchor: "center", x: 0.5, y: -0.2,}
         };
-        Plotly.newPlot("plot-randomroi", randomROIData, mergeDark(mergeDark(randomROILayout, {autosize:true}, {responsive:true}), {responsive:true}));
+        Plotly.newPlot("plot-randomroi", randomROIData, themedLayout(themedLayout(randomROILayout, {autosize:true}, {responsive:true}), {responsive:true}));
         document.getElementById("plot-randomroi-actual-number").innerHTML = rateArray.length;
         document.getElementById("plot-randomroi-actual-average").innerHTML = util.formatPercentageVal(100 * util.arrayAverage(rateArray));
         document.getElementById("plot-randomroi-actual-display").style.display = "block";
@@ -490,15 +444,41 @@ if (typeof(results) === "undefined") {
   if (!window.Plotly || !Plotly.newPlot) return;
   const cssVar = (name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   function plotlyLayoutBase(){
-    const theme = document.documentElement.getAttribute("data-theme") || "dark";
-    const isLight = theme === "light";
+    // Read theme colors from CSS and the .panel background so plots always match the panel
+    const cssVar = (name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const panelEl = document.querySelector(".panel") || document.body;
+    const panelBg = getComputedStyle(panelEl).backgroundColor || cssVar("--surface") || "white";
+    // Determine brightness to choose a sensible Plotly template for axes/legend defaults
+    const rgb = panelBg.match(/\d+(\.\d+)?/g) || [255,255,255];
+    const [r,g,b] = rgb.map(Number);
+    // Relative luminance approximation
+    const luminance = (0.2126*r + 0.7152*g + 0.0722*b) / 255;
+    const isLightBackground = luminance > 0.6;
+    // Build base layout
     return {
-      template: isLight ? "plotly_white" : "plotly_dark",
-      paper_bgcolor: isLight ? "white" : "rgba(0,0,0,0)",
-      plot_bgcolor: isLight ? "white" : "rgba(0,0,0,0)",
-      font: { color: cssVar("--text") },
-      xaxis: { gridcolor: cssVar("--border") },
-      yaxis: { gridcolor: cssVar("--border") }
+      // Choose a template whose defaults suit the background brightness
+      template: isLightBackground ? "plotly_white" : "plotly_dark",
+      // Match panel background exactly
+      paper_bgcolor: panelBg,
+      plot_bgcolor: panelBg,
+      // Text and grid from theme vars
+      font: { color: cssVar("--text") || (isLightBackground ? "#111" : "#eee") },
+      xaxis: {
+        gridcolor: cssVar("--border") || (isLightBackground ? "#e2e8f0" : "#2b3445"),
+        zerolinecolor: cssVar("--border") || (isLightBackground ? "#e2e8f0" : "#2b3445"),
+        linecolor: cssVar("--border") || (isLightBackground ? "#cbd5e1" : "#3b455a"),
+        tickcolor: cssVar("--border") || (isLightBackground ? "#cbd5e1" : "#3b455a")
+      },
+      yaxis: {
+        gridcolor: cssVar("--border") || (isLightBackground ? "#e2e8f0" : "#2b3445"),
+        zerolinecolor: cssVar("--border") || (isLightBackground ? "#e2e8f0" : "#2b3445"),
+        linecolor: cssVar("--border") || (isLightBackground ? "#cbd5e1" : "#3b455a"),
+        tickcolor: cssVar("--border") || (isLightBackground ? "#cbd5e1" : "#3b455a")
+      },
+      legend: {
+        bgcolor: panelBg,
+        bordercolor: cssVar("--border") || (isLightBackground ? "#e2e8f0" : "#2b3445")
+      }
     };
   }
   const _newPlot = Plotly.newPlot;
