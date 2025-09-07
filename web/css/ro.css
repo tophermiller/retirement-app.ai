@@ -74,14 +74,14 @@
 /* Themed icons that change with light/dark mode */
 :root[data-theme="dark"] .themed-icon.processing {
   background-image: url("../images/processing3.gif");
-  width: 400px;
-  height: 400px;
+  width: 350px;
+  height: 350px;
 }
 
 :root[data-theme="light"] .themed-icon.processing {
   background-image: url("../images/processing2_lightmode.gif");
-  width: 400px;
-  height: 400px;
+  width: 350px;
+  height: 350px;
 }
 
 *{box-sizing:border-box}
@@ -1456,4 +1456,33 @@ header, footer, .topbar, .bottombar {
   background-size: contain;
   background-repeat: no-repeat;
   vertical-align: middle;
+}
+
+
+/* Processing modal: centered floating dialog, no screen dim, block outside clicks */
+#processingModal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;     /* visible page, no dim */
+  z-index: 2000;
+  pointer-events: auto;        /* capture clicks so they don't reach page */
+}
+
+#processingModal .modal-content {
+  width: 430px;
+  height: 430px;
+  margin: auto;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  border: 1px solid var(--outline);
+  background-color: var(--surface-2, var(--bg)); /* keep readable behind the spinner */
+  pointer-events: auto;        /* interactive inside */
+}
+
+/* While modal is open, freeze underlying page scroll */
+body.ro-modal-open {
+  overflow: hidden;
 }
