@@ -30,7 +30,8 @@
   --link: #7aa2f7;
   --overlay: rgba(0,0,0,0.6);
   --input-bg: #151a23;
-  --input-border: #2b3445;
+  --input-border: #39445c;
+  --input-border-hover: #cbd3e1;
   --shadow: 0 6px 16px rgba(0,0,0,0.4);
   --ok:#a6e3a1;
 
@@ -54,6 +55,7 @@
   --overlay: rgba(0,0,0,0.35);
   --input-bg: #ffffff;
   --input-border: #cbd3e1;
+  --input-border-hover: #39445c;
   --shadow: 0 6px 16px rgba(0,0,0,0.12);
   --ok:#17e005;
 }
@@ -155,7 +157,7 @@ a {
     background:transparent; border:1px solid var(--outline);
     color:var(--text); cursor:pointer; transition:.15s;
   }
-  .nav button:hover{background:var(--surface-2)}
+  .nav button:hover{background:var(--input-border-hover)}
   .nav button.active{
     border-color:var(--primary);
     box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--primary),transparent 60%);
@@ -215,14 +217,14 @@ a {
     transition:.15s ease transform,.15s ease box-shadow,.15s ease border-color,.15s ease opacity;
      touch-action:none;
   }
-  .mini:hover{transform:translateY(-2px); border-color:var(--primary); box-shadow:0 10px 28px rgba(0,0,0,.3)}
+  .mini:hover{transform:translateY(-2px); border-color:var(--input-border-hover); box-shadow:0 10px 28px rgba(0,0,0,.3)}
   .mini h4{margin:0 0 6px; font-size:13.5px; letter-spacing:.2px}
   .kv{font-size:12.5px; color:#a9b3c5; line-height:1.4}
   .badges{display:flex; gap:6px; margin-top:8px}
   .badge{font-size:11.5px; padding:3px 8px; border:1px solid var(--outline); border-radius:999px; color:#cbd3e1; background:#0f131b}
   .actions{position:absolute; top:8px; right:8px; display:flex; gap:6px}
   .icon-btn{width:26px; height:26px; border-radius:8px; border:1px solid var(--outline); background:rgba(255,255,255,.03); color:var(--muted); cursor:pointer}
-  .icon-btn:hover{border-color:var(--primary); color:var(--text)}
+  .icon-btn:hover{border-color:var(--input-border-hover); color:var(--text)}
   .mini.dragging{opacity:.9; box-shadow:0 12px 36px rgba(0,0,0,.45); transform:rotate(1deg) scale(1.02) !important}
   .placeholder{width:220px; min-width:220px; border:2px dashed var(--primary); border-radius:12px; opacity:.6; background:transparent}
 
@@ -245,16 +247,29 @@ a {
     min-width:140px; 
     max-width:100%;
   }
-  .title-input:hover{border-color:#39445c}
+  .title-input:hover{border-color:var(--input-border-hover)}
+  .tri-alloc-inputs:hover input{border-color:var(--input-border-hover)}
+
   .title-input:focus{
     outline:none; 
     border-color:var(--primary); 
     background: var(--bg); align-items:center; gap:8px}
 
-  .btn{border:1px solid var(--outline); background:var(--surface); color:var(--text); padding:8px 10px; border-radius:10px; cursor:pointer; font-size:13px}
-  .btn:hover{border-color:var(--primary)}
-  .btn.primary{border-color:var(--primary)}
-  .btn.ghost{background:transparent}
+  .btn{
+    border:1px solid var(--outline); 
+    background:var(--surface); 
+    color:var(--text); 
+    padding:8px 10px; 
+    border-radius:10px; 
+    cursor:pointer; 
+    font-size:13px
+  }
+  .btn:hover{border-color:var(--inpute-border-hover)}
+  /* .btn.primary{border-color:var(--primary)} */
+  .btn.ghost{
+    background:transparent;
+    margin-right: 5px;
+  }
   .btn.small{padding:6px 8px; font-size:12.5px}
   .btn.danger{border-color:var(--danger); color:var(--danger)}
   .btn.ok{border-color:var(--ok); color:var(--ok)}
@@ -274,7 +289,15 @@ a {
     color:var(--text); 
     outline:none; 
     min-width:0}
-  select{padding:10px 12px; border-radius:10px; border:1px solid var(--outline); background:#0f131b; color:#e6e9ef; outline:none; min-width:0}
+  select{
+    padding:10px 12px; 
+    border-radius:10px; 
+    border:1px solid var(--outline); 
+    background:#0f131b; 
+    color:#e6e9ef; 
+    outline:none; 
+    min-width:0
+  }
   input::placeholder{color:#5b6576}
   .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top: 10px;}
   .switch{display:flex; align-items:center; gap:8px}
@@ -465,7 +488,7 @@ select {
     padding:8px 12px; border-radius:999px; border:1px solid var(--outline);
     /*background:#0f131b; color:#cbd3e1;*/ font-size:12.5px; cursor:pointer; user-select:none; transition:.15s ease;
   }
-  .segmented label:hover{ border-color:#39445c }
+  .segmented label:hover{ border-color: var(input-border-hover) }
   .segmented input:focus + label{ outline:2px solid color-mix(in oklab, var(--primary), transparent 60%); outline-offset:2px }
   .segmented input:checked + label{
     border-color:var(--primary); color:var(--text);
@@ -616,7 +639,7 @@ select {
     background:var(--surface); border:1px solid var(--outline);
     color:var(--text); cursor:pointer; transition:.15s;
   }
-  .navbtn:hover{ background:var(--surface-2) }
+  .navbtn:hover{ background:var(--surface-2); border-color: var(--input-border-hover); }
   .navbtn .icon{ width:20px; height:20px; display:inline-flex }
   .navbtn span{ font-weight:500 }
 
@@ -650,6 +673,7 @@ select {
 .btn-row { margin-top: 6px; display: flex; gap: 8px; }
 .rem-row { border: 0; background: transparent; cursor: pointer; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 8px; color: #ccc; }
 .rem-row:hover { background: var(--bg-2); color: #fff; }
+
 
 
 .triple-row {
@@ -708,6 +732,11 @@ select {
     padding-right: 3.25em; /* room for 'yrs' badge */
     min-width: 7.5ch;      /* fits 3 digits comfortably */
   }
+  
+  .ctrl:hover{border-color: var(--input-border-hover)}
+  select:hover{border-color: var(--input-border-hover)}
+  input:hover{border-color: var(--input-border-hover)}
+
   .basics-grid .ctrl .unit{
     position: absolute;
     right: 10px;
@@ -1255,7 +1284,12 @@ button:disabled, .btn:disabled {
 
 
 /* Button icon sizing */
-.btn .btn-icon{width:16px;height:16px;margin-right:6px;display:inline-block;vertical-align:middle}
+.btn .btn-icon{
+  width:16px;
+  height:16px;
+  margin-right:6px;
+  display:inline-block;
+  vertical-align:middle}
 
 /* Info icon for read-only cards */
 .info-icon{ margin-left: .4rem; font-size: .95em; opacity:.8; }
@@ -1346,13 +1380,11 @@ input[readonly], select[disabled], textarea[readonly] {
 button, .btn, .cta {
   /*background: var(--accent);*/
   color: var(--text);
-  border: 1px solid var(--accent);
+  /* border: 1px solid var(--primary); */
 }
-button.secondary, .btn.secondary {
-  background: var(--surface-3);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
+/* button.secondary, .btn.secondary {
+
+} */
 
 /* Footer/header bars */
 header, footer, .topbar, .bottombar {
