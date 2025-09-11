@@ -18,6 +18,13 @@
     .get-started-btn { display: inline-flex; align-items: center; gap: .6rem; font-size: 1.05rem; }
     .get-started-btn .btn-icon { flex: 0 0 auto; }
   </style>
+<style>
+/* --- Welcome Modal styles --- */
+.modal-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);backdrop-filter:saturate(120%) blur(2px);z-index:9999}
+.modal-content{max-width:min(900px,92vw);max-height:92vh;overflow:auto;border-radius:16px;padding:24px;background:var(--surface, #fff);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+/* Ensure page underlay remains inert while modal open */
+body.modal-open{overflow:hidden}
+</style>
 </head>
 <body class="welcome-mode">
   <header class="brandbar">
@@ -64,39 +71,7 @@
 <div class="overlay" id="overlay"></div>
 <main class="main">
 
-<section id="welcomePanel" class="welcome-panel">
-  <div class="welcome-inner">
-    <span class="welcome-title">Welcome to the new RetirementOdds.com!</span><br>
-    <br>
-    With a lot of help from AI, I've built a whole new user experience for this calculator!  
-    Returning visitors will notice the big changes, and you'll need to re-enter your
-    data just one time.  But rest assured, the calculations under the hood
-    are mostly the same, other than an improvement in annual returns generation 
-    which is now based on correlated asset class allocation.   Read more about that here.<br>
-    <br>
-    So if you're ready to check your Retirement Odds, click below....<br>
-    <br>
 
-    <button id="getStartedBtn" class="btn ok get-started-btn" aria-label="Get Started Now">
-      <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true" width="20" height="20">
-        <path d="M5 12h12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span>Get Started Now</span>
-    </button>
-    <br><br>
-    <span class="welcome-title">What happened to the old site?</span><br>
-    <br>
-    The old (now "classic") site is still alive and kicking as well, and still offers 
-    a few features that aren't here in the new site just yet...
-    <ul>
-      <li>"Simple" mode - Easier data entry, less accurate results</li>
-      <li>"What If" mode - Run 10 calculations at once</li>
-      <li>Specialized forms for health insurance, installment loans, and Social Security entry</li>
-    </ul>
-    If you prefer to use the old site, just go to <a href="https://www.retirementodds.info" target="_new">www.retirementodds.info</a>.
- </div>
-</section>
 
 <div id="mainPanel">
 <div class="topbar" id="topbar">
@@ -573,5 +548,105 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 </script>
 
+<!-- Welcome Modal (auto-injected from prior #welcomePanel) -->
+<div id="welcomeModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="welcomeModalTitle">
+  <div class="modal-content">
+
+  <div class="welcome-inner">
+    <span class="welcome-title">Welcome to the new RetirementOdds.com!</span><br>
+    <br>
+    With a lot of help from AI, I've built a whole new user experience for this calculator!  
+    Returning visitors will notice the big changes, and you'll need to re-enter your
+    data just one time.  But rest assured, the calculations under the hood
+    are mostly the same, other than an improvement in annual returns generation 
+    which is now based on correlated asset class allocation.   Read more about that here.<br>
+    <br>
+    So if you're ready to check your Retirement Odds, click below....<br>
+    <br>
+
+    <button id="getStartedBtn" class="btn ok get-started-btn" aria-label="Get Started Now">
+      <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true" width="20" height="20">
+        <path d="M5 12h12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Get Started Now</span>
+    </button>
+    <br><br>
+    <span class="welcome-title">What happened to the old site?</span><br>
+    <br>
+    The old (now "classic") site is still alive and kicking as well, and still offers 
+    a few features that aren't here in the new site just yet...
+    <ul>
+      <li>"Simple" mode - Easier data entry, less accurate results</li>
+      <li>"What If" mode - Run 10 calculations at once</li>
+      <li>Specialized forms for health insurance, installment loans, and Social Security entry</li>
+    </ul>
+    If you prefer to use the old site, just go to <a href="https://www.retirementodds.info" target="_new">www.retirementodds.info</a>.
+ </div>
+
+  </div>
+</div>
+<script>
+/* --- Welcome Modal controller --- */
+(function(){
+  function showWelcomeModal(){
+    var m = document.getElementById('welcomeModal');
+    if(!m) return;
+    m.style.display = 'flex';
+    document.body.classList.add('modal-open');
+    // Try to hide underlying focus trapping in case of SPA
+    if (typeof window.pauseHotkeys === 'function') { try { window.pauseHotkeys(true); } catch(e){} }
+  }
+  function hideWelcomeModal(){
+    var m = document.getElementById('welcomeModal');
+    if(!m) return;
+    m.style.display = 'none';
+    document.body.classList.remove('modal-open');
+    // Navigate to Basics panel after dismiss
+    try {
+      if (typeof window.render === 'function') {
+        window.render('basics');
+      } else {
+        // Fallback: try clicking a known Basics button id
+        var btn = document.getElementById('basicsButton') || document.querySelector('[data-panel="basics"]');
+        if (btn) btn.click();
+      }
+    } catch(e){ /* no-op */ }
+  }
+
+  // Wire up button by id or text content
+  function wireDismiss(){
+    var candidates = [];
+    var byId = document.getElementById('getStartedBtn') || document.getElementById('getStartedNow') || document.getElementById('welcomeGetStarted');
+    if (byId) candidates.push(byId);
+    // Text-based fallback
+    var buttons = document.querySelectorAll('#welcomeModal button, #welcomeModal a, #welcomeModal .btn');
+    buttons.forEach(function(el){
+      var t = (el.textContent || '').trim().toLowerCase();
+      if (t.includes('get started')) candidates.push(el);
+    });
+    candidates.forEach(function(el){
+      el.addEventListener('click', function(ev){
+        ev.preventDefault();
+        hideWelcomeModal();
+      }, { once: true });
+    });
+  }
+
+  // Initialize on DOM ready (but after initial render so modal overlays everything)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function(){
+      showWelcomeModal();
+      wireDismiss();
+    });
+  } else {
+    showWelcomeModal();
+    wireDismiss();
+  }
+
+  // Expose for debugging
+  window._welcomeModal = { show: showWelcomeModal, hide: hideWelcomeModal };
+})();
+</script>
 </body>
 </html>
