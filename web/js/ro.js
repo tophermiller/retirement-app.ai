@@ -704,7 +704,18 @@ function render(){
       nextSectionBtn.innerHTML = '';
       nextSectionBtn.className = 'navbtn';
       const idx = sections.findIndex(s => s.key === active);
-      if (idx >= 0 && idx < sections.length - 1) {
+      // Always show Calculate on Expenses, even if a Results section exists
+      if (active === 'zeta') {
+        const sp = document.createElement('span');
+        sp.textContent = 'Calculate My RetirementOdds';
+        nextSectionBtn.className = 'btn ok';
+        const calcIcon = document.createElement('span'); calcIcon.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h18v18H3zM7 7h10v2H7zM7 11h6v2H7zM7 15h10v2H7z"/></svg>`;
+        nextSectionBtn.appendChild(calcIcon);
+        nextSectionBtn.appendChild(sp);
+        nextSectionBtn.onclick = () => submitBtn.click();
+        panelNextFooter.classList.remove('hidden');
+      } else if (idx >= 0 && idx < sections.length - 1) {
+    
         const next = sections[idx + 1];
         nextSectionBtn.appendChild(icon(next.icon));
         const sp = document.createElement('span');
