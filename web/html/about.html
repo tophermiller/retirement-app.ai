@@ -1,6 +1,6 @@
 <div class="brand">
-<img alt="Logo" height="50px" src="images/piggy-transparent.png">
-<h1>Welcome to RetirementOdds.com</h1>
+
+<h1>About This Retirement Calculator</h1>
 </div>
     
     <p>
@@ -12,21 +12,47 @@
         It's important to know that retirement success is rarely a 100% certainty.  Too much of the future is unknown, and there's
         no magic number for your net worth that means guaranteed success.  We believe this so-called "FI Number" is the wrong way to 
         look at the decision.   Rather, you need make some reasonable assumptions, use them to determine your probability of success,
-        and then decide what probability of success you are comfortable with. 
+        and then decide what probability you are comfortable with. 
         And you need to be prepared to make adjustments if things don't go as planned.
         </p>
         <p>
         To determine your odds, we need to insert some unpredictability into the future of your money.   
-        For this, we use 
+        For this, we assume that market returns follow a "normal distribution" (i.e. bell curve) based on  
         an average <b><i>return on investment (ROI)</i></b>, and a <b><i>standard deviation of ROI</i></b>.  
-        Standard deviation is a measure of volatility.  It's what makes your future returns unpredictable.  
-        If you don't know what that means, don't worry, we help you come up with these numbers by choosing
+        Standard deviation is a measure of volatility, or how "wide" the bell curve is. 
+        If you don't know what all this means, don't worry.  We help you come up with these numbers by choosing
         a historical market time period to use as a predictor of the future.   From there, you can always override
         as you see fit, or leave the suggestions as is.
         </p>
         <p>
         When you press the Calculate button, we'll compute 1000 projections into the future, and tell you what percentage of them 
         end in success.   These are your <b><i>Retirement Odds.</i></b>
+        </p>
+
+<h3>More About Market Returns</h3>
+
+        <p>
+            Starting with version 5.0 of this tool, we use an improved method of generating annual returns.  It 
+            starts with asking for average and standard deviation for each of the three most common asset classes:
+            US Stocks, US Bonds, and International Stocks (these are the asset classes of the popular 
+            <a href="https://www.bogleheads.org/wiki/Three-fund_portfolio" target="_new">Bogleheads Three Fund Portfolio</a>).   
+            To make things easier, we give you some presets based on different historical
+            time periods.   Just choose whichever period you think will be the best predictor of future returns.
+        </p>
+        <p>
+            Next, when you declare your accounts, you're asked for the asset allocation of the account, i.e. you're
+            asked to approximate how the account is invested among the three asset classes.
+        </p>
+        <p>
+            Finally, we generate the randomized market returns for each year of the simulation using all of 
+            this information.    We use a technique called 
+            <a href="https://en.wikipedia.org/wiki/Cholesky_decomposition" target="_new">Cholesky Decomposition</a> 
+            to make sure that the overall blended return takes into account the typical correlation between the 
+            asset classes.
+        </p>
+        <p>
+            Overall, we believe this provides a more accurate reflection of reality, at least as much as this 
+            can be possible when trying to predict the future.
         </p>
 
 <h3>Interpreting Your Results</h3>
