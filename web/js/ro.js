@@ -3279,6 +3279,7 @@ function buildRestoreList(){
     });
 
     // List of element IDs
+    /*
     const footerLinkIds = ["aboutSiteLink", "disclosureLink", "aboutMeLink", "donateLink", "contactLink"];
 
     // Generic click handler
@@ -3330,7 +3331,7 @@ function buildRestoreList(){
         el.addEventListener("click", handleFooterLinkClick);
       }
     });
-
+*/
     /* JSON preview toggle */
     if (previewJsonLink) previewJsonLink.addEventListener('click', ()=>{
       const errors = validateState();
@@ -3821,3 +3822,91 @@ document.addEventListener('DOMContentLoaded', ()=>{
     };
   }catch(e){}
 })();
+
+
+
+
+// HASH TAG HANDLING
+//////////////////////
+    // Generic click handler
+    function handleFooterHash(clickedHash) {
+      let htmlLink;
+      switch (clickedHash) {
+        case "about":
+          htmlLink = "html/about.html";
+          break;
+        case "disclosures":
+          htmlLink = "html/disclosures.html";
+          break;
+        case "aboutme": 
+          htmlLink = "html/aboutMe.html";
+          break;
+        case "donate": 
+          htmlLink = "html/donate.html";
+          break;
+        case "contact":
+          htmlLink = "html/contact.html";
+          break;
+      }
+      hideErrorPanel();
+      fetch(htmlLink)
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("footerLinkContent").innerHTML = data;
+        })
+        .catch(error => {
+          console.error("Error loading footer link content:", error);
+        });
+        footerLinkMode = true;
+        if(jsonMode){
+          jsonMode = false;
+          jsonBox.classList.add('hidden');
+          previewJsonLink.textContent = 'Preview JSON';
+        }
+        active = '';
+        document.getElementById("footerLinkContent").classList.remove("hidden");
+        document.querySelector('.main').scrollIntoView({ behavior: 'smooth' });
+        render();
+    }
+
+
+
+// 1) Map hash "routes" to functions you want to run
+const hashActions = {
+  about: () => handleFooterHash('about'),   // your modal opener
+  disclosures:    () => handleFooterHash('disclosures'),        // your SPA navigation
+  aboutme: () =>  handleFooterHash('aboutme'),
+  donate: () =>   handleFooterHash('donate'),
+  contact: () =>  handleFooterHash('contact'),
+};
+
+
+// 2) Parse "#route?param1=val&param2=val"
+function parseHash(h) {
+  const s = (h || '').replace(/^#/, '');
+  if (!s) return { route: '', params: {} };
+  const [route, query = ''] = s.split('?');
+  const params = Object.fromEntries(new URLSearchParams(query));
+  return { route, params };
+}
+
+// 3) Run action on initial load and on hash changes
+function handleHash() {
+  const { route, params } = parseHash(location.hash);
+  const fn = hashActions[route];
+  if (typeof fn === 'function') {
+    fn(params);
+    // Optional: keep the URL “clean” (avoids accidental native anchor jumps)
+    // Comment this out if you want the hash to remain.
+    // history.replaceState(null, '', location.pathname + location.search + '#');
+  }
+}
+
+// Fire once on load (supports copy/paste or direct navigation)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', handleHash, { once: true });
+} else {
+  handleHash();
+}
+// Also respond to in-page clicks that change the hash
+window.addEventListener('hashchange', handleHash);
