@@ -1518,3 +1518,25 @@ header, footer, .topbar, .bottombar {
 body.ro-modal-open {
   overflow: hidden;
 }
+
+
+/* === Targeted override: submit & next buttons colors (both themes) ===
+   Scoped to IDs to avoid impacting other .btn/.ok/.cta buttons */
+#submitBtn,
+#nextSectionBtn.btn.ok {
+  background-color: #2EA44F !important;
+  color: #e8edf7 !important;
+}
+
+#submitBtn:focus-visible,
+#nextSectionBtn.btn.ok:focus-visible {
+  outline: 2px solid color-mix(in oklab, #2EA44F, white 40%);
+  outline-offset: 2px;
+}
+
+/* Hover darkening for Calculate buttons */
+#submitBtn:hover,
+#nextSectionBtn.btn.ok:hover {
+  background-color: color-mix(in oklab, #2EA44F, black 12%) !important;
+}
+
