@@ -2,59 +2,104 @@
 
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>RetirementOdds.com</title>
-<link href="css/ro.css" rel="stylesheet"/>
-<link href="css/responsive_plots.css" rel="stylesheet"/>
-<link href="css/results.css" rel="stylesheet"/>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>RetirementOdds.com</title>
+  <link href="css/ro.css" rel="stylesheet"/>
+  <link href="css/responsive_plots.css" rel="stylesheet"/>
+  <link href="css/results.css" rel="stylesheet"/>
+  <style>
+    /* App shell is hidden during welcome */
+    .welcome-mode #mainPanel { display: none !important; }
+    /* Welcome splash: hidden by default, only shown in welcome-mode */
+    .welcome-panel { display: none;  }
+    .welcome-mode .welcome-panel { display: grid; }
+    .welcome-title {font-size: 2em}
+    .get-started-btn { display: inline-flex; align-items: center; gap: .6rem; font-size: 1.05rem; }
+    .get-started-btn .btn-icon { flex: 0 0 auto; }
+  </style>
 </head>
-<body>
-<header class="brandbar">
-<div class="brand">
-<img alt="Logo" height="50px" src="images/piggy-transparent.png"/>
-<h1>What are your Retirement Odds?</h1>
-</div>
-<div class="brand-desc lipsum">
+<body class="welcome-mode">
+  <header class="brandbar">
+  <div class="brand">
+    <img alt="Logo" height="50px" src="images/piggy-transparent.png"/>
+    <h1>What are your Retirement Odds?</h1>
+  </div>
+  <div class="brand-desc lipsum">
       Enter your financial information and find out the chances that you can live the rest of your like without running out of money. The key to an accurate result lies in the guesses you make in the "Growth Rates" section.
     
-  <div class="brand-actions">
-    <button class="btn ok" id="loadSampleBtn" style="margin-top: 10px">
-      <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <defs>
-        <linearGradient id="sampleGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#a6e3a1"/>
-          <stop offset="1" stop-color="#7aa2f7"/>
-        </linearGradient>
-      </defs>
-      <!-- Document -->
-      <path fill="none" stroke="url(#sampleGrad)" stroke-width="1.5" d="M7 4h7l4 4v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
-      <path fill="none" stroke="url(#sampleGrad)" stroke-width="1.5" d="M14 4v4h4"/>
-      <!-- Sparkles -->
-      <path fill="url(#sampleGrad)" d="M10.5 10.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/>
-      <path fill="url(#sampleGrad)" d="M16.5 9l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4z"/>
-      </svg>
-      Start With Sample Data
-    </button>
-    <div id="odometer-container" class="lipsum"><span id="odometer"></span> calculations performed</div>
-    <!-- In-page theme switch (no checkbox) -->
-    <button id="themeToggleSwitch" class="theme-switch" role="switch" aria-checked="false" aria-label="Toggle theme">
-      <span class="switch" aria-hidden="true"><span class="thumb"></span></span>
-      <span class="label">Dark</span>
-    </button>
+    <div class="brand-actions">
+      <button class="btn ok" id="loadSampleBtn" style="margin-top: 10px">
+        <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <defs>
+          <linearGradient id="sampleGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#a6e3a1"/>
+            <stop offset="1" stop-color="#7aa2f7"/>
+          </linearGradient>
+        </defs>
+        <!-- Document -->
+        <path fill="none" stroke="url(#sampleGrad)" stroke-width="1.5" d="M7 4h7l4 4v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+        <path fill="none" stroke="url(#sampleGrad)" stroke-width="1.5" d="M14 4v4h4"/>
+        <!-- Sparkles -->
+        <path fill="url(#sampleGrad)" d="M10.5 10.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/>
+        <path fill="url(#sampleGrad)" d="M16.5 9l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4z"/>
+        </svg>
+        Start With Sample Data
+      </button>
+      <div id="odometer-container" class="lipsum"><span id="odometer"></span> calculations performed</div>
+      <!-- In-page theme switch (no checkbox) -->
+      <button id="themeToggleSwitch" class="theme-switch" role="switch" aria-checked="false" aria-label="Toggle theme">
+        <span class="switch" aria-hidden="true"><span class="thumb"></span></span>
+        <span class="label">Dark</span>
+      </button>
 
+    </div>
   </div>
-</div>
-
-
 </header>
+
 <div class="app">
 <aside class="sidebar" id="sidebar">
 <nav class="nav" id="nav"></nav>
 </aside>
 <div class="overlay" id="overlay"></div>
 <main class="main">
-<div class="topbar">
+
+<section id="welcomePanel" class="welcome-panel">
+  <div class="welcome-inner">
+    <span class="welcome-title">Welcome to the new RetirementOdds.com!</span><br>
+    <br>
+    With a lot of help from AI, I've built a whole new user experience for this calculator!  
+    Returning visitors will notice the big changes, and you'll need to re-enter your
+    data just one time.  But rest assured, the calculations under the hood
+    are mostly the same, other than an improvement in annual returns generation 
+    which is now based on correlated asset class allocation.   Read more about that here.<br>
+    <br>
+    So if you're ready to check your Retirement Odds, click below....<br>
+    <br>
+
+    <button id="getStartedBtn" class="btn ok get-started-btn" aria-label="Get Started Now">
+      <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true" width="20" height="20">
+        <path d="M5 12h12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Get Started Now</span>
+    </button>
+    <br><br>
+    <span class="welcome-title">What happened to the old site?</span><br>
+    <br>
+    The old (now "classic") site is still alive and kicking as well, and still offers 
+    a few features that aren't here in the new site just yet...
+    <ul>
+      <li>"Simple" mode - Easier data entry, less accurate results</li>
+      <li>"What If" mode - Run 10 calculations at once</li>
+      <li>Specialized forms for health insurance, installment loans, and Social Security entry</li>
+    </ul>
+    If you prefer to use the old site, just go to <a href="https://www.retirementodds.info" target="_new">www.retirementodds.info</a>.
+ </div>
+</section>
+
+<div id="mainPanel">
+<div class="topbar" id="topbar">
 <button aria-label="Open menu" class="hamburger" id="hamburger">☰</button>
 <div class="spacer"></div>
 <!-- CTA BUTTONS ABOVE THE MAIN PANEL -->
@@ -77,12 +122,14 @@
 </button>
 </div>
 </div>
-<!-- Error Panel -->
-<div aria-live="polite" class="error-panel" hidden="" id="errorPanel" role="alert">
-<div class="error-header">Please fix the following:</div>
-<ul id="errorList"></ul>
-</div>
-<section class="panel">
+  <!-- Error Panel -->
+  <div aria-live="polite" class="error-panel" hidden="" id="errorPanel" role="alert">
+    <div class="error-header">Please fix the following:</div>
+    <ul id="errorList"></ul>
+  </div>
+
+</div><!-- /mainPanel -->
+<section class="panel hidden" id="mainPanel">
 <div class="panel-header">
 <h2 id="sectionTitle">Section</h2>
 </div>
@@ -482,6 +529,49 @@
   </div>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  function exitWelcome(){
+    document.body.classList.remove('welcome-mode');
+    var el = document.getElementById('welcomePanel');
+    if (el) {
+      el.style.display = 'none';
+      try { el.remove(); } catch(e) {}
+    }
+    try {
+      if (typeof window.navToSection === 'function') window.navToSection('basics');
+      else if (typeof window.showBasics === 'function') window.showBasics();
+      else if (typeof window.render === 'function') {
+        window.active = 'alpha';
+        window.render();
+      }
+    } catch(e) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  var btn = document.getElementById('getStartedBtn');
+  if (btn) btn.addEventListener('click', exitWelcome);
+  var nav = document.getElementById('nav');
+  if (nav) nav.addEventListener('click', exitWelcome, true);
+  var sidebar = document.getElementById('sidebar');
+  if (sidebar) sidebar.addEventListener('click', exitWelcome, true);
+});
+</script>
 
 </body>
 </html>
