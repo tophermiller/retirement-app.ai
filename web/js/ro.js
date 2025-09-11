@@ -709,7 +709,7 @@ function render(){
         const sp = document.createElement('span');
         sp.textContent = 'Calculate My RetirementOdds';
         nextSectionBtn.className = 'btn ok';
-        const calcIcon = document.createElement('span'); calcIcon.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h18v18H3zM7 7h10v2H7zM7 11h6v2H7zM7 15h10v2H7z"/></svg>`;
+        const calcIcon = document.createElement('span'); calcIcon.className='icon'; calcIcon.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="11" x2="11" y2="11"/><line x1="13" y1="11" x2="17" y2="11"/><line x1="7" y1="15" x2="17" y2="15"/></svg>`;
         nextSectionBtn.appendChild(calcIcon);
         nextSectionBtn.appendChild(sp);
         nextSectionBtn.onclick = () => submitBtn.click();
@@ -727,7 +727,7 @@ function render(){
         const sp = document.createElement('span');
         sp.textContent = 'Calculate My RetirementOdds';
         nextSectionBtn.className = 'btn ok';
-        const calcIcon = document.createElement('span'); calcIcon.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="7" y="6.5" width="10" height="3" rx="1" ry="1" fill="currentColor"/><circle cx="9" cy="12" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15" cy="12" r="1.1" fill="currentColor"/><circle cx="9" cy="16" r="1.1" fill="currentColor"/><circle cx="12" cy="16" r="1.1" fill="currentColor"/><circle cx="15" cy="16" r="1.1" fill="currentColor"/></svg>`; nextSectionBtn.appendChild(calcIcon); nextSectionBtn.appendChild(sp);
+        const calcIcon = document.createElement('span'); calcIcon.className='icon'; calcIcon.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="11" x2="11" y2="11"/><line x1="13" y1="11" x2="17" y2="11"/><line x1="7" y1="15" x2="17" y2="15"/></svg>`; nextSectionBtn.appendChild(calcIcon); nextSectionBtn.appendChild(sp);
         nextSectionBtn.onclick = () => submitBtn.click();
         panelNextFooter.classList.remove('hidden');
       }

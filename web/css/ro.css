@@ -1540,3 +1540,19 @@ body.ro-modal-open {
   background-color: color-mix(in oklab, #2EA44F, black 12%) !important;
 }
 
+
+
+/* === Fix: Align icon and text in Calculate buttons === */
+#nextSectionBtn.btn.ok,
+#submitBtn.btn.ok {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px; /* spacing between icon and text */
+}
+
+#nextSectionBtn.btn.ok .icon,
+#submitBtn.btn.ok .icon {
+  display: inline-flex;
+  align-items: center;
+}
