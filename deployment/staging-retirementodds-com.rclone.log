@@ -1,0 +1,214 @@
+2025/09/14 15:34:18 NOTICE: S3 bucket staging-retirementodds-com: Switched region to "us-east-2" from "us-east-1"
+2025/09/14 15:34:19 INFO  : S3 bucket staging-retirementodds-com: Waiting for checks to finish
+2025/09/14 15:34:19 INFO  : S3 bucket staging-retirementodds-com: Waiting for transfers to finish
+2025/09/14 15:34:19 ERROR : html/donate.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>GYYK95SEX1AB6TRK</RequestId><HostId>UZZO6NLo4HVxuZj/ZD+gzPrmxZBF3pnzOUuIkhDWr9LikLH1ytWRPJHN2/Zu9V9foIRnZ+jrfxs=</HostId></Error>
+2025/09/14 15:34:19 ERROR : html/contact.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>GYYRQ4BS32AWB75V</RequestId><HostId>zPEPvCP11OsXAdYRkrlXPoU83DSmfx48xfRoXii+kvRv0EUh8HO/uzxjhxXB5aQ2CJBgTfOxXCM=</HostId></Error>
+2025/09/14 15:34:19 ERROR : html/disclosures.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJZMDA91K2AGG6Z</RequestId><HostId>NmY975gEQFZwkRV27g5gXEbk/FAmuFL8hmTYniVqlpqX5iTiMZv4zyqkHCWo3XM0NVltbdab77g=</HostId></Error>
+2025/09/14 15:34:20 ERROR : assets/realEstateROI.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJV7DSMSBWV245S</RequestId><HostId>oyYoTpLsgJ+kbi3hqj3Ja86FNUfN8mnYd22TjM7VBhbdVuw4SyHnEUx82x2zWlwnA9WY886YMco=</HostId></Error>
+2025/09/14 15:34:20 ERROR : assets/markethistory.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJVNVF9MPBNTZ8M</RequestId><HostId>AyBhfFvVykhYxmIAyIA9HOO2384kQ50dp9dwHQPZYTMbUiRKNGPy+XTdv/NzOgc2g//hY+sEY7Q=</HostId></Error>
+2025/09/14 15:34:20 ERROR : js/util.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJXG2KJEQG5SH29</RequestId><HostId>pkHpbG/23dDhaON/0f7uYZmgu7QXyIEhDaDeJEJe0dIOqdAeo/knzRmyVAYDptYRhG1zDrVkhPQ=</HostId></Error>
+2025/09/14 15:34:20 ERROR : html/aboutMe.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJHZFWHF9AD5P1B</RequestId><HostId>fK3XP7LNgWOMdFS0ORprN6dDw7H8rNYZLlKlcP5UPKaTCy/9/trI4xFYDa1/LaVNjewBBMXYUTE=</HostId></Error>
+2025/09/14 15:34:20 ERROR : assets/inflationdata.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJY6E6XQ0NJ2EFH</RequestId><HostId>CDmRjFW6OxSyJVe0ZhnouFsR2PFiWw6DPOjHSAP5MzuyqZDBuTO2sF/JP33jHufDi7QSvuUryKU=</HostId></Error>
+2025/09/14 15:34:20 ERROR : html/feedback.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJQ5XTZKXYA4EN3</RequestId><HostId>U2aZUOLIwffSSeDKQ1CiYIClPNXLGVEP7vpcZuASlmYPZaT8MWhWn0e1oicfDlEYlPfDf2osWi0=</HostId></Error>
+2025/09/14 15:34:20 ERROR : js/data/sampleplan.json: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJRT6GW6PFPJ000</RequestId><HostId>9arx7qUtn7VzBzUAJAmncyg3IHDCMSoXoiDjU0f3lLfGbtsbwJiLOZ4j0ImJmI1zXj9aKNdOqUI=</HostId></Error>
+2025/09/14 15:34:20 ERROR : assets/marketreturns.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJKBBYW1WEKWMHY</RequestId><HostId>1DJShLAPx5cadeoAK+LnT13i49cX9AyfMSRLrGLqeGVneQPB/AZtVapF1PGUVn7B1aEstrUU33s=</HostId></Error>
+2025/09/14 15:34:20 ERROR : images/donate.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJG730PVTNDWAX7</RequestId><HostId>l3uujZcPY044g4pkRILfzg3R5D/6kF/BpV1MjeX3kWlCDBvph9QLi/zuCcyet30Mdxs5ZAukOJI=</HostId></Error>
+2025/09/14 15:34:20 ERROR : css/responsive_plots.css: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJSY6JVDHSR7SG1</RequestId><HostId>3+ZUg9hga0zEL6ynZcifV6E6PXkqAH8cqJEYGBGDTpz5C1vZbLqFls5ZCbbV7c/x0Xcik4U1abg=</HostId></Error>
+2025/09/14 15:34:20 ERROR : js/results.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJWKZ3WYT2K46GE</RequestId><HostId>flLJ2BTPLCxRnui6p5lwb26oN0195D/wqybTKRW2NSYtEknswPmxLs3PVQK9W4yAw2vVkx2wapY=</HostId></Error>
+2025/09/14 15:34:20 ERROR : css/results.css: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJKQZHZ5ZQXMA33</RequestId><HostId>SwHTWNQ9gWSejvazEIsFRbowjTde1DhNPn16qCGW6SVgw3uGvJmAg6nssbzRHvCDhkZ4w/AbKGI=</HostId></Error>
+2025/09/14 15:34:20 ERROR : images/piggy-transparent.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJKSJZK59N77TYK</RequestId><HostId>D39QOj7lNpFpQZl3NlOmhY/BO1BUX3Xn3OHTfgqi89PAR5zmrOG66SCiZZWRhAlsToW3iq2dKXg=</HostId></Error>
+2025/09/14 15:34:20 ERROR : index.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJVP1FJYJ7RCBV8</RequestId><HostId>Jn8B+6/DO67ebZw9jBQo9ra/9Y7WLAto9sI+3ff87mij++Yx60Qt35Fet/k7otGruAXpLJC/BQw=</HostId></Error>
+2025/09/14 15:34:20 ERROR : html/about.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJM9HPHC4KX7FGW</RequestId><HostId>Thc2gVK9rp5k+xUtvN4zM6e/E9W0chflBfZscEcbZ5tKlWLUqZ8NKs90n59TeJ+2LfBo0LXuKuA=</HostId></Error>
+2025/09/14 15:34:20 ERROR : css/ro.css: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJKZRJWRC9MDB32</RequestId><HostId>7Rj0aGHijbXT89mhlq53ozkwfpJAm0c56drJ6RQbBavTBTZHGnoNSxR1a8Z2TwrHvhYjW1NjzN8=</HostId></Error>
+2025/09/14 15:34:20 ERROR : images/chris2.jpg: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJHVTB934FQMXAB</RequestId><HostId>iX6dbsDSwxWbeZkGM1VpmRF3Vg/epwG/AOYUo64Pxr8aXvTfvkodpIzepV/EIE1UVEZrvkmQq04=</HostId></Error>
+2025/09/14 15:34:20 ERROR : js/ro.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>6SJPQGWTG59DZHDD</RequestId><HostId>gy/DqVkeJ2DA6TIT3ohNk1Q8kclECRsM/W4pIain4O8o/zavIjQoLyoVAqB03VLVXoeEq23PN+Q=</HostId></Error>
+2025/09/14 15:34:21 ERROR : images/processing3.gif: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>9T2263Q687PEJ7WP</RequestId><HostId>m6AsKqh16+mkIKfiHXq6EsMsnV8nepGUYbWuIs7ZkDOv4vUS+U6oRtUOlQCSaSkWPznq/Pbp2OQ=</HostId></Error>
+2025/09/14 15:34:22 ERROR : images/processing2_lightmode.gif: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>MPAZQHGCC82EYH5W</RequestId><HostId>wFqE/mRaanu1ZRLn1mETYRbws3EwwsRiAOcarXKGB+TQJJnCZHRy2Q4mlGv7xaAJh5IGRtRoMLg=</HostId></Error>
+2025/09/14 15:34:22 ERROR : images/email_light.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>MPAH8A832KZMEN33</RequestId><HostId>IKfJ29BJNU2W0VAKDtCDfV78U+qp8LlXE4WgviD9bDj/e7LSDUERRxw3GucxTdKJ3l2yWEBxY5g=</HostId></Error>
+2025/09/14 15:34:23 ERROR : images/email.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>J4M7J8KE5K28C3B2</RequestId><HostId>esLXWJtMcJoHAak86d8PLwCOO3kQeIXcvf+cut+0HbDTyhSZakjMaJi4nD1zhsSQgg08K/fmYSg=</HostId></Error>
+2025/09/14 15:34:25 ERROR : js/thirdparty/plotly-2.16.1.min.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>X7ZTMN75TFMW42W3</RequestId><HostId>l4/+1xrx+U2MYyqKD0ozFCAjij8RYVL0Kty/JCrYdG3uwt/tuOC2pMnbVSzSLLjJQ0jApAkfPSk=</HostId></Error>
+2025/09/14 15:34:25 ERROR : S3 bucket staging-retirementodds-com: not deleting files as there were IO errors
+2025/09/14 15:34:25 ERROR : S3 bucket staging-retirementodds-com: not deleting directories as there were IO errors
+2025/09/14 15:34:25 ERROR : Attempt 1/3 failed with 53 errors and: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>X7ZTMN75TFMW42W3</RequestId><HostId>l4/+1xrx+U2MYyqKD0ozFCAjij8RYVL0Kty/JCrYdG3uwt/tuOC2pMnbVSzSLLjJQ0jApAkfPSk=</HostId></Error>
+2025/09/14 15:34:25 INFO  : S3 bucket staging-retirementodds-com: Waiting for checks to finish
+2025/09/14 15:34:25 INFO  : S3 bucket staging-retirementodds-com: Waiting for transfers to finish
+2025/09/14 15:34:25 ERROR : index.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE8AR42X1NE7TMW3</RequestId><HostId>Y6nzpReGhVhbAoeD6dHzGDoCW7OiZTX6wYr/ayXgQhT0cq/UHmkXpvl/VIBfxSXQzNkgkjBwAmM=</HostId></Error>
+2025/09/14 15:34:26 ERROR : assets/markethistory.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE819HVB15JX6X5J</RequestId><HostId>sFjAFiR4gYa2yxqkWqLvVxg0SaLg56RnafX4qgmcXbkCf6y9QR3bvMvY7Wq2CKKwXOcVDg2iz9c=</HostId></Error>
+2025/09/14 15:34:26 ERROR : css/responsive_plots.css: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE82B04BA728G7NM</RequestId><HostId>Wk3fe9ckYVgNbr9lJAeSXwX26nMMN86N3eTAm9XTLPJW8BFy/s0qYTvhEnfUCnzRn1wliLG+xik=</HostId></Error>
+2025/09/14 15:34:26 ERROR : html/feedback.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE8E1J4SN6VHK5VT</RequestId><HostId>6pD4j1aCDnFKZpRnCNcRavvFw9BHnc9zpig1mAAI+iMzrNkuaMKrbg0eGFUWJvX/zCWs4wZv/ew=</HostId></Error>
+2025/09/14 15:34:26 ERROR : html/disclosures.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE8486Z2HHB41MXG</RequestId><HostId>a+BbeP9lWrjHBTl1xnHBfn0oq7XC6PqfywBxd8xEMJ0/uzQg30Sw0Xc7xcxbOm2RPoX4RZrSgxE=</HostId></Error>
+2025/09/14 15:34:26 ERROR : html/contact.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE8BAEDM80MW6Y3B</RequestId><HostId>b6pbtYhPNNss5JQs+bEESIiwjCKWukMQTSzeLdE3jMhLt2OsbgWvPL5UICXk0vxgM7cS9ieXy3I=</HostId></Error>
+2025/09/14 15:34:26 ERROR : js/util.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE8DQR5NFYVHGP34</RequestId><HostId>x4qZ7ts2+/7D3QqewDbT0+BnfLcr+N9Kx6/UBvjqz5QNbp/4OZJwHIH/t7FHhziczuFHzuO2R/0=</HostId></Error>
+2025/09/14 15:34:26 ERROR : assets/marketreturns.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE8BMY8ASV1FTVYD</RequestId><HostId>u6b3QuTI2oBMQpuPbLUFTyKf/eRRJu8hJ/8z+LXjitGG9xIQVuFo9j2mFIJYz5lvnc/mPCmmjwg=</HostId></Error>
+2025/09/14 15:34:26 ERROR : assets/inflationdata.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE852P03XWE1TNNG</RequestId><HostId>MPRZkgKL81tijMNATx8G9nzbi2kPpneKWSUhV9TbDiPnpSj8NsjndNiihuHZw67VtLUjivauMSg=</HostId></Error>
+2025/09/14 15:34:26 ERROR : html/aboutMe.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE83Q7QTF5JQXMHE</RequestId><HostId>J1cFiynle5iP++YnIcLyuB+YLlLBLra1TmVGjMLERjfPLaSKSmMZ4b6swM3yMSM7r+0biaOSri0=</HostId></Error>
+2025/09/14 15:34:26 ERROR : assets/realEstateROI.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE80S08JRZ6FZ3JT</RequestId><HostId>2R1SdhD9WKP9wyqaK8hadZuLp/wKhXr3IoS9U4A7TD7qlyk0YkB25XxJsOHjmyI5l3DFj8nToSU=</HostId></Error>
+2025/09/14 15:34:26 ERROR : html/donate.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE82Z2A0KQNYXFW9</RequestId><HostId>L+D119ZfyFs4VNZnO+ipAYNC0sO4/ned2Gg8pYOSabpHGkpOjG39L0q9rzHkc4LG1+8P2vVzWLM=</HostId></Error>
+2025/09/14 15:34:26 ERROR : css/results.css: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE827W62GFMJ5SW2</RequestId><HostId>yMGMBTg++oC1WThGCuWR6ejAayagpDB6FB6DVeakn5pgUeDjkisEuX2CBsKQjWK1/cfMJTXq0Ts=</HostId></Error>
+2025/09/14 15:34:26 ERROR : js/data/sampleplan.json: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE85NB5R6KMB0PPK</RequestId><HostId>himjO60yilVC85N5eAnSB0dilf1UTQiA8BWlqKByqMvxI/nLfxP+fvP0N2UhptjKsvjSkgCq/cY=</HostId></Error>
+2025/09/14 15:34:26 ERROR : js/results.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE81J41167YA3JEZ</RequestId><HostId>0Z3u9q77wdehjMKPCe5yPd9X8YuXmdDsN/vIQCiMGRJ8tcpHz3F2sklwwZZD94Bkv7Ta6NTLvqU=</HostId></Error>
+2025/09/14 15:34:26 ERROR : images/piggy-transparent.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE820EYKPYVBD3RD</RequestId><HostId>JIDi0qYaqm9SMCBHEoVCJBzuNM5mvw9neBtrewvVVeWbA3ZPqNXBY93euuzJaS3gd52ZGPETGOA=</HostId></Error>
+2025/09/14 15:34:26 ERROR : images/donate.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE8ERER0C5TJD0A1</RequestId><HostId>tG9/TEHITrBahLOl4w1Z1GnK0zvhCI24BqV/8xp/XF7CyiF35yhtn+tSQWnpgF7VGEB8wn1TWo8=</HostId></Error>
+2025/09/14 15:34:26 ERROR : html/about.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE88VYZTZD1XDSX4</RequestId><HostId>+WEqMvx4olMApgro/YaCXgyRRcQqKVKS1Hp1pbLI6LwyXesgwGZFVQdkkJnvy0jqbMX0oqhEMk0=</HostId></Error>
+2025/09/14 15:34:26 ERROR : css/ro.css: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE8321R3EPZ6E476</RequestId><HostId>trvTdH+MqFnp9B/eurCDcg6+ezrpJWPvvhjDP1Y1+pcKptzGjVvjr56JTontb0nsRrNn3gSKFMc=</HostId></Error>
+2025/09/14 15:34:26 ERROR : images/chris2.jpg: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE84AM4J4JG1HFYQ</RequestId><HostId>Va1hTbsbWx879M51zKKp8Mn/Vp4BfZDyRKcb1NlHa9FwiaMOJXGZutmpIENKYWSKroi5mQuXUos=</HostId></Error>
+2025/09/14 15:34:26 ERROR : js/ro.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>FE88TV7YA7NRRGQ1</RequestId><HostId>g8HiW6g8F5M3J7/23f7HG+O/LUjEaqdFGCLz+Q828b7ruaY5m/mjIPfAoh/U5AX+qUXYCrM/Ocg=</HostId></Error>
+2025/09/14 15:34:27 ERROR : images/processing3.gif: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>AGADDW5JWAQ44CD0</RequestId><HostId>i1aw7DAb/xSAJNNS7ad8Z4AjUX8KjiqWQAONSxQlwq2babQcaAsV+xpTE8eZfit9uIaFvh/3NMY=</HostId></Error>
+2025/09/14 15:34:27 ERROR : images/processing2_lightmode.gif: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>AGA7J1P31S5Z1QAW</RequestId><HostId>L+bVS/U/usVFVUTe57gKVxnWmgK23Hduf6zZoRiVZ9INrRIlLKrf+JWZ2Qwh8tTTFRyFPuyq3KU=</HostId></Error>
+2025/09/14 15:34:28 ERROR : images/email.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>N2E3E8MH702XJFXJ</RequestId><HostId>w8cpPBPrNQs3TAw126DR+4Q7+xAaj4OcLDcO1wimgVKzTjcMnrzZmPC61T/cADdRn4Bkmc0LAhs=</HostId></Error>
+2025/09/14 15:34:29 ERROR : images/email_light.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>YQ0X2FCNB30G4YSJ</RequestId><HostId>FDD39KIjOdxTtQ+Lsq8bYGawvX8nyRQFyAlYRBPgo0CSCXUKuqeKuc8XkAEXtw+5u/nsc60Q68k=</HostId></Error>
+2025/09/14 15:34:29 ERROR : js/thirdparty/plotly-2.16.1.min.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XK9VMNBM57NBGV2</RequestId><HostId>1mERwejsihd26iNqKbWKB5g9RWPpnbbzvI6uFrmmfMhb6anuhdT94ngOcVY9WuE9lsreEMFggu4=</HostId></Error>
+2025/09/14 15:34:29 ERROR : S3 bucket staging-retirementodds-com: not deleting files as there were IO errors
+2025/09/14 15:34:29 ERROR : S3 bucket staging-retirementodds-com: not deleting directories as there were IO errors
+2025/09/14 15:34:29 ERROR : Attempt 2/3 failed with 53 errors and: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XK9VMNBM57NBGV2</RequestId><HostId>1mERwejsihd26iNqKbWKB5g9RWPpnbbzvI6uFrmmfMhb6anuhdT94ngOcVY9WuE9lsreEMFggu4=</HostId></Error>
+2025/09/14 15:34:30 INFO  : S3 bucket staging-retirementodds-com: Waiting for checks to finish
+2025/09/14 15:34:30 INFO  : S3 bucket staging-retirementodds-com: Waiting for transfers to finish
+2025/09/14 15:34:30 ERROR : index.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XKCTRW9HGP5N5SF</RequestId><HostId>D4x3AloW43kJt7t+b1bLhHZEP9afBBFJmv9gzK59GGHusvSSmj+Skf3sbvwj18+iugW4ZvTxGX0=</HostId></Error>
+2025/09/14 15:34:30 ERROR : html/donate.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XK781BX9WQ8XGHF</RequestId><HostId>nOwcOHThsS2a4oNteIvu7+lO9ThQvBJcY5EPxDSnJFO+rt0T6u8T7rSfcsT2B9DHvFBte+ZBVLg=</HostId></Error>
+2025/09/14 15:34:30 ERROR : assets/markethistory.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XK9GPXN508EGEE6</RequestId><HostId>GrZNdw4aD/T82FqXso8enkddviFV8wcfeAo+xTMD+GEPRXZsGiCNz1NaEBiLh12bU34Qt6nCX8s=</HostId></Error>
+2025/09/14 15:34:30 ERROR : css/responsive_plots.css: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XK239RJVYZ7QQ89</RequestId><HostId>Pf5gYXB8Fncy6V1RmqDxOwtuXUqnb2IypeeCi8Q6TsoiukU9QTyy5VtM0Fv+nRauPgZJKXlhrcs=</HostId></Error>
+2025/09/14 15:34:30 ERROR : assets/inflationdata.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XK3NABD6EY8R3AB</RequestId><HostId>JbZrAI5Lu3gqizyGjVv3h0V2TW+MHaDufA5vSvifc1yie3p+UkfkWzNJPw9p1abZS2bB9isPOpg=</HostId></Error>
+2025/09/14 15:34:30 ERROR : assets/realEstateROI.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XK1ZKEMP1NEBHBM</RequestId><HostId>+/rFpTQV0VtGNZ8XN242u6HoCcJUbZ1lqG8irWyvKHII6lBvfjFWosWTisUKhQKF9SHQuZmPO6w=</HostId></Error>
+2025/09/14 15:34:30 ERROR : html/aboutMe.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XKBR5433A08W3BK</RequestId><HostId>MPd83twQmg+bRuk3pfZImJa7iWQsIJpaY/FcjhRKeQrFcEss+Qt2MldOf0s0dOXVatmARKWTHcw=</HostId></Error>
+2025/09/14 15:34:30 ERROR : html/feedback.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XK6P15KRWVMNZM8</RequestId><HostId>wywdg2W4DJy4u0iT0T3ZPn2EtvDhkh6KThRc94Q4xaWRTquAMwj2vnLeOtFm7Xx9YA2A55octAk=</HostId></Error>
+2025/09/14 15:34:30 ERROR : js/data/sampleplan.json: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XK99TY11CPAPVK3</RequestId><HostId>9+PbEqFquHZVtO0SC70imQ9zNBGAkVRTXoSCEN4SM8SzLoSZw2u8O28HkwrkRhjxpmm7NzIVMlo=</HostId></Error>
+2025/09/14 15:34:30 ERROR : html/disclosures.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XK9M25CMRT809D8</RequestId><HostId>RXYulgf4OFSyEY5s3pxEHpMFoqnBW6yYP0qw2rm8RNDWqNQvK2CPb8YalhKBRasdqr41EQMmnBM=</HostId></Error>
+2025/09/14 15:34:30 ERROR : js/util.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XKEK3C4ZKZ3RQH9</RequestId><HostId>rEAIuQTaf3WhNq4XOGMYCa/pdhnFGVa8FElRIj0zKyBhuWR09iEqhnjRcBuLu5im9+kprIarPFs=</HostId></Error>
+2025/09/14 15:34:30 ERROR : css/results.css: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XKFJZZG0XJA75DC</RequestId><HostId>MHAVtITLkD7hKyoRmyv1opR3A9mrHhZQQjjuDPj/ZBNRaM8LyqQTM3JfZ0CYnjHVcuwMne76nmU=</HostId></Error>
+2025/09/14 15:34:30 ERROR : html/contact.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XKB3SZMBSJYAD5T</RequestId><HostId>iWiXXoNup+v1gEZEumm29osTVzbe8M1VIS2NTHzj+bLsWIhzSn0Wsnju7v7J/6V1qv0WLAnkaxE=</HostId></Error>
+2025/09/14 15:34:30 ERROR : assets/marketreturns.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XKFTEM0Q0045DGH</RequestId><HostId>dRNMKtiQjFez5phQJjQlSqlNDVvZsO5aYFJKSePCrTf+o7IKmCG/GM6Bajg4J2ylleWCUoRhtJA=</HostId></Error>
+2025/09/14 15:34:30 ERROR : html/about.html: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XKF81KPEZPV7MAD</RequestId><HostId>zm8Da1BX0B36tmWO411mcfBUPgUQlS+ur6BG107s98/r4F9M2q9gjswl3lfguk87+knGYHuHT7w=</HostId></Error>
+2025/09/14 15:34:30 ERROR : images/donate.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XKB4NPW3BMHBHTJ</RequestId><HostId>HStMB5PNPp1ZYrhAvPl0nbjWUdrbGH7YVxLUPsH+omKZEDW367Oh66YqMCYN6+kK46XzOiy8YoY=</HostId></Error>
+2025/09/14 15:34:30 ERROR : images/piggy-transparent.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>2XK5B39G1PFJ3HVG</RequestId><HostId>jPndMfQPhRbQyo3hu4ZJwuye+gK6HP4v26/XZNNkQSI+iZprkSZJlAlf1N78Br8bItnoVBU5z/A=</HostId></Error>
+2025/09/14 15:34:30 ERROR : js/results.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>3NY6N68Y7BQ1FDPM</RequestId><HostId>L5nPGUQ6Xg5qerWcKylfSmelLNuy/XCePsJ/83SgAVDPJl7P0YS3T0vdN/zt37W13QnOdhtc+us=</HostId></Error>
+2025/09/14 15:34:30 ERROR : css/ro.css: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>3NYDD80Q0NV5Q1Q3</RequestId><HostId>e825Pwh85mCaLavNy/tiC2biFk+DQWlFICEaGXV41g3egkL51U0eI0/nHUK1xCe9lqbfaivfd5s=</HostId></Error>
+2025/09/14 15:34:30 ERROR : images/chris2.jpg: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>3NYEWVC32RDBE71W</RequestId><HostId>IjIOYinbqjRrkyJmkO23LP9BaZX4wvxttar4PZAItOHj4+7+9hVSrEX1EBd4o2QwTEFxTaGnOFs=</HostId></Error>
+2025/09/14 15:34:31 ERROR : js/ro.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>3NY3EA3DACVZFD3W</RequestId><HostId>Rap88q3cLry4oaXVnJvrsl1DgJUE2iTc3go00TaiQgqvi1eo+Js74k2KowaAviA6aaqH/iv69Ws=</HostId></Error>
+2025/09/14 15:34:31 ERROR : images/processing3.gif: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>3NY6904M1C5M4192</RequestId><HostId>otcmKEGRE8wDx+ARBvrcDeZ2dkHHj+SM5A/cCDEMyoAP9z0je7JDZoH8ra5/1N5cgIqNWL8LwqM=</HostId></Error>
+2025/09/14 15:34:31 ERROR : images/processing2_lightmode.gif: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>MDVFH0V5KA66FJH3</RequestId><HostId>Uv3WDd2nSQBfqd6JWqBM/fFsTNgVhPwZuyyNa68rJSousRnxlUJVvL2q+hD9r2nshDLLhI1DDuM=</HostId></Error>
+2025/09/14 15:34:33 ERROR : images/email.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>M39FKSGDGKGT80FM</RequestId><HostId>hM83BjoHjLfION/BJ/dDj4zjMyI3Lhj0SlUM7k5Ia+IZlGMVNShW+QrKQh5T8cM2zpJ/Re/0Qv4=</HostId></Error>
+2025/09/14 15:34:35 ERROR : images/email_light.png: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>WY6K27STEM9CTD0X</RequestId><HostId>XBi5GTJDDmacWX84FVO3X5ADzLeW4H0RaEb2uj3OxS6j/bzAP3N2FCVSZNk0hrbPKnFghLJmGC0=</HostId></Error>
+2025/09/14 15:34:35 ERROR : js/thirdparty/plotly-2.16.1.min.js: Failed to copy: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>WY6H3VJHD1M1WQBP</RequestId><HostId>HT/fq0ohjZdBdyD02HoxglKSNhRrs/u/xEpbPKX1YnqcUbXNiArkARN/k8i++Xa3lZB3sIew+0I=</HostId></Error>
+2025/09/14 15:34:35 ERROR : S3 bucket staging-retirementodds-com: not deleting files as there were IO errors
+2025/09/14 15:34:35 ERROR : S3 bucket staging-retirementodds-com: not deleting directories as there were IO errors
+2025/09/14 15:34:35 ERROR : Attempt 3/3 failed with 53 errors and: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>WY6H3VJHD1M1WQBP</RequestId><HostId>HT/fq0ohjZdBdyD02HoxglKSNhRrs/u/xEpbPKX1YnqcUbXNiArkARN/k8i++Xa3lZB3sIew+0I=</HostId></Error>
+2025/09/14 15:34:35 Failed to sync with 53 errors: last error was: s3 upload: 400 Bad Request: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessControlListNotSupported</Code><Message>The bucket does not allow ACLs</Message><RequestId>WY6H3VJHD1M1WQBP</RequestId><HostId>HT/fq0ohjZdBdyD02HoxglKSNhRrs/u/xEpbPKX1YnqcUbXNiArkARN/k8i++Xa3lZB3sIew+0I=</HostId></Error>
+2025/09/14 15:42:08 NOTICE: S3 bucket staging-retirementodds-com: Switched region to "us-east-2" from "us-east-1"
+2025/09/14 15:42:09 INFO  : S3 bucket staging-retirementodds-com: Waiting for checks to finish
+2025/09/14 15:42:09 INFO  : S3 bucket staging-retirementodds-com: Waiting for transfers to finish
+2025/09/14 15:42:10 INFO  : index.html: Copied (new)
+2025/09/14 15:42:10 INFO  : assets/inflationdata.js: Copied (new)
+2025/09/14 15:42:10 INFO  : css/responsive_plots.css: Copied (new)
+2025/09/14 15:42:10 INFO  : css/results.css: Copied (new)
+2025/09/14 15:42:10 INFO  : html/donate.html: Copied (new)
+2025/09/14 15:42:11 INFO  : js/util.js: Copied (new)
+2025/09/14 15:42:11 INFO  : js/data/sampleplan.json: Copied (new)
+2025/09/14 15:42:11 INFO  : html/feedback.html: Copied (new)
+2025/09/14 15:42:11 INFO  : assets/marketreturns.js: Copied (new)
+2025/09/14 15:42:11 INFO  : assets/realEstateROI.js: Copied (new)
+2025/09/14 15:42:11 INFO  : html/disclosures.html: Copied (new)
+2025/09/14 15:42:11 INFO  : css/ro.css: Copied (new)
+2025/09/14 15:42:11 INFO  : html/contact.html: Copied (new)
+2025/09/14 15:42:11 INFO  : assets/markethistory.js: Copied (new)
+2025/09/14 15:42:11 INFO  : html/aboutMe.html: Copied (new)
+2025/09/14 15:42:11 INFO  : images/piggy-transparent.png: Copied (new)
+2025/09/14 15:42:11 INFO  : images/donate.png: Copied (new)
+2025/09/14 15:42:11 INFO  : html/about.html: Copied (new)
+2025/09/14 15:42:11 INFO  : js/results.js: Copied (new)
+2025/09/14 15:42:12 INFO  : js/ro.js: Copied (new)
+2025/09/14 15:42:12 INFO  : images/chris2.jpg: Copied (new)
+2025/09/14 15:42:12 INFO  : images/processing3.gif: Copied (new)
+2025/09/14 15:42:13 INFO  : images/processing2_lightmode.gif: Copied (new)
+2025/09/14 15:42:15 INFO  : images/email.png: Copied (new)
+2025/09/14 15:42:15 INFO  : js/thirdparty/plotly-2.16.1.min.js: Copied (new)
+2025/09/14 15:42:17 INFO  : images/email_light.png: Copied (new)
+2025/09/14 15:42:17 INFO  : Waiting for deletions to finish
+2025/09/14 15:42:17 INFO  : 
+Transferred:   	    7.370M / 7.370 MBytes, 100%, 970.244 kBytes/s, ETA 0s
+Errors:                 0
+Checks:                 0 / 0, -
+Transferred:           26 / 26, 100%
+Elapsed time:        7.7s
+
