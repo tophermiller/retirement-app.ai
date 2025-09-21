@@ -1,4 +1,8 @@
 
+var staging = false;
+
+
+
 /* Icons */
 function icon(name){
   const wrap = document.createElement('span'); wrap.className = 'icon';
@@ -704,7 +708,18 @@ function render(){
       nextSectionBtn.innerHTML = '';
       nextSectionBtn.className = 'navbtn';
       const idx = sections.findIndex(s => s.key === active);
-      if (idx >= 0 && idx < sections.length - 1) {
+      // Always show Calculate on Expenses, even if a Results section exists
+      if (active === 'zeta') {
+        const sp = document.createElement('span');
+        sp.textContent = 'Calculate My RetirementOdds';
+        nextSectionBtn.className = 'btn ok';
+        const calcIcon = document.createElement('span'); calcIcon.className='icon'; calcIcon.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="11" x2="11" y2="11"/><line x1="13" y1="11" x2="17" y2="11"/><line x1="7" y1="15" x2="17" y2="15"/></svg>`;
+        nextSectionBtn.appendChild(calcIcon);
+        nextSectionBtn.appendChild(sp);
+        nextSectionBtn.onclick = () => submitBtn.click();
+        panelNextFooter.classList.remove('hidden');
+      } else if (idx >= 0 && idx < sections.length - 1) {
+    
         const next = sections[idx + 1];
         nextSectionBtn.appendChild(icon(next.icon));
         const sp = document.createElement('span');
@@ -716,7 +731,7 @@ function render(){
         const sp = document.createElement('span');
         sp.textContent = 'Calculate My RetirementOdds';
         nextSectionBtn.className = 'btn ok';
-        const calcIcon = document.createElement('span'); calcIcon.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="7" y="6.5" width="10" height="3" rx="1" ry="1" fill="currentColor"/><circle cx="9" cy="12" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15" cy="12" r="1.1" fill="currentColor"/><circle cx="9" cy="16" r="1.1" fill="currentColor"/><circle cx="12" cy="16" r="1.1" fill="currentColor"/><circle cx="15" cy="16" r="1.1" fill="currentColor"/></svg>`; nextSectionBtn.appendChild(calcIcon); nextSectionBtn.appendChild(sp);
+        const calcIcon = document.createElement('span'); calcIcon.className='icon'; calcIcon.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="11" x2="11" y2="11"/><line x1="13" y1="11" x2="17" y2="11"/><line x1="7" y1="15" x2="17" y2="15"/></svg>`; nextSectionBtn.appendChild(calcIcon); nextSectionBtn.appendChild(sp);
         nextSectionBtn.onclick = () => submitBtn.click();
         panelNextFooter.classList.remove('hidden');
       }
@@ -2801,7 +2816,16 @@ submitBtn.addEventListener('click', async ()=>{
   const data = buildPlanJSON();
   const body = btoa(JSON.stringify(data))
   showProcessingModal();
-  const response = await fetch('https://api.retirementodds.info/calculate/staging/calculate', {
+  let stagingUrl = 'https://rdgkyklxytiqub5rjfnypk3uye0lvtra.lambda-url.us-east-2.on.aws/staging.retirementodds.com';
+  let productionUrl = 'https://gsxhoeqef5pivi2lax4q42nnby0nqwvb.lambda-url.us-east-2.on.aws/www.retirementodds.com';
+  let apiUrl;
+  if (staging) {
+    apiUrl = stagingUrl;
+  }
+  else {
+    apiUrl = productionUrl;
+  }
+  const response = await fetch(apiUrl, {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
     mode: 'cors', // no-cors, *cors, same-origin
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -3279,6 +3303,7 @@ function buildRestoreList(){
     });
 
     // List of element IDs
+    /*
     const footerLinkIds = ["aboutSiteLink", "disclosureLink", "aboutMeLink", "donateLink", "contactLink"];
 
     // Generic click handler
@@ -3330,7 +3355,7 @@ function buildRestoreList(){
         el.addEventListener("click", handleFooterLinkClick);
       }
     });
-
+*/
     /* JSON preview toggle */
     if (previewJsonLink) previewJsonLink.addEventListener('click', ()=>{
       const errors = validateState();
@@ -3764,7 +3789,7 @@ function getTotalExpenses(){
 
 async function updateOdometer() {
   try {
-    const response = await fetch("/js/data/odometer/odometer.json");
+    const response = await fetch("https://www.retirementodds.com/js/data/odometer/odometer.json");
     const odometer = await response.json();
     const base = odometer.base;
     const counter = odometer.counter;
@@ -3821,3 +3846,93 @@ document.addEventListener('DOMContentLoaded', ()=>{
     };
   }catch(e){}
 })();
+
+
+
+
+// HASH TAG HANDLING
+//////////////////////
+    // Generic click handler
+    function handleFooterHash(clickedHash) {
+      let htmlLink;
+      switch (clickedHash) {
+        case "about":
+          htmlLink = "html/about.html";
+          break;
+        case "disclosures":
+          htmlLink = "html/disclosures.html";
+          break;
+        case "aboutme": 
+          htmlLink = "html/aboutMe.html";
+          break;
+        case "donate": 
+          htmlLink = "html/donate.html";
+          break;
+        case "contact":
+          htmlLink = "html/contact.html";
+          break;
+      }
+      hideErrorPanel();
+      fetch(htmlLink)
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("footerLinkContent").innerHTML = data;
+        })
+        .catch(error => {
+          console.error("Error loading footer link content:", error);
+        });
+        footerLinkMode = true;
+        if(jsonMode){
+          jsonMode = false;
+          jsonBox.classList.add('hidden');
+          previewJsonLink.textContent = 'Preview JSON';
+        }
+        active = '';
+        document.getElementById("footerLinkContent").classList.remove("hidden");
+        document.querySelector('.main').scrollIntoView({ behavior: 'smooth' });
+        render();
+    }
+
+
+
+// 1) Map hash "routes" to functions you want to run
+const hashActions = {
+  about: () => handleFooterHash('about'),   // your modal opener
+  disclosures:    () => handleFooterHash('disclosures'),        // your SPA navigation
+  aboutme: () =>  handleFooterHash('aboutme'),
+  donate: () =>   handleFooterHash('donate'),
+  contact: () =>  handleFooterHash('contact'),
+};
+
+
+// 2) Parse "#route?param1=val&param2=val"
+function parseHash(h) {
+  const s = (h || '').replace(/^#/, '');
+  if (!s) return { route: '', params: {} };
+  const [route, query = ''] = s.split('?');
+  const params = Object.fromEntries(new URLSearchParams(query));
+  return { route, params };
+}
+
+// 3) Run action on initial load and on hash changes
+function handleHash() {
+  const { route, params } = parseHash(location.hash);
+  const fn = hashActions[route];
+  if (typeof fn === 'function') {
+    fn(params);
+    // Optional: keep the URL “clean” (avoids accidental native anchor jumps)
+    // Comment this out if you want the hash to remain.
+    // history.replaceState(null, '', location.pathname + location.search + '#');
+  }
+}
+
+// Fire once on load (supports copy/paste or direct navigation)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', handleHash, { once: true });
+} else {
+  handleHash();
+}
+// Also respond to in-page clicks that change the hash
+window.addEventListener('hashchange', handleHash);
+
+

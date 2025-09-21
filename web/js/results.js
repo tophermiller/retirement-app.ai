@@ -1,57 +1,11 @@
 
+// Compatibility shim: themedLayout now handled by Plotly.newPlot override.
+// Keep as identity so existing calls still work.
+window.themedLayout = function(layout){ return layout || {}; };
 
-// ---- Dark mode helpers injected ----
-const __DARK_LAYOUT__ = {
-  template: "plotly_dark",
-  plot_bgcolor: "#1e1e1e",
-  paper_bgcolor: "#1e1e1e",
-  font: { color: "#FFFFFF" },
-};
-function mergeDark(layout) {
-  try {
-    if (!layout || typeof layout !== "object") layout = {};
-    const result = Object.assign({}, layout);
-    if (!("template" in result)) result.template = __DARK_LAYOUT__.template;
-    if (!("plot_bgcolor" in result)) result.plot_bgcolor = __DARK_LAYOUT__.plot_bgcolor;
-    if (!("paper_bgcolor" in result)) result.paper_bgcolor = __DARK_LAYOUT__.paper_bgcolor;
-    if (!("font" in result)) result.font = __DARK_LAYOUT__.font;
-    if (!("autosize" in result)) result.autosize = true;
-    result.xaxis = Object.assign({},
-      layout.xaxis || {},
-      { tickfont: Object.assign({ color: "#FFFFFF" }, (layout.xaxis && layout.xaxis.tickfont) || {}),
-        title: (layout.xaxis && layout.xaxis.title)
-          ? Object.assign({}, layout.xaxis.title, { font: Object.assign({ color: "#FFFFFF" }, (layout.xaxis.title.font||{})) })
-          : { text: (layout.xaxis && layout.xaxis.title && layout.xaxis.title.text) || (layout.xaxis && layout.xaxis.title) || undefined, font: { color: "#FFFFFF" } },
-        gridcolor: (layout.xaxis && layout.xaxis.gridcolor) || "#444"
-      }
-    );
-    result.yaxis = Object.assign({},
-      layout.yaxis || {},
-      { tickfont: Object.assign({ color: "#FFFFFF" }, (layout.yaxis && layout.yaxis.tickfont) || {}),
-        title: (layout.yaxis && layout.yaxis.title)
-          ? Object.assign({}, layout.yaxis.title, { font: Object.assign({ color: "#FFFFFF" }, (layout.yaxis.title.font||{})) })
-          : { text: (layout.yaxis && layout.yaxis.title && layout.yaxis.title.text) || (layout.yaxis && layout.yaxis.title) || undefined, font: { color: "#FFFFFF" } },
-        gridcolor: (layout.yaxis && layout.yaxis.gridcolor) || "#444"
-      }
-    );
-    result.legend = Object.assign({},
-      layout.legend || {},
-      { font: Object.assign({ color: "#FFFFFF" }, (layout.legend && layout.legend.font) || {}) }
-    );
-    if (result.title) {
-      if (typeof result.title === "string") {
-        result.title = { text: result.title, font: { color: "#FFFFFF" } };
-      } else {
-        result.title = Object.assign({}, result.title);
-        result.title.font = Object.assign({ color: "#FFFFFF" }, result.title.font || {});
-      }
-    }
-    return result;
-  } catch (e) {
-    return Object.assign({ template: "plotly_dark" }, layout || {});
-  }
-}
-// ---- End dark mode helpers ----
+
+
+
 
 
 if (typeof(results) === "undefined") {
@@ -437,7 +391,7 @@ if (typeof(results) === "undefined") {
 
       // Add click event listeners to each element
       chartsData.forEach(({buttonId, plotId, data, layout}) => {
-        document.getElementById(buttonId).addEventListener("click", () => Plotly.newPlot(plotId, data, mergeDark(mergeDark(layout, {autosize:true}, {responsive:true}), {responsive:true})));
+        document.getElementById(buttonId).addEventListener("click", () => Plotly.newPlot(plotId, data, themedLayout(themedLayout(layout, {autosize:true}, {responsive:true}), {responsive:true})));
       });
 
       document.getElementById("plot-assets-choice-liquid").click();
@@ -465,7 +419,7 @@ if (typeof(results) === "undefined") {
           yaxis: {title: "ROI", tickformat: ',.1%'},
           legend: {orientation: "h", xanchor: "center", x: 0.5, y: -0.2,}
         };
-        Plotly.newPlot("plot-randomroi", randomROIData, mergeDark(mergeDark(randomROILayout, {autosize:true}, {responsive:true}), {responsive:true}));
+        Plotly.newPlot("plot-randomroi", randomROIData, themedLayout(themedLayout(randomROILayout, {autosize:true}, {responsive:true}), {responsive:true}));
         document.getElementById("plot-randomroi-actual-number").innerHTML = rateArray.length;
         document.getElementById("plot-randomroi-actual-average").innerHTML = util.formatPercentageVal(100 * util.arrayAverage(rateArray));
         document.getElementById("plot-randomroi-actual-display").style.display = "block";
@@ -482,3 +436,162 @@ if (typeof(results) === "undefined") {
 
   }
 }
+
+
+
+// === Plotly theme adapter (First Pass) ===============================
+(function(){
+  if (!window.Plotly || !Plotly.newPlot) return;
+  const cssVar = (name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  function plotlyLayoutBase(){
+    // Read theme colors from CSS and the .panel background so plots always match the panel
+    const cssVar = (name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const panelEl = document.querySelector(".panel") || document.body;
+    const panelBg = getComputedStyle(panelEl).backgroundColor || cssVar("--surface") || "white";
+    // Determine brightness to choose a sensible Plotly template for axes/legend defaults
+    const rgb = panelBg.match(/\d+(\.\d+)?/g) || [255,255,255];
+    const [r,g,b] = rgb.map(Number);
+    // Relative luminance approximation
+    const luminance = (0.2126*r + 0.7152*g + 0.0722*b) / 255;
+    const isLightBackground = luminance > 0.6;
+    // Build base layout
+    return {
+      autosize: true,
+      // Choose a template whose defaults suit the background brightness
+      template: isLightBackground ? "plotly_white" : "plotly_dark",
+      // Match panel background exactly
+      paper_bgcolor: panelBg,
+      plot_bgcolor: panelBg,
+      // Text and grid from theme vars
+      font: { color: cssVar("--text") || (isLightBackground ? "#111" : "#eee") },
+      xaxis: {
+        gridcolor: cssVar("--border") || (isLightBackground ? "#e2e8f0" : "#2b3445"),
+        zerolinecolor: cssVar("--border") || (isLightBackground ? "#e2e8f0" : "#2b3445"),
+        linecolor: cssVar("--border") || (isLightBackground ? "#cbd5e1" : "#3b455a"),
+        tickcolor: cssVar("--border") || (isLightBackground ? "#cbd5e1" : "#3b455a")
+      },
+      yaxis: {
+        gridcolor: cssVar("--border") || (isLightBackground ? "#e2e8f0" : "#2b3445"),
+        zerolinecolor: cssVar("--border") || (isLightBackground ? "#e2e8f0" : "#2b3445"),
+        linecolor: cssVar("--border") || (isLightBackground ? "#cbd5e1" : "#3b455a"),
+        tickcolor: cssVar("--border") || (isLightBackground ? "#cbd5e1" : "#3b455a")
+      },
+      legend: {
+        bgcolor: panelBg,
+        bordercolor: cssVar("--border") || (isLightBackground ? "#e2e8f0" : "#2b3445")
+      }
+    };
+  }
+  
+const _newPlot = Plotly.newPlot;
+function _asElement(gd){
+  if (!gd) return null;
+  if (typeof gd === "string") return document.getElementById(gd);
+  return gd;
+}
+function _installResizeObserver(gd){
+  try {
+    const el = _asElement(gd);
+    if (!el || el.__plotlyResizeObserver) return;
+    if (window.ResizeObserver){
+      const ro = new ResizeObserver(()=>{ try { Plotly.Plots.resize(el); } catch(e){} });
+      ro.observe(el);
+      el.__plotlyResizeObserver = ro;
+    } else {
+      // Fallback: window resize listener (debounced)
+      if (!window.__plotlyResizeFallback){
+        let tid=null;
+        window.addEventListener("resize", ()=>{
+          clearTimeout(tid);
+          tid=setTimeout(()=>{
+            document.querySelectorAll(".js-plotly-plot").forEach(g=>{ try{ Plotly.Plots.resize(g); }catch(e){} });
+          }, 100);
+        });
+        window.__plotlyResizeFallback = true;
+      }
+    }
+  } catch(e){ /* ignore */ }
+}
+Plotly.newPlot = function(gd, data, layout, config){
+  const base = plotlyLayoutBase();
+  const mergedLayout = Object.assign({ autosize: true }, base, layout||{});
+  const mergedConfig = Object.assign({ responsive: true }, config||{});
+  const ret = _newPlot.call(Plotly, gd, data, mergedLayout, mergedConfig);
+  try { _installResizeObserver(gd); } catch(e){}
+  return ret;
+};
+
+  document.addEventListener("themechange", ()=>{
+    try {
+      if (window.render) window.render();
+    } catch(e){ console.warn("themechange rerender failed", e); }
+  });
+
+// --- Plotly theme live-updater ---
+(function(){
+  if (!window.Plotly) return;
+  // Re-apply themed layout to all existing plots without rebuilding traces
+  function updateAllPlotsTheme(){
+    try {
+      const base = plotlyLayoutBase();
+      const plots = document.querySelectorAll(".js-plotly-plot");
+      plots.forEach((gd)=>{
+        // Only update layout keys we control, avoid wiping user-specified layout
+        const themed = {
+          template: base.template,
+          paper_bgcolor: base.paper_bgcolor,
+          plot_bgcolor: base.plot_bgcolor,
+          font: base.font,
+          "xaxis.gridcolor": base.xaxis.gridcolor,
+          "xaxis.zerolinecolor": base.xaxis.zerolinecolor,
+          "xaxis.linecolor": base.xaxis.linecolor,
+          "xaxis.tickcolor": base.xaxis.tickcolor,
+          "yaxis.gridcolor": base.yaxis.gridcolor,
+          "yaxis.zerolinecolor": base.yaxis.zerolinecolor,
+          "yaxis.linecolor": base.yaxis.linecolor,
+          "yaxis.tickcolor": base.yaxis.tickcolor,
+          "legend.bgcolor": base.legend.bgcolor,
+          "legend.bordercolor": base.legend.bordercolor
+        };
+        Plotly.relayout(gd, themed);
+        Plotly.Plots.resize(gd);
+      });
+    } catch(e){ console.warn("updateAllPlotsTheme failed", e); }
+  }
+  window.updateAllPlotsTheme = updateAllPlotsTheme;
+
+  // Observe changes to the theme attribute on <html>
+  const root = document.documentElement;
+  try {
+    const mo = new MutationObserver((mutations)=>{
+      for (const m of mutations){
+        if (m.type === "attributes" && m.attributeName === "data-theme"){
+          updateAllPlotsTheme();
+          // downstream code may also re-render if needed
+          const ev = new Event("themechange");
+          document.dispatchEvent(ev);
+        }
+      }
+    });
+    mo.observe(root, { attributes:true, attributeFilter:["data-theme"] });
+  } catch(e){ console.warn("Theme observer failed", e); }
+
+  // Also, if a custom theme switcher toggles a class instead of data-theme, watch for class changes too.
+  try {
+    const mo2 = new MutationObserver((mutations)=>{
+      for (const m of mutations){
+        if (m.type === "attributes" && m.attributeName === "class"){
+          // Heuristic: if CSS variables changed, panel background will change; just update.
+          updateAllPlotsTheme();
+          const ev = new Event("themechange");
+          document.dispatchEvent(ev);
+        }
+      }
+    });
+    mo2.observe(root, { attributes:true, attributeFilter:["class"] });
+  } catch(e){ /* ignore */ }
+})();
+// --- end Plotly theme live-updater ---
+
+
+})();

@@ -6,3 +6,15 @@
   min-width: 430px !important;
 }
 /* ---- End injected ---- */
+
+
+/* Ensure Plotly containers size to their parent width and center nicely */
+.plot, .plotly-container, .js-plotly-plot {
+  width: 100% !important;
+  max-width: 100%;
+}
+.plot {
+  margin-left: auto;
+  margin-right: auto;
+}
+
