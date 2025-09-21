@@ -242,3 +242,45 @@ if (typeof(util) === "undefined") {
 
   }
 }
+
+
+// === Theme Init (First Pass) =========================================
+(function setupTheme(){try{
+  const root = document.documentElement;
+  const stored = localStorage.getItem("theme");
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const initial = stored || "light";
+  root.setAttribute("data-theme", initial);
+  window.setTheme = (next)=>{
+    root.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+    document.dispatchEvent(new CustomEvent("themechange", { detail: { theme: next }}));
+  };
+}catch(e){ console.warn("Theme setup failed", e); }})();
+
+
+// === In-page iOS-style Theme Switch wiring ===
+(function initThemeToggleSwitch(){
+  function sync(){
+    const btn = document.getElementById("themeToggleSwitch");
+    if(!btn) return;
+    const theme = document.documentElement.getAttribute("data-theme") || "dark";
+    const isLight = (theme === "light");
+    btn.setAttribute("aria-checked", String(isLight));
+    const label = btn.querySelector(".label");
+    if(label) label.textContent = isLight ? "Light" : "Dark";
+  }
+  function onClick(e){
+    const btn = document.getElementById("themeToggleSwitch");
+    if(!btn) return;
+    if (btn.contains(e.target)) {
+      const theme = document.documentElement.getAttribute("data-theme") || "dark";
+      setTheme(theme === "light" ? "dark" : "light");
+    }
+  }
+  document.addEventListener("click", onClick);
+  document.addEventListener("themechange", sync);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", sync);
+  } else { sync(); }
+})();
