@@ -3378,14 +3378,14 @@ function buildRestoreList(){
       }
       render();
     });
-
+/*
     document.getElementById("donating").addEventListener('click', ()=>{
       document.getElementById("donateLink").click();
     })
     document.getElementById("reachOut").addEventListener('click', ()=>{
       document.getElementById("contactLink").click();
     })
-
+*/
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', setup); } else { setup(); }
 })();
