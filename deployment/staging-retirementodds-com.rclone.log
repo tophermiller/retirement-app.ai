@@ -224,3 +224,55 @@ Checks:                26 / 26, 100%
 Transferred:            1 / 1, 100%
 Elapsed time:       800ms
 
+2025/09/20 17:28:20 NOTICE: S3 bucket staging-retirementodds-com: Switched region to "us-east-2" from "us-east-1"
+2025/09/20 17:28:20 INFO  : S3 bucket staging-retirementodds-com: Waiting for checks to finish
+2025/09/20 17:28:20 INFO  : index.html: Copied (replaced existing)
+2025/09/20 17:28:20 INFO  : css/results.css: Copied (replaced existing)
+2025/09/20 17:28:21 INFO  : S3 bucket staging-retirementodds-com: Waiting for transfers to finish
+2025/09/20 17:28:21 INFO  : js/ro.js: Copied (replaced existing)
+2025/09/20 17:28:21 INFO  : Waiting for deletions to finish
+2025/09/20 17:28:21 INFO  : 
+Transferred:   	  192.375k / 192.375 kBytes, 100%, 214.466 kBytes/s, ETA 0s
+Errors:                 0
+Checks:                26 / 26, 100%
+Transferred:            3 / 3, 100%
+Elapsed time:       800ms
+
+2025/09/20 17:31:59 NOTICE: S3 bucket staging-retirementodds-com: Switched region to "us-east-2" from "us-east-1"
+2025/09/20 17:31:59 INFO  : S3 bucket staging-retirementodds-com: Waiting for checks to finish
+2025/09/20 17:31:59 INFO  : css/results.css: Copied (replaced existing)
+2025/09/20 17:32:00 INFO  : S3 bucket staging-retirementodds-com: Waiting for transfers to finish
+2025/09/20 17:32:00 INFO  : Waiting for deletions to finish
+2025/09/20 17:32:00 INFO  : 
+Transferred:   	       832 / 832 Bytes, 100%, 1.301 kBytes/s, ETA 0s
+Errors:                 0
+Checks:                26 / 26, 100%
+Transferred:            1 / 1, 100%
+Elapsed time:       600ms
+
+2025/09/20 17:45:30 NOTICE: S3 bucket staging-retirementodds-com: Switched region to "us-east-2" from "us-east-1"
+2025/09/20 17:45:31 INFO  : S3 bucket staging-retirementodds-com: Waiting for checks to finish
+2025/09/20 17:45:31 INFO  : index.html: Copied (replaced existing)
+2025/09/20 17:45:31 INFO  : html/aboutMe.html: Copied (replaced existing)
+2025/09/20 17:45:31 INFO  : html/disclosures.html: Copied (replaced existing)
+2025/09/20 17:45:31 INFO  : S3 bucket staging-retirementodds-com: Waiting for transfers to finish
+2025/09/20 17:45:31 INFO  : Waiting for deletions to finish
+2025/09/20 17:45:31 INFO  : 
+Transferred:   	   31.884k / 31.884 kBytes, 100%, 36.315 kBytes/s, ETA 0s
+Errors:                 0
+Checks:                26 / 26, 100%
+Transferred:            3 / 3, 100%
+Elapsed time:       800ms
+
+2025/09/20 17:54:49 NOTICE: S3 bucket staging-retirementodds-com: Switched region to "us-east-2" from "us-east-1"
+2025/09/20 17:54:50 INFO  : S3 bucket staging-retirementodds-com: Waiting for checks to finish
+2025/09/20 17:54:50 INFO  : js/util.js: Copied (replaced existing)
+2025/09/20 17:54:50 INFO  : S3 bucket staging-retirementodds-com: Waiting for transfers to finish
+2025/09/20 17:54:50 INFO  : Waiting for deletions to finish
+2025/09/20 17:54:50 INFO  : 
+Transferred:   	    8.679k / 8.679 kBytes, 100%, 13.048 kBytes/s, ETA 0s
+Errors:                 0
+Checks:                26 / 26, 100%
+Transferred:            1 / 1, 100%
+Elapsed time:       600ms
+

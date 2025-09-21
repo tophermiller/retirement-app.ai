@@ -3,8 +3,8 @@
 /* --- Net worth columns --- */
 .tnw-cols{display:grid;grid-template-columns:1fr;gap:.25rem;margin:.5rem 0 1rem 0}
 .tnw-row{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:baseline}
-.tnw-num{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;min-width:8ch}
-.tnw-txt{}
+.tnw-num{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;min-width:15ch}
+
 .tnw-sep{border-top:1px solid var(--border-color, #666);margin:.25rem 0}
 .tnw-total .tnw-num{font-weight:700}
 .tnw-total .tnw-txt{font-weight:700}

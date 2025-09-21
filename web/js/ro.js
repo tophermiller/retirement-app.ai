@@ -3789,7 +3789,7 @@ function getTotalExpenses(){
 
 async function updateOdometer() {
   try {
-    const response = await fetch("/js/data/odometer/odometer.json");
+    const response = await fetch("https://www.retirementodds.com/js/data/odometer/odometer.json");
     const odometer = await response.json();
     const base = odometer.base;
     const counter = odometer.counter;
