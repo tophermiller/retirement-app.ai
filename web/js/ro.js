@@ -1,4 +1,8 @@
 
+var staging = true;
+
+
+
 /* Icons */
 function icon(name){
   const wrap = document.createElement('span'); wrap.className = 'icon';
@@ -2812,7 +2816,16 @@ submitBtn.addEventListener('click', async ()=>{
   const data = buildPlanJSON();
   const body = btoa(JSON.stringify(data))
   showProcessingModal();
-  const response = await fetch('https://api.retirementodds.info/calculate/staging/calculate', {
+  let stagingUrl = 'https://rdgkyklxytiqub5rjfnypk3uye0lvtra.lambda-url.us-east-2.on.aws/staging.retirementodds.com';
+  let productionUrl = 'https://gsxhoeqef5pivi2lax4q42nnby0nqwvb.lambda-url.us-east-2.on.aws/www.retirementodds.com';
+  let apiUrl;
+  if (staging) {
+    apiUrl = stagingUrl;
+  }
+  else {
+    apiUrl = productionUrl;
+  }
+  const response = await fetch(apiUrl, {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
     mode: 'cors', // no-cors, *cors, same-origin
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -3921,3 +3934,5 @@ if (document.readyState === 'loading') {
 }
 // Also respond to in-page clicks that change the hash
 window.addEventListener('hashchange', handleHash);
+
+
