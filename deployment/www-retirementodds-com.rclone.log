@@ -1,0 +1,164 @@
+2025/09/20 18:00:41 NOTICE: S3 bucket www-retirementodds-com: Switched region to "us-east-2" from "us-east-1"
+2025/09/20 18:00:43 INFO  : assets/inflationdata.js: Copied (new)
+2025/09/20 18:00:43 INFO  : assets/realEstateROI.js: Copied (new)
+2025/09/20 18:00:43 INFO  : assets/marketreturns.js: Copied (new)
+2025/09/20 18:00:43 INFO  : js/util.js: Copied (replaced existing)
+2025/09/20 18:00:43 INFO  : index.html: Copied (replaced existing)
+2025/09/20 18:00:43 INFO  : html/disclosures.html: Copied (replaced existing)
+2025/09/20 18:00:43 INFO  : html/aboutMe.html: Copied (new)
+2025/09/20 18:00:43 INFO  : images/donate.png: Updated modification time in destination
+2025/09/20 18:00:43 INFO  : assets/markethistory.js: Copied (new)
+2025/09/20 18:00:43 INFO  : css/ro.css: Copied (new)
+2025/09/20 18:00:43 INFO  : css/responsive_plots.css: Copied (new)
+2025/09/20 18:00:43 INFO  : css/results.css: Copied (new)
+2025/09/20 18:00:43 INFO  : js/ro.js: Copied (new)
+2025/09/20 18:00:43 INFO  : images/piggy-transparent.png: Copied (new)
+2025/09/20 18:00:43 INFO  : html/contact.html: Copied (new)
+2025/09/20 18:00:43 INFO  : js/results.js: Copied (replaced existing)
+2025/09/20 18:00:43 INFO  : S3 bucket www-retirementodds-com: Waiting for checks to finish
+2025/09/20 18:00:43 INFO  : html/feedback.html: Updated modification time in destination
+2025/09/20 18:00:43 INFO  : images/chris2.jpg: Updated modification time in destination
+2025/09/20 18:00:43 INFO  : S3 bucket www-retirementodds-com: Waiting for transfers to finish
+2025/09/20 18:00:43 INFO  : html/donate.html: Copied (replaced existing)
+2025/09/20 18:00:43 INFO  : js/data/sampleplan.json: Copied (new)
+2025/09/20 18:00:43 INFO  : html/about.html: Copied (replaced existing)
+2025/09/20 18:00:43 INFO  : images/processing3.gif: Copied (new)
+2025/09/20 18:00:45 INFO  : images/processing2_lightmode.gif: Copied (new)
+2025/09/20 18:00:46 INFO  : images/email_light.png: Copied (new)
+2025/09/20 18:00:47 INFO  : images/email.png: Copied (new)
+2025/09/20 18:00:48 INFO  : js/thirdparty/plotly-2.16.1.min.js: Copied (replaced existing)
+2025/09/20 18:00:48 INFO  : Waiting for deletions to finish
+2025/09/20 18:00:48 INFO  : js/helpTab.js: Deleted
+2025/09/20 18:00:48 INFO  : html/property.html: Deleted
+2025/09/20 18:00:48 INFO  : js/all.js: Deleted
+2025/09/20 18:00:48 INFO  : js/data/marketreturns.js: Deleted
+2025/09/20 18:00:48 INFO  : images/piggyico.jpg: Deleted
+2025/09/20 18:00:48 INFO  : js/thirdparty/cookieconsent-2.8.9.js: Deleted
+2025/09/20 18:00:48 INFO  : html/income.html: Deleted
+2025/09/20 18:00:48 INFO  : css/comparisontable.css: Deleted
+2025/09/20 18:00:48 INFO  : html/help.html: Deleted
+2025/09/20 18:00:48 INFO  : js/thirdparty/vanilla-tabs.min.js: Deleted
+2025/09/20 18:00:48 INFO  : images/new.jpg: Deleted
+2025/09/20 18:00:48 INFO  : js/data/states2.js: Deleted
+2025/09/20 18:00:48 INFO  : ai/images/processing2_lightmode.gif: Deleted
+2025/09/20 18:00:48 INFO  : js/data/lifeExpectancies.js: Deleted
+2025/09/20 18:00:48 INFO  : images/donate.gif: Deleted
+2025/09/20 18:00:48 INFO  : html/spending.html: Deleted
+2025/09/20 18:00:48 INFO  : images/piggy.jpg: Deleted
+2025/09/20 18:00:48 INFO  : html/taxes.html: Deleted
+2025/09/20 18:00:48 INFO  : ai/images/email_light.png: Deleted
+2025/09/20 18:00:48 INFO  : html/saveload.html: Deleted
+2025/09/20 18:00:48 INFO  : ai/html/about.html: Deleted
+2025/09/20 18:00:48 INFO  : js/thirdparty/vanilla-tabs.js: Deleted
+2025/09/20 18:00:48 INFO  : images/iStock-1176074571.jpg: Deleted
+2025/09/20 18:00:48 INFO  : ai/css/ro.css: Deleted
+2025/09/20 18:00:48 INFO  : js/moreTab.js: Deleted
+2025/09/20 18:00:48 INFO  : images/pushpin.png: Deleted
+2025/09/20 18:00:48 INFO  : images/istockphoto-1176074571-1024x1024.jpg: Deleted
+2025/09/20 18:00:48 INFO  : ai/css/responsive_plots.css: Deleted
+2025/09/20 18:00:48 INFO  : ai/html/donate.html: Deleted
+2025/09/20 18:00:48 INFO  : css/framing.css: Deleted
+2025/09/20 18:00:48 INFO  : ai/html/contact.html: Deleted
+2025/09/20 18:00:48 INFO  : ai/assets/markethistory.js: Deleted
+2025/09/20 18:00:48 INFO  : images/beta.jpg: Deleted
+2025/09/20 18:00:48 INFO  : js/assets.js: Deleted
+2025/09/20 18:00:48 INFO  : html/whatIfMode.html: Deleted
+2025/09/20 18:00:48 INFO  : html/assets.html: Deleted
+2025/09/20 18:00:48 INFO  : images/patreon-logo.png: Deleted
+2025/09/20 18:00:48 INFO  : ai/js/results.js: Deleted
+2025/09/20 18:00:48 INFO  : js/aboutpage.js: Deleted
+2025/09/20 18:00:48 INFO  : html/calculator.html: Deleted
+2025/09/20 18:00:48 INFO  : images/processing.gif: Deleted
+2025/09/20 18:00:48 INFO  : js/obfuscation.js: Deleted
+2025/09/20 18:00:48 INFO  : js/helptips.js: Deleted
+2025/09/20 18:00:48 INFO  : html/spending/genericSpendingForm.html: Deleted
+2025/09/20 18:00:48 INFO  : images/arrow-left.jpg: Deleted
+2025/09/20 18:00:48 INFO  : ai/js/util.js: Deleted
+2025/09/20 18:00:48 INFO  : ai/js/data/sampleplan.json: Deleted
+2025/09/20 18:00:48 INFO  : html/assets/fixedRateSavingsForm.html: Deleted
+2025/09/20 18:00:48 INFO  : help/realEstateROI.html: Deleted
+2025/09/20 18:00:48 INFO  : images/collapse1.png: Deleted
+2025/09/20 18:00:48 INFO  : js/projector.js: Deleted
+2025/09/20 18:00:48 INFO  : html/growthrates.html: Deleted
+2025/09/20 18:00:48 INFO  : images/new_with_background.jpg: Deleted
+2025/09/20 18:00:48 INFO  : images/testing.png: Deleted
+2025/09/20 18:00:48 INFO  : ai/css/results.css: Deleted
+2025/09/20 18:00:48 INFO  : ai/html/disclosures.html: Deleted
+2025/09/20 18:00:48 INFO  : html/simple2.html: Deleted
+2025/09/20 18:00:48 INFO  : images/iStock-1176074571_Transparent.psd: Deleted
+2025/09/20 18:00:48 INFO  : css/modes.css: Deleted
+2025/09/20 18:00:48 INFO  : js/submitter.js: Deleted
+2025/09/20 18:00:48 INFO  : images/piggy200.jpg: Deleted
+2025/09/20 18:00:48 INFO  : debug.html: Deleted
+2025/09/20 18:00:48 INFO  : images/chris.jpg: Deleted
+2025/09/20 18:00:48 INFO  : images/collapse2.png: Deleted
+2025/09/20 18:00:48 INFO  : js/income.js: Deleted
+2025/09/20 18:00:48 INFO  : ads.txt: Deleted
+2025/09/20 18:00:48 INFO  : js/thirdparty/markdown-it.min.js: Deleted
+2025/09/20 18:00:48 INFO  : css/thirdparty/cookieconsent.css: Deleted
+2025/09/20 18:00:48 INFO  : ai/images/processing3.gif: Deleted
+2025/09/20 18:00:48 INFO  : js/modals.js: Deleted
+2025/09/20 18:00:48 INFO  : ai/assets/marketreturns.js: Deleted
+2025/09/20 18:00:48 INFO  : js/validator.js: Deleted
+2025/09/20 18:00:48 INFO  : js/simple2.js: Deleted
+2025/09/20 18:00:48 INFO  : html/spending/healthInsuranceForm.html: Deleted
+2025/09/20 18:00:48 INFO  : ai/images/email.png: Deleted
+2025/09/20 18:00:48 INFO  : images/fhd_01_Logo1_69b94cc7c1.png: Deleted
+2025/09/20 18:00:48 INFO  : help/roistd.html: Deleted
+2025/09/20 18:00:48 INFO  : images/ChatGPT-Logo.png: Deleted
+2025/09/20 18:00:48 INFO  : js/subsections.js: Deleted
+2025/09/20 18:00:48 INFO  : ai/assets/realEstateROI.js: Deleted
+2025/09/20 18:00:48 INFO  : ai/assets/inflationdata.js: Deleted
+2025/09/20 18:00:48 INFO  : ai/js/thirdparty/plotly-2.16.1.min.js: Deleted
+2025/09/20 18:00:48 INFO  : css/helptips.css: Deleted
+2025/09/20 18:00:48 INFO  : css/thirdparty/vanilla-tabs.min.css: Deleted
+2025/09/20 18:00:48 INFO  : html/income/socialSecurityForm.html: Deleted
+2025/09/20 18:00:48 INFO  : js/toptabs.js: Deleted
+2025/09/20 18:00:48 INFO  : html/assets/stockAssetFormPretax.html: Deleted
+2025/09/20 18:00:48 INFO  : js/thirdparty/cookieconsent-init.js: Deleted
+2025/09/20 18:00:48 INFO  : js/data/states.js: Deleted
+2025/09/20 18:00:48 INFO  : js/basics.js: Deleted
+2025/09/20 18:00:48 INFO  : js/roc.min.js: Deleted
+2025/09/20 18:00:48 INFO  : images/pushpin25.png: Deleted
+2025/09/20 18:00:48 INFO  : images/piggy2.jpg: Deleted
+2025/09/20 18:00:48 INFO  : images/processing2.gif: Deleted
+2025/09/20 18:00:48 INFO  : images/collapse-all-icon-16.jpg: Deleted
+2025/09/20 18:00:48 INFO  : js/spending.js: Deleted
+2025/09/20 18:00:49 INFO  : ai/images/piggy-transparent.png: Deleted
+2025/09/20 18:00:49 INFO  : ai/js/ro.js: Deleted
+2025/09/20 18:00:49 INFO  : js/thirdparty/crypto-js-4.1.1.min.js: Deleted
+2025/09/20 18:00:49 INFO  : images/donate.jpg: Deleted
+2025/09/20 18:00:49 INFO  : ai/images/donate.png: Deleted
+2025/09/20 18:00:49 INFO  : html/geoplugin_activation.html: Deleted
+2025/09/20 18:00:49 INFO  : html/property/property.html: Deleted
+2025/09/20 18:00:49 INFO  : html/basics.html: Deleted
+2025/09/20 18:00:49 INFO  : html/more.html: Deleted
+2025/09/20 18:00:49 INFO  : ai/index.html: Deleted
+2025/09/20 18:00:49 INFO  : html/spending/installmentLoanForm.html: Deleted
+2025/09/20 18:00:49 INFO  : images/leftarrow.png: Deleted
+2025/09/20 18:00:49 INFO  : images/new_with_transparent_area_filled.png: Deleted
+2025/09/20 18:00:49 INFO  : ai/html/aboutMe.html: Deleted
+2025/09/20 18:00:49 INFO  : css/ui.css: Deleted
+2025/09/20 18:00:49 INFO  : js/property.js: Deleted
+2025/09/20 18:00:49 INFO  : images/new-yellow.jpg: Deleted
+2025/09/20 18:00:49 INFO  : html/assets/stockAssetFormTaxable.html: Deleted
+2025/09/20 18:00:49 INFO  : js/whatif.js: Deleted
+2025/09/20 18:00:49 INFO  : js/saveload2.js: Deleted
+2025/09/20 18:00:49 INFO  : js/calculator.js: Deleted
+2025/09/20 18:00:49 INFO  : images/Patreon-logo-2013.png: Deleted
+2025/09/20 18:00:49 INFO  : ai/images/chris2.jpg: Deleted
+2025/09/20 18:00:49 INFO  : js/sections.js: Deleted
+2025/09/20 18:00:49 INFO  : js/growthrates.js: Deleted
+2025/09/20 18:00:49 INFO  : html/income/genericIncomeForm.html: Deleted
+2025/09/20 18:00:49 INFO  : js/data/realEstateROI.js: Deleted
+2025/09/20 18:00:49 INFO  : images/iStock-1176074571.eps: Deleted
+2025/09/20 18:00:49 INFO  : js/global.js: Deleted
+2025/09/20 18:00:49 INFO  : ai/html/feedback.html: Deleted
+2025/09/20 18:00:49 INFO  : js/feedback.js: Deleted
+2025/09/20 18:00:49 INFO  : 
+Transferred:   	    7.243M / 7.243 MBytes, 100%, 1.086 MBytes/s, ETA 0s
+Errors:                 0
+Checks:               137 / 137, 100%
+Transferred:           23 / 23, 100%
+Elapsed time:        6.6s
+
