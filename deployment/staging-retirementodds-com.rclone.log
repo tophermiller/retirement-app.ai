@@ -276,3 +276,42 @@ Checks:                26 / 26, 100%
 Transferred:            1 / 1, 100%
 Elapsed time:       600ms
 
+2025/09/21 18:17:02 NOTICE: Config file "C:\\Dropbox\\retirement-app.ai\\deployment\\rclone.conf" not found - using defaults
+2025/09/21 18:17:02 Failed to create file system for "s3:staging-retirementodds-com": didn't find section in config file
+2025/09/21 18:42:18 NOTICE: S3 bucket staging-retirementodds-com: Switched region to "us-east-2" from "us-east-1"
+2025/09/21 18:42:18 INFO  : S3 bucket staging-retirementodds-com: Waiting for checks to finish
+2025/09/21 18:42:19 INFO  : js/util.js: Copied (replaced existing)
+2025/09/21 18:42:19 INFO  : index.html: Copied (replaced existing)
+2025/09/21 18:42:19 INFO  : js/results.js: Copied (replaced existing)
+2025/09/21 18:42:19 INFO  : assets/realEstateROI.js: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : assets/marketreturns.js: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : assets/markethistory.js: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : assets/inflationdata.js: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : images/chris2.jpg: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : images/donate.png: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : images/email.png: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : images/email_light.png: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : images/piggy-transparent.png: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : js/ro.js: Copied (replaced existing)
+2025/09/21 18:42:19 INFO  : html/about.html: Copied (replaced existing)
+2025/09/21 18:42:19 INFO  : html/aboutMe.html: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : images/processing2_lightmode.gif: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : html/contact.html: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : images/processing3.gif: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : html/disclosures.html: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : html/donate.html: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : js/data/sampleplan.json: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : html/feedback.html: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : css/results.css: Copied (replaced existing)
+2025/09/21 18:42:19 INFO  : css/responsive_plots.css: Copied (replaced existing)
+2025/09/21 18:42:19 INFO  : css/ro.css: Copied (replaced existing)
+2025/09/21 18:42:19 INFO  : js/thirdparty/plotly-2.16.1.min.js: Updated modification time in destination
+2025/09/21 18:42:19 INFO  : S3 bucket staging-retirementodds-com: Waiting for transfers to finish
+2025/09/21 18:42:19 INFO  : Waiting for deletions to finish
+2025/09/21 18:42:19 INFO  : 
+Transferred:   	  306.768k / 306.768 kBytes, 100%, 246.834 kBytes/s, ETA 0s
+Errors:                 0
+Checks:                26 / 26, 100%
+Transferred:            8 / 8, 100%
+Elapsed time:        1.2s
+

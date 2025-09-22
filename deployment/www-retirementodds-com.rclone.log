@@ -162,3 +162,46 @@ Checks:               137 / 137, 100%
 Transferred:           23 / 23, 100%
 Elapsed time:        6.6s
 
+2025/09/21 18:17:46 NOTICE: Config file "C:\\Dropbox\\retirement-app.ai\\deployment\\rclone.conf" not found - using defaults
+2025/09/21 18:17:46 Failed to create file system for "s3:www-retirementodds-com": didn't find section in config file
+2025/09/21 18:28:17 NOTICE: Config file "C:\\Dropbox\\retirement-app.ai\\deployment\\rclone.conf" not found - using defaults
+2025/09/21 18:28:17 Failed to create file system for "s3:www-retirementodds-com": didn't find section in config file
+2025/09/21 18:34:08 NOTICE: Config file "C:\\Dropbox\\retirement-app.ai\\deployment\\rclone.conf" not found - using defaults
+2025/09/21 18:34:08 Failed to create file system for "s3:www-retirementodds-com": didn't find section in config file
+2025/09/21 18:41:42 NOTICE: S3 bucket www-retirementodds-com: Switched region to "us-east-2" from "us-east-1"
+2025/09/21 18:41:43 INFO  : S3 bucket www-retirementodds-com: Waiting for checks to finish
+2025/09/21 18:41:43 INFO  : index.html: Copied (replaced existing)
+2025/09/21 18:41:43 INFO  : css/results.css: Copied (replaced existing)
+2025/09/21 18:41:43 INFO  : js/util.js: Copied (replaced existing)
+2025/09/21 18:41:43 INFO  : css/responsive_plots.css: Copied (replaced existing)
+2025/09/21 18:41:43 INFO  : js/results.js: Copied (replaced existing)
+2025/09/21 18:41:43 INFO  : assets/marketreturns.js: Updated modification time in destination
+2025/09/21 18:41:43 INFO  : assets/realEstateROI.js: Updated modification time in destination
+2025/09/21 18:41:43 INFO  : assets/inflationdata.js: Updated modification time in destination
+2025/09/21 18:41:43 INFO  : html/about.html: Updated modification time in destination
+2025/09/21 18:41:43 INFO  : assets/markethistory.js: Updated modification time in destination
+2025/09/21 18:41:43 INFO  : html/disclosures.html: Updated modification time in destination
+2025/09/21 18:41:43 INFO  : html/contact.html: Updated modification time in destination
+2025/09/21 18:41:43 INFO  : html/aboutMe.html: Updated modification time in destination
+2025/09/21 18:41:43 INFO  : css/ro.css: Copied (replaced existing)
+2025/09/21 18:41:44 INFO  : js/ro.js: Copied (replaced existing)
+2025/09/21 18:41:44 INFO  : images/donate.png: Updated modification time in destination
+2025/09/21 18:41:44 INFO  : html/feedback.html: Updated modification time in destination
+2025/09/21 18:41:44 INFO  : images/piggy-transparent.png: Updated modification time in destination
+2025/09/21 18:41:44 INFO  : html/donate.html: Updated modification time in destination
+2025/09/21 18:41:44 INFO  : images/chris2.jpg: Updated modification time in destination
+2025/09/21 18:41:44 INFO  : images/email.png: Updated modification time in destination
+2025/09/21 18:41:44 INFO  : images/processing2_lightmode.gif: Updated modification time in destination
+2025/09/21 18:41:44 INFO  : images/email_light.png: Updated modification time in destination
+2025/09/21 18:41:44 INFO  : js/data/sampleplan.json: Updated modification time in destination
+2025/09/21 18:41:44 INFO  : images/processing3.gif: Updated modification time in destination
+2025/09/21 18:41:44 INFO  : js/thirdparty/plotly-2.16.1.min.js: Updated modification time in destination
+2025/09/21 18:41:44 INFO  : S3 bucket www-retirementodds-com: Waiting for transfers to finish
+2025/09/21 18:41:44 INFO  : Waiting for deletions to finish
+2025/09/21 18:41:44 INFO  : 
+Transferred:   	  272.974k / 272.974 kBytes, 100%, 214.534 kBytes/s, ETA 0s
+Errors:                 0
+Checks:                26 / 26, 100%
+Transferred:            7 / 7, 100%
+Elapsed time:        1.2s
+
