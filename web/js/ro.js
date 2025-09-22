@@ -1,5 +1,5 @@
 
-var staging = false;
+var staging = true;
 
 
 
@@ -2474,6 +2474,7 @@ function codeForYearSelection(yearSelection) {
 function buildPlanJSON(){
   const submittal = {};
   submittal.version = "5.0";
+  submittal.appStateV5 = state;
   //submittal.clickstream = "";
   submittal.mode = "advanced";
   try {submittal.city = geoplugin_city();} catch (e) {console.log('could not obtain city')}
@@ -3269,6 +3270,63 @@ function buildRestoreList(){
   }
 
   function setup(){
+    // Import state from optional ?data=<base64(JSON)> param before first render
+    (function(){
+      try {
+        // Prefer query string; also check hash query (e.g. #about?data=...)
+        let enc = new URLSearchParams(window.location.search || '').get('data');
+        if (!enc && window.location.hash && window.location.hash.includes('?')) {
+          const qs = window.location.hash.split('?')[1] || '';
+          enc = new URLSearchParams(qs).get('data');
+        }
+        if (!enc) return;
+
+        // Accept URL-safe base64; normalize and pad
+        enc = String(enc).replace(/\s+/g,'+').replace(/-/g,'+').replace(/_/g,'/');
+        const pad = enc.length % 4; if (pad) enc += '='.repeat(4 - pad);
+
+        // Decode
+        let jsonText = atob(enc);
+
+        // Parse JSON (supports either raw state or wrapper {name,updatedAt,data})
+        const parsed = JSON.parse(jsonText);
+        const newState = (parsed && (parsed.data || parsed.updatedAt || parsed.name)) ? parsed.data : parsed;
+        if (!newState || typeof newState !== 'object') throw new Error('Invalid data payload');
+
+        // Deep merge into existing global state while preserving references
+        function deepAssign(target, source){
+          if (source && typeof source === 'object') {
+            Object.keys(source).forEach(k => {
+              const sv = source[k];
+              if (sv && typeof sv === 'object' && !Array.isArray(sv)) {
+                if (!target[k] || typeof target[k] !== 'object') target[k] = {};
+                deepAssign(target[k], sv);
+              } else {
+                target[k] = sv;
+              }
+            });
+          }
+        }
+        // Use existing deepAssign if available on scope; otherwise use the local one above
+        try {
+          if (typeof deepAssign === 'function') {
+            // noop; use the one we just declared (shadows outer if any)
+          }
+        } catch (e) {}
+
+        // Replace state content
+        if (typeof state === 'object' && state) {
+          Object.keys(state).forEach(k => { delete state[k]; });
+          deepAssign(state, newState);
+        } else {
+          // Fallback (unlikely): define state if not present
+          window.state = newState;
+        }
+      } catch (e) {
+        console.warn('Failed to import state from ?data:', e);
+      }
+    })();
+
     const previewJsonLink = document.getElementById('previewJsonLink');
     const aboutSiteLink = document.getElementById('aboutSiteLink');
     const disclosureLink = document.getElementById('disclosureLink');
