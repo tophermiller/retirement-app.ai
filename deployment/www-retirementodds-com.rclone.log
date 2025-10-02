@@ -252,7 +252,7 @@ Elapsed time:        1.2s
 2025/09/30 18:15:44 INFO  : css/ro.css: Updated modification time in destination
 2025/09/30 18:15:44 INFO  : assets/inflationdata.js: Updated modification time in destination
 2025/09/30 18:15:44 INFO  : assets/markethistory.js: Updated modification time in destination
-2025/09/30 18:15:44 INFO  : assets/marketreturns2.js: Copied (new)
+2025/09/30 18:15:44 INFO  : assets/markethistory2.js: Copied (new)
 2025/09/30 18:15:44 INFO  : assets/realEstateROI.js: Updated modification time in destination
 2025/09/30 18:15:44 INFO  : assets/marketreturns.js: Updated modification time in destination
 2025/09/30 18:15:44 INFO  : html/contact.html: Updated modification time in destination

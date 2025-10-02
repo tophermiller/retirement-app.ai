@@ -1,5 +1,5 @@
-if (typeof(marketreturns2) === "undefined") {
-    marketreturns2 = {
+if (typeof(markethistory2) === "undefined") {
+    markethistory2 = {
 	
 		/*
 			usstocks
@@ -326,9 +326,9 @@ if (typeof(marketreturns2) === "undefined") {
 
 /* === Added utility & stats functions (2025-09-30) === */
 (function(){
-  // Guard if marketreturns2 isn't present
-  if (typeof marketreturns2 !== "object" || marketreturns2 === null) {
-    console.error("marketreturns2 not found; cannot attach getAverage/getStandardDeviation.");
+  // Guard if markethistory2 isn't present
+  if (typeof markethistory2 !== "object" || markethistory2 === null) {
+    console.error("markethistory2 not found; cannot attach getAverage/getStandardDeviation.");
     return;
   }
 
@@ -350,12 +350,12 @@ if (typeof(marketreturns2) === "undefined") {
   /**
    * Compute the arithmetic average of values in the given dataset
    * between startYear and endYear (inclusive).
-   * @param {Object} dataset - e.g., marketreturns2.usstocks
+   * @param {Object} dataset - e.g., markethistory2.usstocks
    * @param {number} startYear
    * @param {number} endYear
    * @returns {number} mean, or NaN if no values present
    */
-  marketreturns2.getAverage = function(dataset, startYear, endYear) {
+  markethistory2.getAverage = function(dataset, startYear, endYear) {
     const vals = _collectValues(dataset, startYear, endYear);
     if (vals.length === 0) return NaN;
     let sum = 0;
@@ -367,12 +367,12 @@ if (typeof(marketreturns2) === "undefined") {
    * Compute the (sample) standard deviation (Bessel-corrected, n-1)
    * of values in the given dataset between startYear and endYear (inclusive).
    * Returns NaN if fewer than 2 observations are available.
-   * @param {Object} dataset - e.g., marketreturns2.usbonds
+   * @param {Object} dataset - e.g., markethistory2.usbonds
    * @param {number} startYear
    * @param {number} endYear
    * @returns {number} standard deviation (sample)
    */
-  marketreturns2.getStandardDeviation = function(dataset, startYear, endYear, population=false) {
+  markethistory2.getStandardDeviation = function(dataset, startYear, endYear, population=false) {
     const vals = _collectValues(dataset, startYear, endYear);
     const n = vals.length;
     if (n < 2) return NaN;
@@ -395,7 +395,7 @@ if (typeof(marketreturns2) === "undefined") {
    * Simple unit tests for getAverage and getStandardDeviation.
    * Logs results to console and returns a summary object.
    */
-  marketreturns2.testStats = function() {
+  markethistory2.testStats = function() {
     const eps = 1e-12;
     function almostEqual(a, b, tol = eps) {
       if (Number.isNaN(a) && Number.isNaN(b)) return true;
@@ -414,8 +414,8 @@ if (typeof(marketreturns2) === "undefined") {
         return Math.sqrt(v);
       })([0.438112, -0.082979, -0.251236]); // ~0.3594085218415575
 
-      const avg = marketreturns2.getAverage(marketreturns2.usstocks, 1928, 1930);
-      const sd  = marketreturns2.getStandardDeviation(marketreturns2.usstocks, 1928, 1930);
+      const avg = markethistory2.getAverage(markethistory2.usstocks, 1928, 1930);
+      const sd  = markethistory2.getStandardDeviation(markethistory2.usstocks, 1928, 1930);
       results.push({
         name: "US Stocks 1928-1930",
         avg: avg, sd: sd,
@@ -432,8 +432,8 @@ if (typeof(marketreturns2) === "undefined") {
       const v = ((vals[0]-m)**2 + (vals[1]-m)**2 + (vals[2]-m)**2) / (vals.length - 1);
       const expectedSd = Math.sqrt(v); // ~0.02048945682540169
 
-      const avg = marketreturns2.getAverage(marketreturns2.usbonds, 1928, 1930);
-      const sd  = marketreturns2.getStandardDeviation(marketreturns2.usbonds, 1928, 1930);
+      const avg = markethistory2.getAverage(markethistory2.usbonds, 1928, 1930);
+      const sd  = markethistory2.getStandardDeviation(markethistory2.usbonds, 1928, 1930);
       results.push({
         name: "US Bonds 1928-1930",
         avg: avg, sd: sd,
@@ -444,8 +444,8 @@ if (typeof(marketreturns2) === "undefined") {
 
     // Test 3: Swap start/end order
     (function(){
-      const a = marketreturns2.getAverage(marketreturns2.usstocks, 1930, 1928);
-      const b = marketreturns2.getAverage(marketreturns2.usstocks, 1928, 1930);
+      const a = markethistory2.getAverage(markethistory2.usstocks, 1930, 1928);
+      const b = markethistory2.getAverage(markethistory2.usstocks, 1928, 1930);
       results.push({
         name: "Swapped year order yields same average",
         passAvg: almostEqual(a, b),
@@ -455,7 +455,7 @@ if (typeof(marketreturns2) === "undefined") {
 
     // Test 4: Single-year stdev is NaN
     (function(){
-      const sd = marketreturns2.getStandardDeviation(marketreturns2.usstocks, 1928, 1928);
+      const sd = markethistory2.getStandardDeviation(markethistory2.usstocks, 1928, 1928);
       results.push({
         name: "Single-year standard deviation returns NaN",
         sd: sd,
@@ -471,7 +471,7 @@ if (typeof(marketreturns2) === "undefined") {
     );
 
     try {
-      console.group("marketreturns2.testStats()");
+      console.group("markethistory2.testStats()");
       for (const r of results) console.log(r.name, r);
       console.log("ALL PASS:", allPass);
       console.groupEnd();
@@ -485,9 +485,9 @@ if (typeof(marketreturns2) === "undefined") {
 
 /* === Enhanced unit tests to verify sample vs population stdev (2025-09-30) === */
 (function(){
-  if (typeof marketreturns2 !== "object" || marketreturns2 === null) return;
+  if (typeof markethistory2 !== "object" || markethistory2 === null) return;
 
-  marketreturns2.testStats = function() {
+  markethistory2.testStats = function() {
     const eps = 1e-12;
     function almostEqual(a, b, tol = eps) {
       if (Number.isNaN(a) && Number.isNaN(b)) return true;
@@ -510,9 +510,9 @@ if (typeof(marketreturns2) === "undefined") {
       const expS = expectedStats(vals, false); // sample
       const expP = expectedStats(vals, true);  // population
 
-      const avg = marketreturns2.getAverage(marketreturns2.usstocks, 1928, 1930);
-      const sdS = marketreturns2.getStandardDeviation(marketreturns2.usstocks, 1928, 1930, false);
-      const sdP = marketreturns2.getStandardDeviation(marketreturns2.usstocks, 1928, 1930, true);
+      const avg = markethistory2.getAverage(markethistory2.usstocks, 1928, 1930);
+      const sdS = markethistory2.getStandardDeviation(markethistory2.usstocks, 1928, 1930, false);
+      const sdP = markethistory2.getStandardDeviation(markethistory2.usstocks, 1928, 1930, true);
 
       results.push({
         name: "US Stocks 1928-1930 (avg/sample/population)",
@@ -529,9 +529,9 @@ if (typeof(marketreturns2) === "undefined") {
       const expS = expectedStats(vals, false);
       const expP = expectedStats(vals, true);
 
-      const avg = marketreturns2.getAverage(marketreturns2.usbonds, 1928, 1930);
-      const sdS = marketreturns2.getStandardDeviation(marketreturns2.usbonds, 1928, 1930, false);
-      const sdP = marketreturns2.getStandardDeviation(marketreturns2.usbonds, 1928, 1930, true);
+      const avg = markethistory2.getAverage(markethistory2.usbonds, 1928, 1930);
+      const sdS = markethistory2.getStandardDeviation(markethistory2.usbonds, 1928, 1930, false);
+      const sdP = markethistory2.getStandardDeviation(markethistory2.usbonds, 1928, 1930, true);
 
       results.push({
         name: "US Bonds 1928-1930 (avg/sample/population)",
@@ -544,8 +544,8 @@ if (typeof(marketreturns2) === "undefined") {
 
     // Case C: Swapped year order average must match
     (function(){
-      const a = marketreturns2.getAverage(marketreturns2.usstocks, 1930, 1928);
-      const b = marketreturns2.getAverage(marketreturns2.usstocks, 1928, 1930);
+      const a = markethistory2.getAverage(markethistory2.usstocks, 1930, 1928);
+      const b = markethistory2.getAverage(markethistory2.usstocks, 1928, 1930);
       results.push({
         name: "Swapped year order yields same average",
         passAvg: almostEqual(a, b),
@@ -555,8 +555,8 @@ if (typeof(marketreturns2) === "undefined") {
 
     // Case D: Single-year stdev returns NaN (both sample and population have edge rules)
     (function(){
-      const sdS = marketreturns2.getStandardDeviation(marketreturns2.usstocks, 1928, 1928, false);
-      const sdP = marketreturns2.getStandardDeviation(marketreturns2.usstocks, 1928, 1928, true);
+      const sdS = markethistory2.getStandardDeviation(markethistory2.usstocks, 1928, 1928, false);
+      const sdP = markethistory2.getStandardDeviation(markethistory2.usstocks, 1928, 1928, true);
       // By implementation: both return NaN when n<2
       results.push({
         name: "Single-year standard deviation returns NaN (sample & population)",
@@ -571,24 +571,24 @@ if (typeof(marketreturns2) === "undefined") {
     );
 
     try {
-      console.group("marketreturns2.testStats()");
+      console.group("markethistory2.testStats()");
       for (const r of results) console.log(r.name, r);
       console.log("ALL PASS:", allPass);
       console.groupEnd();
 
-      let avg = marketreturns2.getAverage(marketreturns2.usstocks, 2000, 2024);
+      let avg = markethistory2.getAverage(markethistory2.usstocks, 2000, 2024);
       console.log("US Stocks 2000-2024 avg: " + avg);
-      let sdS = marketreturns2.getStandardDeviation(marketreturns2.usstocks, 2000, 2024);
+      let sdS = markethistory2.getStandardDeviation(markethistory2.usstocks, 2000, 2024);
       console.log("US Stocks 2000-2024 std: " + sdS);
     
-      avg = marketreturns2.getAverage(marketreturns2.usbonds, 2000, 2024);
+      avg = markethistory2.getAverage(markethistory2.usbonds, 2000, 2024);
       console.log("US Bonds 2000-2024 avg: " + avg);
-      sdS = marketreturns2.getStandardDeviation(marketreturns2.usbonds, 2000, 2024);
+      sdS = markethistory2.getStandardDeviation(markethistory2.usbonds, 2000, 2024);
       console.log("US Bonds 2000-2024 std: " + sdS);
 
-      avg = marketreturns2.getAverage(marketreturns2.international, 2000, 2024);
+      avg = markethistory2.getAverage(markethistory2.international, 2000, 2024);
       console.log("International 2000-2024 avg: " + avg);
-      sdS = marketreturns2.getStandardDeviation(marketreturns2.international, 2000, 2024);
+      sdS = markethistory2.getStandardDeviation(markethistory2.international, 2000, 2024);
       console.log("International 2000-2024 std: " + sdS);	  
     } catch(_) {}
 

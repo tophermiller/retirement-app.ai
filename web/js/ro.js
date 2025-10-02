@@ -1,5 +1,5 @@
 
-var staging = false;
+var staging = true;
 
 
 
@@ -109,26 +109,32 @@ function ensureGrowthDefaultsInitialized(){
       }
     }catch(e){ /* noop */ }
 
-    // ---- Liquid asset defaults based on selector default (1976-present) ----
+    // ---- Liquid asset defaults based on selector default (2000-present) ----
     try{
+      function getMaxIndex(obj) {
+        let maxKey = null;
+        for (const [key, value] of Object.entries(obj)) {
+          if(key > maxKey) {
+            maxKey = key;
+          }
+        }
+        return Number(maxKey); // returns the year (as a string)
+      }
+
       g.liquid = g.liquid || { usStocks:{}, usBonds:{}, internationalStocks:{}, customYears:[] };
-      const minY = (typeof markethistory!=='undefined' && Array.isArray(markethistory.data) && markethistory.data.length)
-        ? Math.min.apply(null, markethistory.data.map(r=>r.Year))
-        : 1976;
-      const maxY = (typeof markethistory!=='undefined' && Array.isArray(markethistory.data) && markethistory.data.length)
-        ? Math.max.apply(null, markethistory.data.map(r=>r.Year))
-        : (new Date().getFullYear()-1);
-      const first = Math.max(minY, 1976);
+      const minY = 1928;
+      const maxY = getMaxIndex(markethistory2.usstocks);
+      const first = 2000;
       const last  = maxY;
 
       function setIfEmpty(obj, key, val){ if(!obj[key] || obj[key]==='') obj[key] = val; }
 
-      const meanUS   = (markethistory.getAverage && markethistory.getAverage(first, last, 'US_Stocks_SP500_TR')) ?? null;
-      const stdevUS  = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, 'US_Stocks_SP500_TR')) ?? null;
-      const meanBnd  = (markethistory.getAverage && markethistory.getAverage(first, last, 'US_Bonds_Agg_TR')) ?? null;
-      const stdevBnd = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, 'US_Bonds_Agg_TR')) ?? null;
-      const meanINT  = (markethistory.getAverage && markethistory.getAverage(first, last, 'Intl_Stocks_MSCI_EAFE_NR_USD')) ?? null;
-      const stdevINT = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, 'Intl_Stocks_MSCI_EAFE_NR_USD')) ?? null;
+      const meanUS   = (markethistory2.getAverage && markethistory2.getAverage(markethistory2.usstocks, first, last)) ?? null;
+      const stdevUS  = (markethistory2.getStandardDeviation && markethistory2.getStandardDeviation(markethistory2.usstocks, first, last)) ?? null;
+      const meanBnd  = (markethistory2.getAverage && markethistory2.getAverage(markethistory2.usbonds, first, last)) ?? null;
+      const stdevBnd = (markethistory2.getStandardDeviation && markethistory2.getStandardDeviation(markethistory2.usbonds, first, last)) ?? null;
+      const meanINT  = (markethistory2.getAverage && markethistory2.getAverage(markethistory2.international, first, last)) ?? null;
+      const stdevINT = (markethistory2.getStandardDeviation && markethistory2.getStandardDeviation(markethistory2.international, first, last)) ?? null;
 
       g.liquid.usStocks = g.liquid.usStocks || {};
       g.liquid.usBonds  = g.liquid.usBonds  || {};
@@ -142,7 +148,7 @@ function ensureGrowthDefaultsInitialized(){
       setIfEmpty(g.liquid.internationalStocks, 'stdev', pctStr(stdevINT));
 
       if(!Array.isArray(g.liquid.customYears)) g.liquid.customYears = [];
-    }catch(e){ /* noop */ }
+    }catch(e){ console.log(e);/* noop */ }
 
     // ---- Real Estate defaults based on user's state (geoplugin), fallback CA ----
     try{
@@ -1070,7 +1076,7 @@ const fieldPairs = [
 
     
     
-    /* --- Liquid: Time Period preset handler (markethistory.js) --- */
+    /* --- Liquid: Time Period preset handler (markethistory2.js) --- */
     (function(){
       try {
         const sel = document.getElementById('liquidTimePeriod');
@@ -1093,18 +1099,27 @@ const fieldPairs = [
           const gsel = (state && state.beta && state.beta.single && state.beta.single.liquid && state.beta.single.liquid.presetSelection) || null;
           if (gsel && sel.querySelector(`option[value="${gsel}"]`)) sel.value = gsel;
         } catch(e){}
-        if (!sel || typeof markethistory === 'undefined' || !Array.isArray(markethistory.data)) return;
+        if (!sel) return;
 
         // Map UI -> dataset keys & input ids
         const classes = [
-          { key: "US_Stocks_SP500_TR", roiId: "liquidUsStocksRoi", sdId: "liquidUsStocksSd", stateKey: "usStocks" },
-          { key: "US_Bonds_Agg_TR", roiId: "liquidUsBondsRoi", sdId: "liquidUsBondsSd", stateKey: "usBonds" },
-          { key: "Intl_Stocks_MSCI_EAFE_NR_USD", roiId: "liquidIntlStocksRoi", sdId: "liquidIntlStocksSd", stateKey: "internationalStocks" },
+          { dataset: markethistory2.usstocks, roiId: "liquidUsStocksRoi", sdId: "liquidUsStocksSd", stateKey: "usStocks" },
+          { dataset: markethistory2.usbonds, roiId: "liquidUsBondsRoi", sdId: "liquidUsBondsSd", stateKey: "usBonds" },
+          { dataset: markethistory2.international, roiId: "liquidIntlStocksRoi", sdId: "liquidIntlStocksSd", stateKey: "internationalStocks" },
         ];
 
+        function getMaxIndex(obj) {
+          let maxKey = null;
+          for (const [key, value] of Object.entries(obj)) {
+            if(key > maxKey) {
+              maxKey = key;
+            }
+          }
+          return Number(maxKey); // returns the year (as a string)
+        }
+
         // Helpers
-        const years = markethistory.data.map(r => Number(r.Year)).filter(Number.isFinite);
-        const minY = Math.min.apply(null, years), maxY = Math.max.apply(null, years);
+        const minY = 1928, maxY = getMaxIndex(markethistory2.usstocks);
 
         function parseRange(v){
           // v examples: "1976-present", "2000-2010"
@@ -1133,9 +1148,9 @@ const fieldPairs = [
           }
           const {first, last} = parseRange(sel.value);
           // For each asset, compute mean & stdev from markethistory
-          classes.forEach(({key, roiId, sdId, stateKey})=>{
-            const mean  = (markethistory.getAverage && markethistory.getAverage(first, last, key)) ?? null;
-            const stdev = (markethistory.getStandardDeviation && markethistory.getStandardDeviation(first, last, key)) ?? null;
+          classes.forEach(({dataset, roiId, sdId, stateKey})=>{
+            const mean  = (markethistory2.getAverage && markethistory2.getAverage(dataset, first, last)) ?? null;
+            const stdev = (markethistory2.getStandardDeviation && markethistory2.getStandardDeviation(dataset, first, last)) ?? null;
 
             const roiEl = document.getElementById(roiId);
             const sdEl  = document.getElementById(sdId);
@@ -2925,186 +2940,6 @@ const US_STATES = [
   "South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"
 ];
 
-window.helpMeChoose = function(topic){
-  // map topic -> state path + UI definition
-  const growth = state.beta.single;
-  let title = 'Help me choose';
-  let applyTo = null;
-
-  const makeRoiSdFields = (initRoi, initSd) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'grid-2';
-    const f1 = document.createElement('div'); f1.className='field';
-    const l1 = document.createElement('label'); l1.className='label'; l1.textContent='ROI (%)';
-    const roi = document.createElement('input'); roi.type='text'; roi.inputMode='decimal'; roi.id='modalRoi';
-    if(initRoi){ roi.dataset.raw = String(initRoi); roi.value = `${initRoi}%`; }
-    setPctFieldBehavior(roi);
-    f1.append(l1, roi);
-
-    const f2 = document.createElement('div'); f2.className='field';
-    const l2 = document.createElement('label'); l2.className='label'; l2.textContent='Standard Deviation (%)';
-    const sd = document.createElement('input'); sd.type='text'; sd.inputMode='decimal'; sd.id='modalSd';
-    if(initSd){ sd.dataset.raw = String(initSd); sd.value = `${initSd}%`; }
-    setPctFieldBehavior(sd);
-    f2.append(l2, sd);
-
-    wrap.append(f1, f2);
-    return wrap;
-  };
-
-  modalBody.innerHTML = '';
-
-  if(topic === 'inflation'){
-    title = 'Inflation • Help me choose';
-    applyTo = growth.inflation;
-    const p = document.createElement('p');
-    p.id = 'modalDesc';
-    p.className='lipsum';
-    p.innerHTML = 'The historical average inflation from the <a href="https://www.usinflationcalculator.com/inflation/historical-inflation-rates/" target="_blank">US Inflation Calculator</a> web site is shown below.   Feel free to make adjustments as you see fit to predict the future.';
-    modalBody.appendChild(p);
-    const inflationRoi = inflationdata.computeMean();
-    const inflationSd  = inflationdata.computeStdDev();
-    modalBody.appendChild(makeRoiSdFields(inflationRoi, inflationSd));
-  }
-  else if(topic === 'liquid'){
-    title = 'Liquid Investments • Help me choose';
-    applyTo = growth.liquid;
-
-    // Portfolio selector
-    const fP = document.createElement('div'); fP.className='field';
-    const lP = document.createElement('label'); lP.className='label'; lP.textContent='Portfolio';
-    const sP = document.createElement('select'); sP.id='modalPortfolio';
-    [
-      '--Choose a common portfolio--',
-      'S&P 500', 'Dow Jones (DIA)', 'Total US Stock Market', 'Total US Bond Market',
-      '80% US Stock,20% Bonds', '60% US Stock,40% Bonds', '40% US Stock,60% Bonds',
-      '65% US Stock,15% Intl Stock,20% Bonds', '50% US Stock,10% Intl Stock,40% Bonds'      
-    ].forEach(v=>{
-      const o=document.createElement('option'); o.value=v; o.textContent=v; sP.appendChild(o);
-    });
-    fP.append(lP, sP);
-
-    // History selector
-    const fH = document.createElement('div'); fH.className='field';
-    const lH = document.createElement('label'); lH.className='label'; lH.textContent='Historical Time Period';
-    const sH = document.createElement('select'); sH.id='modalPeriod';
-    [
-      '--Choose a historical time period--',
-      '1987-2023', '2000-2010', '2010-2023', '2000-2023'
-    ].forEach(v=>{
-      const o=document.createElement('option'); o.value=v; o.textContent=v; sH.appendChild(o);
-    });
-    fH.append(lH, sH);
-
-    const selWrap = document.createElement('div'); selWrap.className='grid-2';
-    selWrap.append(fP, fH);
-    modalBody.append("Choose a portfolio that best matches your investments, and historical period that you feel can best predict the future.   Click \"Close & Apply\" to use the resulting values.");
-    modalBody.appendChild(selWrap);
-
-    const roiSdWrap = makeRoiSdFields(applyTo.roi, applyTo.stdev);
-    modalBody.appendChild(roiSdWrap);
-
-    const lookupValues = ()=>{
-      const portfolio = sP.value;
-      const period = sH.value;
-      if (portfolio !== '--Choose a common portfolio--' && period !== '--Choose a historical time period--') {
-        const roi = marketreturns[portfolio][period]["ROI"].replace(/%$/, '');;
-        const sd  = marketreturns[portfolio][period]["STD"].replace(/%$/, '');;
-        const roiEl = document.getElementById('modalRoi');
-        const sdEl  = document.getElementById('modalSd');
-        roiEl.dataset.raw = String(roi); roiEl.value = `${roi}%`;
-        sdEl.dataset.raw  = String(sd);  sdEl.value  = `${sd}%`;
-      }
-    };
-    sP.addEventListener('change', lookupValues);
-    sH.addEventListener('change', lookupValues);
-  }
-  else if(topic === 'real_estate'){
-    title = 'Real Estate Investments • Help me choose';
-    applyTo = growth.realEstate;
-    const p = document.createElement('p');
-    p.id = 'modalDesc';
-    p.className='lipsum';
-    p.innerHTML = 'Choose a state to see the historical appreciation for real estate in that state.  This data is for the period from Q1 1991 to Q3 2022 from the <a href=\"https://www.fhfa.gov/data/hpi\" target=\"_blank\">Federal Housing Finance Agency</a>.  Feel free to make adjustments as you see fit to predict the future.';
-    modalBody.appendChild(p);
-
-    const fS = document.createElement('div'); fS.className='field';
-    const lS = document.createElement('label'); lS.className='label'; lS.textContent='State';
-    const sS = document.createElement('select'); sS.id='modalState';
-
-    const o = document.createElement('option');
-    o.value = ''; o.textContent = '-- Choose a state --';
-    sS.appendChild(o);
-
-    Object.entries(realEstateROI).forEach(([abbr, data]) => {
-        const option = document.createElement('option');
-        option.value = abbr;
-        option.textContent = data.stateName;
-        sS.appendChild(option);
-    });
-
-    fS.append(lS, sS);
-    modalBody.appendChild(fS);
-
-    const roiSdWrap = makeRoiSdFields(applyTo.roi, applyTo.stdev);
-    modalBody.appendChild(roiSdWrap);
-
-    const lookupRE = ()=>{
-      const selectedAbbr = sS.value;
-      const data = realEstateROI[selectedAbbr];
-      if (data) {
-        let roi = `${data.average}`;
-        roi = (100*Number(roi)).toFixed(2); // Average ROI for the state
-        let sd  = `${data.stdev}`;
-        sd = (100*Number(sd)).toFixed(2); // Standard Deviation for the state
-        const roiEl = document.getElementById('modalRoi');
-        const sdEl  = document.getElementById('modalSd');
-        roiEl.dataset.raw = String(roi); roiEl.value = `${roi}%`;
-        sdEl.dataset.raw  = String(sd);  sdEl.value  = `${sd}%`;
-      }
-
-    };
-    sS.addEventListener('change', lookupRE);
-  }
-
-  modalTitle.textContent = title;
-
-  // Close button behavior: push ROI/SD into the main form & state, then close.
-  modalCloseBtn.onclick = ()=>{
-    const roiInput = document.getElementById('modalRoi');
-    const sdInput  = document.getElementById('modalSd');
-
-    const roiRaw = roiInput?.dataset.raw ?? numOnly(roiInput?.value || '');
-    const sdRaw  = sdInput?.dataset.raw  ?? numOnly(sdInput?.value  || '');
-
-    if(applyTo){
-      applyTo.roi   = roiRaw || '';
-      applyTo.stdev = sdRaw  || '';
-    }
-
-    // Reflect into visible inputs on Growth panel
-    const idsMap = {
-      inflation: { roi:'inflationRoi', sd:'inflationSd' },
-      liquid:    { roi:'liquidRoi',    sd:'liquidSd'    },
-      real_estate:{ roi:'reRoi',       sd:'reSd'        }
-    };
-
-    const map = idsMap[topic];
-    if(map){
-      const roiEl = document.getElementById(map.roi);
-      const sdEl  = document.getElementById(map.sd);
-      if(roiEl){ roiEl.dataset.raw = applyTo.roi || ''; roiEl.value = applyTo.roi ? `${applyTo.roi}` : ''; }
-      if(sdEl){  sdEl.dataset.raw  = applyTo.stdev || ''; sdEl.value  = applyTo.stdev ? `${applyTo.stdev}` : ''; }
-    }
-
-    // Re-render to keep all bindings tidy (stays on Growth)
-    render();
-    closeModal();
-  };
-
-  openModal();
-};
-/* ======== /HELP ME CHOOSE MODAL LOGIC ======== */
 
 /* Boot */
 function init(){
