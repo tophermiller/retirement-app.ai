@@ -280,3 +280,18 @@ Checks:                26 / 26, 100%
 Transferred:            2 / 2, 100%
 Elapsed time:        1.3s
 
+2025/10/02 11:25:02 NOTICE: S3 bucket www-retirementodds-com: Switched region to "us-east-2" from "us-east-1"
+2025/10/02 11:25:03 INFO  : S3 bucket www-retirementodds-com: Waiting for checks to finish
+2025/10/02 11:25:03 INFO  : index.html: Copied (replaced existing)
+2025/10/02 11:25:03 INFO  : S3 bucket www-retirementodds-com: Waiting for transfers to finish
+2025/10/02 11:25:03 INFO  : assets/markethistory2.js: Copied (new)
+2025/10/02 11:25:03 INFO  : js/ro.js: Copied (replaced existing)
+2025/10/02 11:25:03 INFO  : Waiting for deletions to finish
+2025/10/02 11:25:04 INFO  : assets/marketreturns2.js: Deleted
+2025/10/02 11:25:04 INFO  : 
+Transferred:   	  202.914k / 202.914 kBytes, 100%, 232.503 kBytes/s, ETA 0s
+Errors:                 0
+Checks:                27 / 27, 100%
+Transferred:            3 / 3, 100%
+Elapsed time:       800ms
+
