@@ -480,7 +480,25 @@ function buildNav(){
     const span = document.createElement('span'); span.textContent = s.label;
     b.appendChild(span);
 
-    b.className = (s.key===active?'active':'' );
+    
+    // If this is the Results entry, add a nested link for What-If
+    if(s.key === 'results'){
+      const sub = document.createElement('a');
+      sub.href = '#';
+      sub.className = 'nav-sub whatif-link';
+      sub.textContent = 'Try a "What-If" scenario';
+      sub.setAttribute('role','button');
+      sub.onclick = (e)=>{
+        e.preventDefault();
+        active = 'whatif';
+        buildNav();
+        render();
+        // close sidebar if open (mobile)
+        try{ sidebar.classList.remove('open'); overlay.classList.remove('show'); }catch(_){}
+      };
+      window.__whatIfSub = sub;
+    }
+b.className = (s.key===active?'active':'' );
     b.setAttribute('role','tab');
     b.setAttribute('aria-selected', String(s.key===active));
     if (s.key===active) b.setAttribute('aria-current','page');
@@ -502,6 +520,7 @@ sidebar.classList.remove('open');
     });
 
     navEl.appendChild(b);
+    if(s.key === 'results' && window.__whatIfSub){ navEl.appendChild(window.__whatIfSub); window.__whatIfSub = null; }
   });
 }
 
@@ -666,11 +685,72 @@ Array.from(navEl.children).forEach(btn => {
 }
 
 
+
+/* ===== What-If Panel ===== */
+function ensureWhatIfPanel(){
+  let w = document.getElementById('whatIfPanel');
+  if(!w){
+    const main = document.querySelector('main') || document.body;
+    w = document.createElement('div');
+    w.id = 'whatIfPanel';
+    w.className = 'panel hidden';
+    w.innerHTML = `
+      <section class="section whatif">
+        <h2 class="h2">What If</h2>
+        <p style="margin:0 0 1rem 0;">
+          Here you can compute your odds multiple times while varying one of your inputs, and see all the results at once.
+        </p>
+        <div class="form-row" style="display:flex;flex-direction:column;gap:.75rem;max-width:520px;">
+          <label for="whatIfSection"><strong>Choose Section</strong></label>
+          <select id="whatIfSection" name="whatIfSection">
+            <option value="">— Select —</option>
+          </select>
+
+          <label for="whatIfVariable"><strong>Choose Variable</strong></label>
+          <select id="whatIfVariable" name="whatIfVariable">
+            <option value="">— Select —</option>
+          </select>
+        </div>
+      
+        <div style="margin-top:1rem;">
+          <button id="whatIfSubmitBtn" class="btn ok">Calculate What-Ifs</button>
+        </div>
+      </section>
+    `;
+    main.appendChild(w);
+  }
+  return w;
+}
+
+
+
+// Hook up What-If button to reuse main calculation for now
+document.addEventListener('click', (e)=>{
+  const t = e.target;
+  if(t && t.id === 'whatIfSubmitBtn'){
+    e.preventDefault();
+    try{ submitBtn.click(); }catch(_){}
+  }
+});
 function render(){
   hideProcessingModal();
   const resultsPanel = document.getElementById('resultsPanel');
   const mainPanel = document.querySelector('main .panel:not(#resultsPanel)');
-  if(active==='results'){
+  
+  const whatIfPanel = document.getElementById('whatIfPanel');
+  if(active==='whatif'){
+    const w = ensureWhatIfPanel();
+    if(mainPanel) mainPanel.classList.add('hidden');
+    if(resultsPanel) resultsPanel.classList.add('hidden');
+    if(w) w.classList.remove('hidden');
+    if(panelNextFooter) panelNextFooter.classList.add('hidden');
+    if(titleEl) titleEl.textContent = 'What If';
+    if(lipsumEl) lipsumEl.textContent = 'Explore alternative scenarios by choosing a section and variable.';
+    return;
+  }else{
+    if(whatIfPanel) whatIfPanel.classList.add('hidden');
+  }
+if(active==='results'){
     if(mainPanel) mainPanel.classList.add('hidden');
     if(resultsPanel) resultsPanel.classList.remove('hidden');
     // Hide next/back footer in results view
