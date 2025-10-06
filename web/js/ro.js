@@ -716,6 +716,20 @@ if (typeof whatIfData === 'undefined') {
 
 /* ===== What-If Panel ===== */
 function ensureWhatIfPanel(){
+
+function _getValueByPath(obj, path){
+  try{
+    const tokens = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+    let cur = obj;
+    for(const t of tokens){
+      if(t==='') continue;
+      if(typeof cur!=='object' || cur===null) return undefined;
+      cur = cur[t];
+    }
+    return cur;
+  }catch(_){ return undefined; }
+}
+
   let w = document.getElementById('whatIfPanel');
   if(!w){
     const main = document.querySelector('main') || document.body;
@@ -739,7 +753,17 @@ function ensureWhatIfPanel(){
             <option value="">— Select —</option>
           </select>
           
-        </div>
+        
+          
+          <div id="whatIfCurrentRow" class="info-line"><strong>Current Value:</strong> <span id="whatIfCurrentValue">—</span></div>
+          
+          <label for="whatIfFrom"><strong>Vary From</strong></label>
+          <input id="whatIfFrom" name="whatIfFrom" class="input" inputmode="decimal" autocomplete="off" />
+
+          <label for="whatIfTo"><strong>Vary To</strong></label>
+          <input id="whatIfTo" name="whatIfTo" class="input" inputmode="decimal" autocomplete="off" />
+          
+    </div>
       
         <div style="margin-top:1rem;">
           <button id="whatIfSubmitBtn" class="btn ok">Calculate What-Ifs</button>
@@ -809,9 +833,68 @@ function ensureWhatIfPanel(){
                 const opt = document.createElement('option');
                 opt.value = indexedStateVariable;
                 opt.textContent = v.label;
+                opt.dataset.type = v.type;
                 varSel.appendChild(opt);
               }
-            });  
+            
+      // --- What-If dynamic fields: Current Value + Vary From/To formatting ---
+      const currentSpan = w.querySelector('#whatIfCurrentValue');
+      const fromInput = w.querySelector('#whatIfFrom');
+      const toInput = w.querySelector('#whatIfTo');
+
+      function formatDisplay(val, type){
+        if(val==='' || val===undefined || val===null) return '—';
+        if(type==='currency'){
+          return '$' + fmtDollars(Number(String(val).toString().replace(/[$,%]/g,'')));
+        }else if(type==='percent'){
+          // Expect raw like 5.43 meaning %, display with %
+          return fmtPercent(Number(String(val).toString().replace(/[$,%]/g,'')));
+        }else{
+          const n = parseFloat(String(val).toString().replace(/[$,%]/g,''));
+          return Number.isFinite(n) ? String(n) : '—';
+        }
+      }
+
+      function setInputMasks(type){
+        if(type==='currency'){
+          fromInput.placeholder = '$0';
+          toInput.placeholder = '$0';
+          fromInput.oninput = (e)=>{ e.target.value = util.formatCurrencyVal(e.target.value); };
+          toInput.oninput   = (e)=>{ e.target.value = util.formatCurrencyVal(e.target.value); };
+        }else if(type==='percent'){
+          fromInput.placeholder = '0%';
+          toInput.placeholder = '0%';
+          fromInput.oninput = (e)=>{ e.target.value = util.formatPercentageVal(e.target.value, false, true); };
+          toInput.oninput   = (e)=>{ e.target.value = util.formatPercentageVal(e.target.value, false, true); };
+        }else{
+          fromInput.placeholder = '0';
+          toInput.placeholder = '0';
+          const onlyNum = (e)=>{ e.target.value = util.formatNumber(e.target.value, true); };
+          fromInput.oninput = onlyNum;
+          toInput.oninput   = onlyNum;
+        }
+      }
+
+      function updateCurrent(){
+        const opt = varSel.options[varSel.selectedIndex];
+        if(!opt || !opt.value){ currentSpan.textContent = '—'; return; }
+        const type = opt.dataset.type || 'number';
+        setInputMasks(type);
+        const val = _getValueByPath(state, opt.value);
+        currentSpan.textContent = formatDisplay(val, type);
+      }
+
+      secSel.addEventListener('change', ()=>{
+        // reset dependent selects/fields
+        currentSpan.textContent = '—';
+        fromInput.value = '';
+        toInput.value = '';
+      });
+      varSel.addEventListener('change', updateCurrent);
+
+      // Initialize defaults on first open
+      updateCurrent();
+});  
           }
         }
       });

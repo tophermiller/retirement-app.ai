@@ -1566,3 +1566,7 @@ body.ro-modal-open {
 /* What-If nested link under Results */
 #nav .nav-sub{display:block;margin:4px 0 8px 42px;font-size:.95rem;opacity:.9;text-align:left}
 #nav .nav-sub:hover{text-decoration:underline}
+
+/* What-If info line */
+.info-line{padding:.5rem .75rem;background:var(--panel-alt,#f6f6f7);border-radius:8px;}
+.info-line strong{margin-right:.5rem;}
