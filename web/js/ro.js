@@ -684,7 +684,35 @@ Array.from(navEl.children).forEach(btn => {
 
 }
 
-
+if (typeof whatIfData === 'undefined') {
+  whatIfData = {
+    "variables": [
+      { stateVariable: "alpha.single.retire", label: "Retirement Age", type: "number"},
+      { stateVariable: "alpha.single.life", label: "Life Expectancy", type: "number"},
+      { stateVariable: "alpha.single.spouseLife", label: "Spouse Life Expectancy", type: "number"},
+      { stateVariable: "alpha.single.heirsTarget", label: "Heirs Target Amount ($)", type: "currency"},
+      { stateVariable: "beta.single.inflation.roi", label: "Inflation Rate (%)", type: "percent"},
+      { stateVariable: "beta.single.liquid.usStocks.roi", label: "US Stocks Return (%)", type: "percent"},
+      { stateVariable: "beta.single.liquid.usStocks.stdev", label: "US Stocks Volatility (%)", type: "percent"},
+      { stateVariable: "beta.single.liquid.usBonds.roi", label: "US Bonds Return (%)", type: "percent"},
+      { stateVariable: "beta.single.liquid.usBonds.stdev", label: "US Bonds Volatility (%)", type: "percent"},
+      { stateVariable: "beta.single.liquid.internationalStocks.roi", label: "International Stocks Return (%)", type: "percent"},
+      { stateVariable: "beta.single.liquid.internationalStocks.stdev", label: "International Stocks Volatility (%)", type: "percent"},
+      { stateVariable: "beta.single.realEstate.roi", label: "Real Estate Return (%)", type: "percent"},
+      { stateVariable: "beta.single.realEstate.stdev", label: "Real Estate Volatility (%)", type: "percent"},
+      { stateVariable: "gamma.items[].amount", label: "Account Value ($)", type: "currency"},
+      { stateVariable: "delta.items[].currentValue", label: "Property Value ($)", type: "currency"},
+      { stateVariable: "delta.items[].annualExpenses", label: "Annual Expenses ($)", type: "currency"},
+      { stateVariable: "delta.items[].saleYear", label: "Property Sale Year", type: "number"},
+      { stateVariable: "epsilon.items[].amount", label: "Income Amount ($)", type: "currency"},
+      { stateVariable: "epsilon.items[].startYear", label: "Income Start Year", type: "number"},
+      { stateVariable: "epsilon.items[].endYear", label: "Income End Year", type: "number"},
+      { stateVariable: "zeta.items[].startYear", label: "Expense Start Year", type: "number"},
+      { stateVariable: "zeta.items[].endYear", label: "Expense End Year", type: "number"},
+      { stateVariable: "zeta.items[].amount", label: "Expense Amount ($)", type: "currency"}
+    ]
+  }
+}
 
 /* ===== What-If Panel ===== */
 function ensureWhatIfPanel(){
@@ -710,6 +738,7 @@ function ensureWhatIfPanel(){
           <select id="whatIfVariable" name="whatIfVariable">
             <option value="">— Select —</option>
           </select>
+          
         </div>
       
         <div style="margin-top:1rem;">
@@ -718,6 +747,75 @@ function ensureWhatIfPanel(){
       </section>
     `;
     main.appendChild(w);
+    // Populate section selector
+    const secSel = w.querySelector('#whatIfSection');
+    if(secSel){
+      sections.forEach(s=>{
+        if (s.mode === 'single') { 
+          const opt = document.createElement('option');
+          opt.value = s.key;
+          opt.textContent = s.label;
+          secSel.appendChild(opt);
+        }
+        else if (s.mode === 'multi') {
+          const sec = state[s.key];
+          if(sec && Array.isArray(sec.items) && sec.items.length > 0){
+            sec.items.forEach((it, idx)=>{
+              if (!it || it.removed) return;
+              // Use id in value to identify item, idx just for stable ordering
+              // Title fallback to defaultTitle if none set
+              // Format: sectionKey::itemId
+              // Example: delta::3
+              //skip items that are infoOnly
+              if(it.infoOnly) return;
+              const opt = document.createElement('option');
+              opt.value = `${s.key}::${it.id}`;
+              opt.textContent = `${s.label} - ${it.title || defaultTitle(s.key, it.id)}`;
+              secSel.appendChild(opt);
+            });
+          }
+        }
+      });
+      secSel.addEventListener('change', ()=>{
+        const selectedSec = secSel.value;
+        let sec;
+        let itemId;
+        if (selectedSec === 'alpha' || selectedSec === 'beta') {
+          //single
+          sec = sections.find(s=>s.key===selectedSec);;
+          itemId = 0; //not used
+        }  
+        else if (selectedSec.includes('::')) {
+          //multi
+          const parts = selectedSec.split('::');
+          if(parts.length===2) {
+            const skey = parts[0];
+            sec = sections.find(s=>s.key===skey);
+            itemId = Number(parts[1]);
+          }
+        }    
+
+        const varSel = w.querySelector('#whatIfVariable');
+        if(varSel){
+          varSel.innerHTML = '<option value="">— Select —</option>';
+          if(sec){
+            whatIfData.variables.forEach(v=>{
+              if(v.stateVariable.startsWith(`${sec.key}.`)){
+                let indexedStateVariable = v.stateVariable
+                if (sec.mode === 'multi') {
+                  indexedStateVariable = v.stateVariable.replace("[]", `[${itemId}]`);
+                } 
+                // single mode: match section.key + '.' + field name
+                const opt = document.createElement('option');
+                opt.value = indexedStateVariable;
+                opt.textContent = v.label;
+                varSel.appendChild(opt);
+              }
+            });  
+          }
+        }
+      });
+    }
   }
   return w;
 }
