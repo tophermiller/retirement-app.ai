@@ -862,11 +862,30 @@ function _getValueByPath(obj, path){
           fromInput.oninput = (e)=>{ e.target.value = util.formatCurrencyVal(e.target.value); };
           toInput.oninput   = (e)=>{ e.target.value = util.formatCurrencyVal(e.target.value); };
         }else if(type==='percent'){
-          fromInput.placeholder = '0%';
+          
+fromInput.placeholder = '0%';
           toInput.placeholder = '0%';
-          fromInput.oninput = (e)=>{ e.target.value = util.formatPercentageVal(e.target.value, false, true); };
-          toInput.oninput   = (e)=>{ e.target.value = util.formatPercentageVal(e.target.value, false, true); };
-        }else{
+          const strip = (s)=> String(s ?? '').toString().replace(/[$,%\s,]/g,'');
+          const normalize = (val)=>{
+            const isNeg = /^-/.test(val);
+            let v = strip(val).replace(/[^0-9.]/g,'');
+            const parts = v.split('.');
+            let kept = parts.shift() || '';
+            if(parts.length){ kept += '.' + parts.join('').replace(/\./g,''); }
+            if(isNeg && kept && kept!=='0') kept = '-' + kept;
+            return kept;
+          };
+          const onFocus = (e)=>{ e.target.value = strip(e.target.value); };
+          const onInput = (e)=>{ e.target.value = normalize(e.target.value); };
+          const onBlur  = (e)=>{ e.target.value = util.formatPercentageVal(e.target.value, "blur", true); };
+
+          fromInput.onfocus = onFocus;
+          toInput.onfocus   = onFocus;
+          fromInput.oninput = onInput;
+          toInput.oninput   = onInput;
+          fromInput.onblur  = onBlur;
+          toInput.onblur    = onBlur;
+}else{
           fromInput.placeholder = '0';
           toInput.placeholder = '0';
           const onlyNum = (e)=>{ e.target.value = util.formatNumber(e.target.value, true); };
