@@ -756,12 +756,12 @@ function _getValueByPath(obj, path){
         
           
           <div id="whatIfCurrentRow" class="info-line"><strong>Current Value:</strong> <span id="whatIfCurrentValue">—</span></div>
-          
-          <label for="whatIfFrom"><strong>Vary From</strong></label>
-          <input id="whatIfFrom" name="whatIfFrom" class="input" inputmode="decimal" autocomplete="off" />
-
-          <label for="whatIfTo"><strong>Vary To</strong></label>
-          <input id="whatIfTo" name="whatIfTo" class="input" inputmode="decimal" autocomplete="off" />
+          <div class="ro-vary-row"><label for="whatIfFrom"><strong>Vary From:</strong></label>
+            <input id="whatIfFrom" name="whatIfFrom" class="input" inputmode="decimal" type="text"/>
+          </div>
+          <div class="ro-vary-row"><label for="whatIfTo"><strong>Vary To:</strong></label>
+            <input id="whatIfTo" name="whatIfTo" class="input" inputmode="decimal" type="text" />
+          </div>
           
     </div>
       

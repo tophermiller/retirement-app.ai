@@ -1568,5 +1568,7 @@ body.ro-modal-open {
 #nav .nav-sub:hover{text-decoration:underline}
 
 /* What-If info line */
-.info-line{padding:.5rem .75rem;background:var(--panel-alt,#f6f6f7);border-radius:8px;}
+.info-line{padding-top:20px;background:var(--panel-alt,#f6f6f7);border-radius:8px;}
 .info-line strong{margin-right:.5rem;}
+
+.ro-vary-row{display:flex;align-items:center;gap:.5rem;margin:.25rem 0}.ro-vary-row>label{min-width:7rem}
