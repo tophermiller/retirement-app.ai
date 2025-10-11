@@ -78,6 +78,11 @@ function createWhatIfPanel() {
             <div style="margin-top:1rem;">
                 <button id="whatIfSubmitBtn" class="btn ok">Calculate What-Ifs</button>
             </div>
+
+            <div id="whatIfResults" style="margin-top:2rem;">
+                <!-- results go here -->
+            </div>
+
         </section>
     `;
     main.appendChild(w);
