@@ -494,10 +494,83 @@ function ensureWhatIfPanel(){
             showWhatIfResults(respData.result); //TODO
         });
 
-        function showWhatIfResults(data){
-            //TODO
-            alert(JSON.stringify(data));
+        
+function showWhatIfResults(data){
+    try{
+        // Find or create the results container
+        let container = document.querySelector('#whatIfResults');
+        if(!container){
+            // If the target div doesn't exist, create it at the end of body for safety
+            container = document.createElement('div');
+            container.id = 'whatIfResults';
+            document.body.appendChild(container);
         }
+        // Extract headers
+        const dim1 = data?.resultMatrixHeaders?.dim1 ?? 'Dimension 1';
+        const dim2 = data?.resultMatrixHeaders?.dim2 ?? 'Result';
+        // Build rows from resultMatrix
+        const rows = Array.isArray(data?.resultMatrix) ? data.resultMatrix : [];
+        // Create table
+        const table = document.createElement('table');
+        table.setAttribute('role','table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        // Header
+        const thead = document.createElement('thead');
+        const htr = document.createElement('tr');
+        const th1 = document.createElement('th');
+        const th2 = document.createElement('th');
+        th1.textContent = dim1;
+        th2.textContent = dim2;
+        [th1, th2].forEach(th=>{
+            th.style.textAlign = 'left';
+            th.style.borderBottom = '1px solid var(--border, #ccc)';
+            th.style.padding = '8px 10px';
+        });
+        htr.appendChild(th1);
+        htr.appendChild(th2);
+        thead.appendChild(htr);
+        table.appendChild(thead);
+        // Body
+        const tbody = document.createElement('tbody');
+        rows.forEach(row=>{
+            // row can be an array of cells; we care about the first item per instructions
+            const cell = Array.isArray(row) ? row[0] : row;
+            if(!cell) return;
+            const tr = document.createElement('tr');
+            const td1 = document.createElement('td');
+            const td2 = document.createElement('td');
+            const label = (cell.rowLabel ?? '').toString();
+            // Format runResult as percentage if it's a finite number between 0 and 1
+            let val = cell.runResult;
+            let display;
+            if (typeof val === 'number' && isFinite(val)) {
+                if (val <= 1 && val >= 0) {
+                    display = (val*100).toFixed(1) + '%';
+                } else {
+                    display = val.toString();
+                }
+            } else {
+                display = '';
+            }
+            td1.textContent = label;
+            td2.textContent = display;
+            [td1, td2].forEach(td=>{
+                td.style.padding = '8px 10px';
+                td.style.borderBottom = '1px solid rgba(0,0,0,0.06)';
+            });
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        // Inject into container
+        container.innerHTML = '';
+        container.appendChild(table);
+    } catch (e){
+        console.error('Failed to render What-If results:', e);
     }
+}
+}
     return w;
 }
