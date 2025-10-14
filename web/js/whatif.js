@@ -16,6 +16,7 @@ if (typeof whatIfData === 'undefined') {
       { stateVariable: "beta.single.realEstate.stdev", label: "Real Estate Volatility (%)", type: "percent"},
       { stateVariable: "gamma.items[].amount", label: "Account Value ($)", type: "currency"},
       { stateVariable: "delta.items[].currentValue", label: "Property Value ($)", type: "currency"},
+      { stateVariable: "delta.items[].annualIncome", label: "Annual Income ($)", type: "currency"},
       { stateVariable: "delta.items[].annualExpenses", label: "Annual Expenses ($)", type: "currency"},
       { stateVariable: "delta.items[].saleYear", label: "Property Sale Year", type: "number"},
       { stateVariable: "epsilon.items[].amount", label: "Income Amount ($)", type: "currency"},
