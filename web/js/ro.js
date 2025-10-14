@@ -2158,7 +2158,7 @@ function makeTextField(labelText, placeholder, initValRaw, onSave, type='text', 
   const i = document.createElement('input'); i.type=type; i.inputMode=inputMode; i.placeholder=placeholder; f.appendChild(i);
 
   if(initValRaw){
-    const isPct = /%$/.test(labelText) || /Rate|Deviation|ROI|Growth/i.test(labelText);
+    const isPct = /%/.test(labelText) || /Rate|Deviation|ROI|Growth/i.test(labelText);
     const isDol = /\(\$\)|\$/i.test(labelText) || /Amount|Basis|Gains|Value|Price|Expenses|Income|Cost/i.test(labelText);
     if(isPct){ i.value = `${initValRaw}%`; }
     else if(isDol){ i.value = `$${fmtDollars(initValRaw)}`; }
