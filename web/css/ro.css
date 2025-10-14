@@ -76,14 +76,14 @@
 /* Themed icons that change with light/dark mode */
 :root[data-theme="dark"] .themed-icon.processing {
   background-image: url("../images/processing3.gif");
-  width: 350px;
-  height: 350px;
+  width: 330px;
+  height: 330px;
 }
 
 :root[data-theme="light"] .themed-icon.processing {
   background-image: url("../images/processing2_lightmode.gif");
-  width: 350px;
-  height: 350px;
+  width: 330px;
+  height: 330px;
 }
 
 *{box-sizing:border-box}
