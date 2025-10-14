@@ -480,7 +480,25 @@ function buildNav(){
     const span = document.createElement('span'); span.textContent = s.label;
     b.appendChild(span);
 
-    b.className = (s.key===active?'active':'' );
+    
+    // If this is the Results entry, add a nested link for What-If
+    if(s.key === 'results'){
+      const sub = document.createElement('a');
+      sub.href = '#';
+      sub.className = 'nav-sub whatif-link';
+      sub.textContent = 'Try a "What-If" scenario';
+      sub.setAttribute('role','button');
+      sub.onclick = (e)=>{
+        e.preventDefault();
+        active = 'whatif';
+        buildNav();
+        render();
+        // close sidebar if open (mobile)
+        try{ sidebar.classList.remove('open'); overlay.classList.remove('show'); }catch(_){}
+      };
+      window.__whatIfSub = sub;
+    }
+b.className = (s.key===active?'active':'' );
     b.setAttribute('role','tab');
     b.setAttribute('aria-selected', String(s.key===active));
     if (s.key===active) b.setAttribute('aria-current','page');
@@ -502,6 +520,7 @@ sidebar.classList.remove('open');
     });
 
     navEl.appendChild(b);
+    if(s.key === 'results' && window.__whatIfSub){ navEl.appendChild(window.__whatIfSub); window.__whatIfSub = null; }
   });
 }
 
@@ -666,11 +685,28 @@ Array.from(navEl.children).forEach(btn => {
 }
 
 
+
+
+
 function render(){
   hideProcessingModal();
   const resultsPanel = document.getElementById('resultsPanel');
   const mainPanel = document.querySelector('main .panel:not(#resultsPanel)');
-  if(active==='results'){
+  
+  const whatIfPanel = document.getElementById('whatIfPanel');
+  if(active==='whatif'){
+    const w = ensureWhatIfPanel();
+    if(mainPanel) mainPanel.classList.add('hidden');
+    if(resultsPanel) resultsPanel.classList.add('hidden');
+    if(w) w.classList.remove('hidden');
+    if(panelNextFooter) panelNextFooter.classList.add('hidden');
+    if(titleEl) titleEl.textContent = 'What If';
+    if(lipsumEl) lipsumEl.textContent = 'Explore alternative scenarios by choosing a section and variable.';
+    return;
+  }else{
+    if(whatIfPanel) whatIfPanel.classList.add('hidden');
+  }
+if(active==='results'){
     if(mainPanel) mainPanel.classList.add('hidden');
     if(resultsPanel) resultsPanel.classList.remove('hidden');
     // Hide next/back footer in results view
@@ -2122,7 +2158,7 @@ function makeTextField(labelText, placeholder, initValRaw, onSave, type='text', 
   const i = document.createElement('input'); i.type=type; i.inputMode=inputMode; i.placeholder=placeholder; f.appendChild(i);
 
   if(initValRaw){
-    const isPct = /%$/.test(labelText) || /Rate|Deviation|ROI|Growth/i.test(labelText);
+    const isPct = /%/.test(labelText) || /Rate|Deviation|ROI|Growth/i.test(labelText);
     const isDol = /\(\$\)|\$/i.test(labelText) || /Amount|Basis|Gains|Value|Price|Expenses|Income|Cost/i.test(labelText);
     if(isPct){ i.value = `${initValRaw}%`; }
     else if(isDol){ i.value = `$${fmtDollars(initValRaw)}`; }

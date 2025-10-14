@@ -295,3 +295,42 @@ Checks:                27 / 27, 100%
 Transferred:            3 / 3, 100%
 Elapsed time:       800ms
 
+2025/10/13 20:21:25 NOTICE: S3 bucket www-retirementodds-com: Switched region to "us-east-2" from "us-east-1"
+2025/10/13 20:21:26 INFO  : S3 bucket www-retirementodds-com: Waiting for checks to finish
+2025/10/13 20:21:26 INFO  : index.html: Copied (replaced existing)
+2025/10/13 20:21:26 INFO  : js/util.js: Updated modification time in destination
+2025/10/13 20:21:26 INFO  : css/results.css: Updated modification time in destination
+2025/10/13 20:21:26 INFO  : js/whatif.js: Copied (new)
+2025/10/13 20:21:26 INFO  : css/responsive_plots.css: Updated modification time in destination
+2025/10/13 20:21:26 INFO  : js/results.js: Updated modification time in destination
+2025/10/13 20:21:26 INFO  : images/donate.png: Updated modification time in destination
+2025/10/13 20:21:26 INFO  : images/chris2.jpg: Updated modification time in destination
+2025/10/13 20:21:26 INFO  : images/email.png: Updated modification time in destination
+2025/10/13 20:21:26 INFO  : images/email_light.png: Updated modification time in destination
+2025/10/13 20:21:26 INFO  : css/ro.css: Copied (replaced existing)
+2025/10/13 20:21:26 INFO  : images/piggy-transparent.png: Updated modification time in destination
+2025/10/13 20:21:26 INFO  : assets/inflationdata.js: Updated modification time in destination
+2025/10/13 20:21:26 INFO  : assets/markethistory.js: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : assets/markethistory2.js: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : js/ro.js: Copied (replaced existing)
+2025/10/13 20:21:27 INFO  : images/processing2_lightmode.gif: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : assets/marketreturns.js: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : images/processing3.gif: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : assets/realEstateROI.js: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : js/data/sampleplan.json: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : html/about.html: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : html/aboutMe.html: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : html/contact.html: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : html/disclosures.html: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : js/thirdparty/plotly-2.16.1.min.js: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : html/donate.html: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : html/feedback.html: Updated modification time in destination
+2025/10/13 20:21:27 INFO  : S3 bucket www-retirementodds-com: Waiting for transfers to finish
+2025/10/13 20:21:27 INFO  : Waiting for deletions to finish
+2025/10/13 20:21:27 INFO  : 
+Transferred:   	  259.691k / 259.691 kBytes, 100%, 177.098 kBytes/s, ETA 0s
+Errors:                 0
+Checks:                27 / 27, 100%
+Transferred:            4 / 4, 100%
+Elapsed time:        1.4s
+

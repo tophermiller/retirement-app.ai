@@ -76,14 +76,14 @@
 /* Themed icons that change with light/dark mode */
 :root[data-theme="dark"] .themed-icon.processing {
   background-image: url("../images/processing3.gif");
-  width: 350px;
-  height: 350px;
+  width: 330px;
+  height: 330px;
 }
 
 :root[data-theme="light"] .themed-icon.processing {
   background-image: url("../images/processing2_lightmode.gif");
-  width: 350px;
-  height: 350px;
+  width: 330px;
+  height: 330px;
 }
 
 *{box-sizing:border-box}
@@ -1523,12 +1523,14 @@ body.ro-modal-open {
 /* === Targeted override: submit & next buttons colors (both themes) ===
    Scoped to IDs to avoid impacting other .btn/.ok/.cta buttons */
 #submitBtn,
+#whatIfSubmitBtn,
 #nextSectionBtn.btn.ok {
   background-color: #2EA44F !important;
   color: #e8edf7 !important;
 }
 
 #submitBtn:focus-visible,
+#whatIfSubmitBtn:focus-visible,
 #nextSectionBtn.btn.ok:focus-visible {
   outline: 2px solid color-mix(in oklab, #2EA44F, white 40%);
   outline-offset: 2px;
@@ -1536,6 +1538,7 @@ body.ro-modal-open {
 
 /* Hover darkening for Calculate buttons */
 #submitBtn:hover,
+#whatIfSubmitBtn:hover,
 #nextSectionBtn.btn.ok:hover {
   background-color: color-mix(in oklab, #2EA44F, black 12%) !important;
 }
@@ -1544,6 +1547,7 @@ body.ro-modal-open {
 
 /* === Fix: Align icon and text in Calculate buttons === */
 #nextSectionBtn.btn.ok,
+#whatIfSubmitBtn,
 #submitBtn.btn.ok {
   display: inline-flex;
   align-items: center;
@@ -1552,7 +1556,19 @@ body.ro-modal-open {
 }
 
 #nextSectionBtn.btn.ok .icon,
+#whatIfSubmitBtn .icon,
 #submitBtn.btn.ok .icon {
   display: inline-flex;
   align-items: center;
 }
+
+
+/* What-If nested link under Results */
+#nav .nav-sub{display:block;margin:4px 0 8px 42px;font-size:.95rem;opacity:.9;text-align:left}
+#nav .nav-sub:hover{text-decoration:underline}
+
+/* What-If info line */
+.info-line{padding-top:20px;background:var(--panel-alt,#f6f6f7);border-radius:8px;}
+.info-line strong{margin-right:.5rem;}
+
+.ro-vary-row{display:flex;align-items:center;gap:.5rem;margin:.25rem 0}.ro-vary-row>label{min-width:7rem}
