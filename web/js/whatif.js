@@ -601,6 +601,7 @@ function ensureWhatIfPanel(){
             // Inject into container
             container.innerHTML = '';
             container.appendChild(table);
+            container.scrollIntoView({behavior: 'smooth'});
         } catch (e){
             console.error('Failed to render What-If results:', e);
         }
