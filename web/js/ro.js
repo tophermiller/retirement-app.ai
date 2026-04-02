@@ -604,6 +604,25 @@ function getProceedsAccountOptions(){
     .map(a => a.title?.trim() || defaultTitle('gamma', a.id));
 }
 
+
+function syncProceedsAccountReferences(oldTitle, newTitle){
+  const oldName = String(oldTitle || '').trim();
+  const newName = String(newTitle || '').trim();
+  if (!oldName || !newName || oldName === newName) return;
+
+  try {
+    (state.gamma?.items || []).forEach(a => {
+      if (a && a.rmdProceedsAccount === oldName) a.rmdProceedsAccount = newName;
+    });
+    (state.delta?.items || []).forEach(p => {
+      if (p && p.saleProceedsAccount === oldName) p.saleProceedsAccount = newName;
+    });
+  } catch (e) {
+    console.error('syncProceedsAccountReferences failed', e);
+  }
+}
+
+
 /* Create new item for multi sections (now supports overrides/flags) */
 function createItem(sectionKey, overrides = {}, lockedFlag /* optional */) {
   const s = state[sectionKey];
@@ -1637,8 +1656,11 @@ function renderItem(it, sectionKey){
   } else { titleInput.value = it.title || defaultTitle(sectionKey, it.id); }
   if(!(isTaxes||isMortgageInfo||isRentalInfo)){ titleInput.placeholder = defaultTitle(sectionKey, it.id); }
   if(!(isTaxes||isMortgageInfo||isRentalInfo)) titleInput.addEventListener('input', ()=>{
-    it.title = titleInput.value.trim() || defaultTitle(sectionKey, it.id);
+    const prevTitle = it.title || defaultTitle(sectionKey, it.id);
+    const nextTitle = titleInput.value.trim() || defaultTitle(sectionKey, it.id);
+    it.title = nextTitle;
     const mini = dockEl.querySelector(`.mini[data-id="${it.id}"] h4`); if(mini) mini.textContent = it.title;
+    if (sectionKey === 'gamma') syncProceedsAccountReferences(prevTitle, nextTitle);
     // If a Liquid Asset title changes, proceeds-dropdowns will refresh on next render
   });
   titleInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') titleInput.blur(); });
@@ -2450,6 +2472,20 @@ function validateState(){
       const saleProceedsAccount = p.saleProceedsAccount || null;
       if (!saleProceedsAccount) {
         errors.push(`Real Estate: Proceeds account is required for sale of property "${p.title || 'Unnamed Property'}"`);
+      }
+    }
+  });
+
+
+  //validate RMD proceeds account references
+  const proceedsAccountOptions = new Set(getProceedsAccountOptions());
+  (state.gamma.items || []).forEach(a => {
+    if (a?.atype === 'Tax Deferred' && a.rmd) {
+      const acct = (a.rmdProceedsAccount || '').trim();
+      if (!acct) {
+        errors.push(`Liquid Assets: Proceeds to account is required for RMD account "${a.title || 'Unnamed Account'}"`);
+      } else if (!proceedsAccountOptions.has(acct)) {
+        errors.push(`Liquid Assets: Proceeds to account "${acct}" is no longer valid for RMD account "${a.title || 'Unnamed Account'}". Please re-select it.`);
       }
     }
   });
