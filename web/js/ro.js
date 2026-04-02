@@ -1360,18 +1360,19 @@ wireHelpButtons();
   }
   const items = state[active].items;
 
+  ensureSingleExpanded(active);
   const hasExpanded = items.some(it => !it.collapsed);
   collapseAllBtn.classList.toggle('hidden', !hasExpanded);
   collapseAllBtn.textContent = 'Collapse All';
 
   dockEl.innerHTML = '';
-  const collapsed = items.filter(it=>it.collapsed);
-  dockEl.classList.toggle('empty', collapsed.length===0);
-  dockEl.textContent = collapsed.length ? '' : 'Collapsed items will appear here.';
-  collapsed.forEach(it => dockEl.appendChild(renderMiniCard(it, active)));
+  dockEl.classList.toggle('empty', items.length===0);
+  dockEl.textContent = items.length ? '' : 'Items will appear here.';
+  items.forEach(it => dockEl.appendChild(renderMiniCard(it, active)));
 
   itemsEl.innerHTML = '';
-  items.filter(it=>!it.collapsed).forEach(it => itemsEl.appendChild(renderItem(it, active)));
+  const expanded = items.find(it=>!it.collapsed);
+  if(expanded) itemsEl.appendChild(renderItem(expanded, active));
 
   enableDockDrag();
 
@@ -1379,11 +1380,33 @@ wireHelpButtons();
   try{ updateActiveNav(); }catch(e){}
 }
 
+function ensureSingleExpanded(sectionKey){
+  const arr = state?.[sectionKey]?.items;
+  if(!Array.isArray(arr) || !arr.length) return;
+  let foundExpanded = false;
+  arr.forEach(it=>{
+    if(it && it.collapsed === false){
+      if(foundExpanded) it.collapsed = true;
+      else foundExpanded = true;
+    }
+  });
+}
+
+function setExpandedItem(sectionKey, itemId){
+  const arr = state?.[sectionKey]?.items;
+  if(!Array.isArray(arr)) return;
+  arr.forEach(it=>{
+    it.collapsed = (it.id !== itemId);
+  });
+  render();
+}
+
 /* Mini-card (collapsed) */
 function renderMiniCard(it, sectionKey){
   const card = document.createElement('div');
   card.className = 'mini'; card.setAttribute('role','button'); card.setAttribute('tabindex','0');
   card.dataset.id = it.id; card.title = 'Drag to reorder • Click to expand';
+  if(it.collapsed === false) card.classList.add('active');
 
   const title = document.createElement('h4');
   if(sectionKey==='zeta' && it && it.isTaxes){ 
@@ -1431,7 +1454,7 @@ function renderMiniCard(it, sectionKey){
   card.appendChild(kv);
 
 
-  const expand = ()=>{ it.collapsed=false; render(); };
+  const expand = ()=>{ setExpandedItem(sectionKey, it.id); };
   card.addEventListener('click', expand);
   card.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); expand(); } });
 
@@ -2228,7 +2251,7 @@ addBtn.addEventListener('click', ()=>{
   const section = sections.find(s=>s.key===active);
   if(section.mode !== 'multi') return;
   const it = createItem(active);
-  render();
+  setExpandedItem(active, it.id);
   requestAnimationFrame(()=>{
     const node = itemsEl.querySelector(`.item[data-id="${it.id}"] .title-input`);
     node?.focus(); node?.select();
@@ -2308,7 +2331,7 @@ function enableDockDrag(){
     if(!el) return;
     const id = Number(el.dataset.id);
     const it = state[active].items.find(x=>x.id===id);
-    if(it){ it.collapsed = false; render(); }
+    if(it){ setExpandedItem(active, it.id); }
   };
 
   const onUp = ()=>{
@@ -2316,7 +2339,7 @@ function enableDockDrag(){
     if(dragStarted){
       if(placeholder) dockEl.insertBefore(draggingEl, placeholder);
       commitReorder(); cleanup(); render();
-    }{
+    } else {
       const el = draggingEl; cleanup(); finishAsClick(el);
     }
   };
