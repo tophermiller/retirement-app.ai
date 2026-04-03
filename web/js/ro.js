@@ -553,7 +553,17 @@ function createAskAIPanel(){
     <section class="section askai">
       <h2 class="h2">Ask AI</h2>
       <p style="margin:0 0 1rem 0;">
-        Copy this prompt and paste it into your AI tool of choice.
+        We've created a detailed prompt based on your retirement plan that you can use with AI tools to get insights, suggestions, or even compute your results.
+        Copy the prompt below and paste it into your favorite AI assistant.   Here's some links to AI tools you can try (some may require a sign-up, login, or paid account):
+        <ul>
+          <li><a href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">ChatGPT</a></li>
+          <li><a href="https://claude.ai" target="_blank" rel="noopener noreferrer">Claude</a></li>
+          <li><a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer">Gemini</a></li>
+          <li><a href="https://www.meta.ai" target="_blank" rel="noopener noreferrer">Meta AI</a></li>
+          <li><a href="https://grok.com" target="_blank" rel="noopener noreferrer">Grok</a></li>
+          <li><a href="https://www.perplexity.ai" target="_blank" rel="noopener noreferrer">Perplexity</a></li>
+          <li><a href="https://chat.deepseek.com" target="_blank" rel="noopener noreferrer">DeepSeek</a></li>
+        </ul>  
       </p>
       <div style="margin:0 0 .75rem 0;">
         <a href="#" id="copyAiPromptLink" class="nav-sub askai-copy-link" role="button" style="margin-left:0;">Copy to Clipboard</a>
