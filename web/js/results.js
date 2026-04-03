@@ -84,6 +84,10 @@ if (typeof(results) === "undefined") {
     },
 
     showResults: function (resultData, submittal) {
+      try {
+        if (typeof resultsData !== "undefined") resultsData = resultData || resultsData;
+        window.__lastRetirementOddsResponse = window.__lastRetirementOddsResponse || { result: resultData };
+      } catch(_) {}
       if (resultData.error) {
         document.getElementById("results-error").innerHTML = resultData.error;
         document.getElementById("results-error").style.display = "block";

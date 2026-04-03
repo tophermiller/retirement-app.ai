@@ -1566,7 +1566,7 @@ body.ro-modal-open {
 
 
 /* What-If nested link under Results */
-#nav .nav-sub{display:block;margin:4px 0 8px 42px;font-size:.95rem;opacity:.9;text-align:left}
+#nav .nav-sub{display:block;width:calc(100% - 24px);margin:4px 12px 8px;font-size:.95rem;opacity:.9;text-align:center}
 #nav .nav-sub:hover{text-decoration:underline}
 
 /* What-If info line */
@@ -1582,3 +1582,29 @@ body.ro-modal-open {
 .info-line span{color:var(--text-muted);}
 
 .ro-vary-row{display:flex;align-items:center;gap:.5rem;margin:.25rem 0}.ro-vary-row>label{min-width:7rem}
+
+
+/* Ask AI panel */
+.askai-textarea{
+  width:100%;
+  min-height:420px;
+  resize:vertical;
+  padding:14px 16px;
+  border:1px solid var(--outline);
+  border-radius:10px;
+  background:var(--surface-2);
+  color:var(--text);
+  font:inherit;
+  line-height:1.45;
+  box-sizing:border-box;
+}
+
+.askai-textarea:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in oklab, var(--accent), transparent 75%);
+}
+
+#nav .askai-link{
+  margin-top:0;
+}

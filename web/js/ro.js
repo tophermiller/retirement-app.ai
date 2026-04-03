@@ -481,7 +481,7 @@ function buildNav(){
     b.appendChild(span);
 
     
-    // If this is the Results entry, add a nested link for What-If
+    // If this is the Results entry, add nested links for What-If and Ask AI
     if(s.key === 'results'){
       const sub = document.createElement('a');
       sub.href = '#';
@@ -497,6 +497,20 @@ function buildNav(){
         try{ sidebar.classList.remove('open'); overlay.classList.remove('show'); }catch(_){}
       };
       window.__whatIfSub = sub;
+
+      const askAI = document.createElement('a');
+      askAI.href = '#';
+      askAI.className = 'nav-sub askai-link';
+      askAI.textContent = 'Ask AI';
+      askAI.setAttribute('role','button');
+      askAI.onclick = (e)=>{
+        e.preventDefault();
+        active = 'askai';
+        buildNav();
+        render();
+        try{ sidebar.classList.remove('open'); overlay.classList.remove('show'); }catch(_){}
+      };
+      window.__askAISub = askAI;
     }
 b.className = (s.key===active?'active':'' );
     b.setAttribute('role','tab');
@@ -521,11 +535,78 @@ sidebar.classList.remove('open');
 
     navEl.appendChild(b);
     if(s.key === 'results' && window.__whatIfSub){ navEl.appendChild(window.__whatIfSub); window.__whatIfSub = null; }
+    if(s.key === 'results' && window.__askAISub){ navEl.appendChild(window.__askAISub); window.__askAISub = null; }
   });
 }
 
 /* Results support */
 let resultsData = null;
+
+function createAskAIPanel(){
+  let p = document.getElementById('askAIPanel');
+  if (p) return p;
+  const main = document.querySelector('main') || document.body;
+  p = document.createElement('div');
+  p.id = 'askAIPanel';
+  p.className = 'panel hidden';
+  p.innerHTML = `
+    <section class="section askai">
+      <h2 class="h2">Ask AI</h2>
+      <p style="margin:0 0 1rem 0;">
+        Copy this prompt and paste it into your AI tool of choice.
+      </p>
+      <div style="margin:0 0 .75rem 0;">
+        <a href="#" id="copyAiPromptLink" class="nav-sub askai-copy-link" role="button" style="margin-left:0;">Copy to Clipboard</a>
+      </div>
+      <textarea id="askAiPromptText" class="askai-textarea" spellcheck="false" aria-label="AI prompt"></textarea>
+    </section>
+  `;
+  main.appendChild(p);
+
+  const copyLink = p.querySelector('#copyAiPromptLink');
+  const textArea = p.querySelector('#askAiPromptText');
+  if (copyLink && textArea) {
+    copyLink.addEventListener('click', async (e)=>{
+      e.preventDefault();
+      const text = textArea.value || '';
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          textArea.focus();
+          textArea.select();
+          document.execCommand('copy');
+        }
+        if (typeof showToast === 'function') showToast('Copied to clipboard');
+      } catch (err) {
+        textArea.focus();
+        textArea.select();
+      }
+    });
+  }
+
+  return p;
+}
+
+function populateAskAIPanel(){
+  const p = createAskAIPanel();
+  const textArea = p?.querySelector('#askAiPromptText');
+  if (!textArea) return p;
+
+  let promptText = '';
+  if (resultsData && typeof resultsData.aiPrompt === 'string') {
+    promptText = resultsData.aiPrompt;
+  } else if (resultsData && resultsData.aiPrompt != null) {
+    try {
+      promptText = JSON.stringify(resultsData.aiPrompt, null, 2);
+    } catch (_) {
+      promptText = String(resultsData.aiPrompt);
+    }
+  }
+  textArea.value = promptText;
+  return p;
+}
+
 function ensureResultsSection(){
   const exists = sections.some(s=>s.key==='results');
   if(!exists){
@@ -713,10 +794,12 @@ function render(){
   const mainPanel = document.querySelector('main .panel:not(#resultsPanel)');
   
   const whatIfPanel = document.getElementById('whatIfPanel');
+  const askAIPanel = document.getElementById('askAIPanel');
   if(active==='whatif'){
     const w = ensureWhatIfPanel();
     if(mainPanel) mainPanel.classList.add('hidden');
     if(resultsPanel) resultsPanel.classList.add('hidden');
+    if(askAIPanel) askAIPanel.classList.add('hidden');
     if(w) w.classList.remove('hidden');
     if(panelNextFooter) panelNextFooter.classList.add('hidden');
     if(titleEl) titleEl.textContent = 'What If';
@@ -724,6 +807,20 @@ function render(){
     return;
   }else{
     if(whatIfPanel) whatIfPanel.classList.add('hidden');
+  }
+
+  if(active==='askai'){
+    const p = populateAskAIPanel();
+    if(mainPanel) mainPanel.classList.add('hidden');
+    if(resultsPanel) resultsPanel.classList.add('hidden');
+    if(whatIfPanel) whatIfPanel.classList.add('hidden');
+    if(p) p.classList.remove('hidden');
+    if(panelNextFooter) panelNextFooter.classList.add('hidden');
+    if(titleEl) titleEl.textContent = 'Ask AI';
+    if(lipsumEl) lipsumEl.textContent = 'Copy the generated AI prompt from your results.';
+    return;
+  }else{
+    if(askAIPanel) askAIPanel.classList.add('hidden');
   }
 if(active==='results'){
     if(mainPanel) mainPanel.classList.add('hidden');
@@ -2954,6 +3051,8 @@ submitBtn.addEventListener('click', async ()=>{
   if(!response.ok) throw new Error(`HTTP ${response.status}`);
   //showToast('Submitted successfully.', true);
   const respData = await response.json(); 
+  resultsData = respData?.result ?? null;
+  window.__lastRetirementOddsResponse = respData;
   hideProcessingModal()
   ensureResultsSection(); 
   results.showResults(respData.result, data); 
