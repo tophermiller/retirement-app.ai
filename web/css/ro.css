@@ -1570,7 +1570,15 @@ body.ro-modal-open {
 #nav .nav-sub:hover{text-decoration:underline}
 
 /* What-If info line */
-.info-line{padding-top:20px;background:var(--panel-alt,#f6f6f7);border-radius:8px;}
-.info-line strong{margin-right:.5rem;}
+.info-line{
+  margin-top:20px;
+  padding:12px 14px;
+  background:var(--surface-2);
+  color:var(--text);
+  border:1px solid var(--outline);
+  border-radius:8px;
+}
+.info-line strong{margin-right:.5rem;color:var(--text);}
+.info-line span{color:var(--text-muted);}
 
 .ro-vary-row{display:flex;align-items:center;gap:.5rem;margin:.25rem 0}.ro-vary-row>label{min-width:7rem}
