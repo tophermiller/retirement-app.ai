@@ -673,8 +673,8 @@ select {
 .triple-row .field .label { font-size: 12.5px; }
 .triple-row .field input { width: 100%; text-align: right; }
 .btn-row { margin-top: 6px; display: flex; gap: 8px; }
-.rem-row { border: 0; background: transparent; cursor: pointer; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 8px; color: #ccc; }
-.rem-row:hover { background: var(--bg-2); color: #fff; }
+.rem-row { border: 0; background: transparent; cursor: pointer; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 8px; color: #var(--text); }
+.rem-row:hover { background: var(--bg-2); color: var(--text); }
 
 
 
