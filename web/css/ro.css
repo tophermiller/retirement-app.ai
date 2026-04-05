@@ -1230,11 +1230,15 @@ button:disabled, .btn:disabled {
 
 /* Site Footer */
 .site-footer {
-    background: #222;
-    color: #eee;
-    padding: 20px 0;
+    background: var(--surface-2);
+    color: var(--text);
+    border-top: 1px solid var(--border);
+    padding: 20px 16px;
     text-align: center;
-    margin-top: 40px;
+    margin-top: 24px;
+}
+.site-footer nav {
+    margin-bottom: 8px;
 }
 .site-footer ul {
     list-style: none;
@@ -1243,14 +1247,18 @@ button:disabled, .btn:disabled {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    
 }
 .site-footer a {
-    color: #eee;
+    color: var(--link);
     text-decoration: underline;
 }
 .site-footer a:hover {
+    color: var(--link);
     text-decoration: underline;
+}
+.site-footer p {
+    margin: 10px 0 0;
+    color: var(--text-muted);
 }
 
 .site-footer ul li {
@@ -1260,7 +1268,8 @@ button:disabled, .btn:disabled {
 .site-footer ul li::after {
     content: "|";
     margin: 0 10px;
-    color: #888;  /* muted so it doesn’t overpower the links */
+    color: var(--text-muted);
+    opacity: 0.8;
 }
 
 .site-footer ul li:last-child::after {
