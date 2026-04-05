@@ -122,7 +122,7 @@ a {
   }
 
   /* LAYOUT */
-  .app{display:flex; min-height:100vh}
+  .app{display:flex; min-height:0; align-items:flex-start}
 
   .sidebar{
     flex:0 0 260px;
@@ -172,7 +172,7 @@ a {
   }
   .sidebar-actions .btn{ width:100%; justify-content:center }
 
-  .main{flex:1 1 auto; padding:20px clamp(16px,3vw,36px); overflow:auto}
+  .main{flex:1 1 auto; padding:20px clamp(16px,3vw,36px); overflow:visible}
 
   /* TOPBAR is now always visible; CTAs live here */
   .topbar{
