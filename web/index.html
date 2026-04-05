@@ -675,5 +675,29 @@ document.addEventListener("DOMContentLoaded", function(){
 
 
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var donateLink = document.querySelector('#welcomeModal a[href="#donate"]');
+  if(donateLink){
+    donateLink.addEventListener('click', function(e){
+      e.preventDefault();
+      try {
+        var modal = document.getElementById('welcomeModal');
+        if(modal) modal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+        document.body.classList.remove('welcome-mode');
+      } catch(e){}
+
+      if (window.location.hash !== '#donate') {
+        window.location.hash = 'donate';
+      } else if (typeof window.handleHash === 'function') {
+        window.handleHash();
+      }
+    });
+  }
+});
+</script>
+
 </body>
 </html>
